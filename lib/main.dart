@@ -9,7 +9,13 @@ class Hoxy extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.light().copyWith(
+        floatingActionButtonTheme: FloatingActionButtonThemeData().copyWith(
+          backgroundColor: primaryColor
+        ),
         appBarTheme: AppBarTheme().copyWith(
+          iconTheme: IconThemeData().copyWith(
+            color: Colors.black
+          ),
           textTheme: TextTheme(
             headline6: TextStyle(
               fontSize: 24,

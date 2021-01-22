@@ -6,3 +6,7 @@ const primaryColor = Color(0xFFF5DF4D);
 
 //region Firebase
 //endregion
+
+const communicateLevelIcons = [
+  ['😷', '🤫', '🤐'], ['😀', '😃', '😄'], ['😆', '🤩', '🥳']
+];

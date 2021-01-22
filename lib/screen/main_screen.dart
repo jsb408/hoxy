@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
+import 'package:hoxy/screen/chat_list_screen.dart';
+import 'package:hoxy/screen/home_screen.dart';
+import 'package:hoxy/screen/my_page_screen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -7,6 +10,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final _screens = [HomeScreen(), HomeScreen(), ChatListScreen(), MyPageScreen()];
   int _selectedIndex = 0;
 
   @override
@@ -16,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
         title: Text('풍덕천동'),
       ),
       body: Center(
-        child: Text('Hello, world!'),
+        child: _screens[_selectedIndex],
       ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
@@ -33,11 +37,11 @@ class _MainScreenState extends State<MainScreen> {
             });
           },
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: '우리동네'),
-            BottomNavigationBarItem(icon: Icon(Icons.share), label: '이름없는기능'),
+            BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: '우리동네'),
+            BottomNavigationBarItem(icon: Icon(Icons.whatshot_outlined), label: '이름없는기능'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.chat_bubble_outline), label: '채팅'),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: '마이페이지'),
+            BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: '마이페이지'),
           ],
         ),
       ),
