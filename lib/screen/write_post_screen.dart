@@ -18,7 +18,7 @@ class WritePostScreen extends StatelessWidget {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: backgroundColor, width: 0.5)),
+                        border: Border.all(color: kBackgroundColor, width: 0.5)),
                     child: TextField(
                       decoration: InputDecoration(
                         border: InputBorder.none,
@@ -34,13 +34,13 @@ class WritePostScreen extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Flexible(
+                      Expanded(
                         child: WritePropertyButton(
                           title: '모임지역',
                           onTap: () {},
                         ),
                       ),
-                      Flexible(
+                      Expanded(
                         child: WritePropertyButton(
                           title: '모임인원',
                           onTap: () {},
@@ -59,7 +59,7 @@ class WritePostScreen extends StatelessWidget {
                   Container(
                     height: 280,
                     decoration: BoxDecoration(
-                        border: Border.all(color: backgroundColor, width: 0.5)),
+                        border: Border.all(color: kBackgroundColor, width: 0.5)),
                     child: TextField(
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
@@ -78,11 +78,11 @@ class WritePostScreen extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.only(left: 20),
                     decoration: BoxDecoration(
-                        border: Border.all(color: backgroundColor, width: 0.5)),
+                        border: Border.all(color: kBackgroundColor, width: 0.5)),
                     child: Row(
                       children: [
                         Icon(Icons.tag),
-                        Expanded(
+                        Flexible(
                           child: TextField(
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -103,7 +103,7 @@ class WritePostScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                         border: Border(
                             top: BorderSide(
-                                width: 0.5, color: backgroundColor))),
+                                width: 0.5, color: kBackgroundColor))),
                     child: Center(
                       child: Column(
                         children: [
@@ -127,7 +127,7 @@ class WritePostScreen extends StatelessWidget {
                           Text('글 작성 시 모임 대화방이 생성되며,\n신청자는 대화방에 참여됩니다.',
                               textAlign: TextAlign.center,
                               style:
-                                  TextStyle(fontSize: 11, color: accentColor))
+                                  TextStyle(fontSize: 11, color: kAccentColor))
                         ],
                       ),
                     ),
@@ -136,7 +136,7 @@ class WritePostScreen extends StatelessWidget {
               ),
             ),
           ),
-          BottomButton(onTap: () {}, buttonTitle: '등록하기')
+          BottomButton(onTap: () {}, buttonTitle: '등록하기', disabled: true,)
         ],
       ),
     );

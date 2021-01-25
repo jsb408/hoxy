@@ -1,15 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 //region Colors
-const backgroundColor = Color(0xFFF2F2F2);
-const primaryColor = Color(0xFFF5DF4D);
-const accentColor = Color(0xFF003BFF);
-const disabledColor = Color(0xFF818181);
+const kBackgroundColor = Color(0xFFF2F2F2);
+const kPrimaryColor = Color(0xFFF5DF4D);
+const kAccentColor = Color(0xFF003BFF);
+const kDisabledColor = Color(0xFF818181);
+const kGradeColor = Color(0xFF55CC91);
 //endregion
 
 //region Firebase
+FirebaseAuth kAuth = FirebaseAuth.instance;
+FirebaseFirestore kFirestore = FirebaseFirestore.instance;
 //endregion
 
-const communicateLevelIcons = [
+//region Styles
+const kJoinTextStyle = TextStyle(fontSize: 18, color: Colors.black);
+//endregion
+
+const kCommunicateLevelIcons = [
   ['😷', '🤫', '🤐'], ['😀', '😃', '😄'], ['😆', '🤩', '🥳']
 ];

@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "935781810748",
+    "project_id": "onemore-7336a",
+    "storage_bucket": "onemore-7336a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:935781810748:android:633c540d512dd7365a7939",
+        "android_client_info": {
+          "package_name": "com.goldouble.flutter.hoxy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "935781810748-g0rbe1104vc8fljrgn1rb2vh2dl7a0bi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6rpk4AriQtaJw_E-VwgAFrzA7X-iNEuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "935781810748-g0rbe1104vc8fljrgn1rb2vh2dl7a0bi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "935781810748-l6vrts184tu6u1gs7tg25j35srho87sk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kang.Hoxy"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

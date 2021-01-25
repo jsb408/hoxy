@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
-          canvasColor: primaryColor,
+          canvasColor: kPrimaryColor,
         ),
         child: BottomNavigationBar(
           currentIndex: _selectedIndex,

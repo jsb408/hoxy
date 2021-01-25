@@ -12,7 +12,7 @@ class WritePropertyButton extends StatelessWidget {
     return GestureDetector(
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: backgroundColor, width: 0.5)
+          border: Border.all(color: kBackgroundColor, width: 0.5)
         ),
         padding: EdgeInsets.only(left: 30, top: 16, bottom: 16),
         width: double.infinity,

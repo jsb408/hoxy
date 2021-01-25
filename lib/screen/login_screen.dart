@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/screen/join_screen.dart';
@@ -43,16 +44,19 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             LoginButton(
               title: '이메일로 로그인',
-              color: primaryColor,
+              color: kPrimaryColor,
               onPressed: () {},
             ),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text('처음 오셨나요 HOXY?'),
-                MaterialButton(
-                  child: Text('회원가입'),
-                  textColor: Colors.blueAccent.shade400,
+                CupertinoButton(
+                  child: Text(
+                    '회원가입',
+                    style: TextStyle(
+                        fontSize: 14, color: Colors.blueAccent.shade400),
+                  ),
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => JoinScreen()));

@@ -6,15 +6,13 @@ class JoinTextField extends StatelessWidget {
       @required this.hintText,
       this.textInputType = TextInputType.text,
       this.obscureText = false,
-      this.description,
-      @required this.onChanged});
+      @required this.validator});
 
   final String title;
   final String hintText;
   final TextInputType textInputType;
-  final String description;
   final bool obscureText;
-  final Function onChanged;
+  final Function validator;
 
   @override
   Widget build(BuildContext context) {
@@ -32,27 +30,15 @@ class JoinTextField extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: EdgeInsets.only(top: 8),
-                  height: 35,
-                  child: TextField(
-                    keyboardType: textInputType,
-                    obscureText: obscureText,
-                    decoration: InputDecoration(
-                      hintText: hintText,
-                      hintStyle: TextStyle(height: 0),
-                    ),
-                    onChanged: onChanged,
+                TextFormField(
+                  keyboardType: textInputType,
+                  obscureText: obscureText,
+                  decoration: InputDecoration(
+                    hintText: hintText,
+                    hintStyle: TextStyle(height: 0),
                   ),
+                  validator: validator,
                 ),
-                if (description != null)
-                  Text(
-                    description,
-                    style: TextStyle(
-                      color: Color(0xFF918DFF),
-                      fontSize: 10,
-                    ),
-                  ),
               ],
             ),
           ),

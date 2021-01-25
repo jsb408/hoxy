@@ -1,8 +1,13 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/screen/login_screen.dart';
 import 'constants.dart';
 
-void main() => runApp(Hoxy());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(Hoxy());
+}
 
 class Hoxy extends StatelessWidget {
   @override
@@ -10,7 +15,7 @@ class Hoxy extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.light().copyWith(
         floatingActionButtonTheme: FloatingActionButtonThemeData().copyWith(
-          backgroundColor: primaryColor
+          backgroundColor: kPrimaryColor
         ),
         appBarTheme: AppBarTheme().copyWith(
           iconTheme: IconThemeData().copyWith(
@@ -23,8 +28,8 @@ class Hoxy extends StatelessWidget {
             ),
           ),
         ),
-        primaryColor: primaryColor,
-        scaffoldBackgroundColor: backgroundColor,
+        primaryColor: kPrimaryColor,
+        scaffoldBackgroundColor: kBackgroundColor,
       ),
       home: LoginScreen(),
     );

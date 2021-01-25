@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Container(
         child: Center(
-          child: Text('${communicateLevelIcons[0][0]} Home Screen'),
+          child: Text('${kCommunicateLevelIcons[0][0]} Home Screen'),
         ),
       ),
     );
