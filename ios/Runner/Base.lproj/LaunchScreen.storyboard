@@ -22,11 +22,11 @@
                             <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="LaunchImage" translatesAutoresizingMaskIntoConstraints="NO" id="YRO-k0-Ey4">
                                 <rect key="frame" x="207" y="448" width="0.5" height="0.5"/>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="person.fill.checkmark" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Lm0-Wz-YpJ">
-                                <rect key="frame" x="107" y="349.5" width="200" height="197"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo" translatesAutoresizingMaskIntoConstraints="NO" id="Lm0-Wz-YpJ">
+                                <rect key="frame" x="57" y="405" width="300" height="86"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="200" id="5Oe-In-Sac"/>
-                                    <constraint firstAttribute="width" constant="200" id="Id7-hD-dpV"/>
+                                    <constraint firstAttribute="height" constant="86" id="XL5-29-Uil"/>
+                                    <constraint firstAttribute="width" constant="300" id="fN6-PG-Naj"/>
                                 </constraints>
                             </imageView>
                         </subviews>
@@ -34,8 +34,8 @@
                         <constraints>
                             <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="1a2-6s-vTC"/>
                             <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="4X2-HB-R7a"/>
-                            <constraint firstItem="Lm0-Wz-YpJ" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Wah-PT-mkn"/>
-                            <constraint firstItem="Lm0-Wz-YpJ" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="eXF-XA-1aI"/>
+                            <constraint firstItem="Lm0-Wz-YpJ" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="DBL-of-Fj0"/>
+                            <constraint firstItem="Lm0-Wz-YpJ" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="RrC-7d-6ve"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -46,6 +46,6 @@
     </scenes>
     <resources>
         <image name="LaunchImage" width="0.5" height="0.5"/>
-        <image name="person.fill.checkmark" catalog="system" width="128" height="88"/>
+        <image name="logo" width="500" height="144"/>
     </resources>
 </document>

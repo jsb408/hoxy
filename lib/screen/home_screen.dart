@@ -16,16 +16,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Container(
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'images/logo.png',
-                width: 300,
-              ),
-              Text('${communicateLevelIcons[0][0]} Home Screen'),
-            ],
-          ),
+          child: Text('${communicateLevelIcons[0][0]} Home Screen'),
         ),
       ),
     );

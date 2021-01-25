@@ -18,9 +18,15 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('풍덕천동'),
+        automaticallyImplyLeading: false,
       ),
-      body: Center(
-        child: _screens[_selectedIndex],
+      body: WillPopScope(
+        onWillPop: () {
+          return Future(() => false);
+        },
+        child: Center(
+          child: _screens[_selectedIndex],
+        ),
       ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
