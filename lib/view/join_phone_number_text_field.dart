@@ -4,13 +4,17 @@ import 'package:hoxy/view/background_button.dart';
 class JoinPhoneNumberTextField extends StatelessWidget {
   JoinPhoneNumberTextField(
       {@required this.hintText,
+      this.readOnly = false,
       @required this.buttonText,
-        this.disabled = false,
+      this.keyboardType = TextInputType.text,
+      this.disabled = false,
       @required this.validator,
       @required this.onPressed});
 
   final String hintText;
+  final bool readOnly;
   final String buttonText;
+  final TextInputType keyboardType;
   final bool disabled;
   final Function validator;
   final Function onPressed;
@@ -22,6 +26,8 @@ class JoinPhoneNumberTextField extends StatelessWidget {
       children: [
         Flexible(
           child: TextFormField(
+            readOnly: readOnly,
+            keyboardType: keyboardType,
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: TextStyle(height: 0),

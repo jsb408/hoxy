@@ -1,12 +1,20 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hoxy/screen/login_screen.dart';
+import 'package:hoxy/screen/main_screen.dart';
 import 'constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(Hoxy());
+  configLoading();
+}
+
+void configLoading() {
+  EasyLoading.instance
+      ..userInteractions = false;
 }
 
 class Hoxy extends StatelessWidget {
@@ -31,7 +39,8 @@ class Hoxy extends StatelessWidget {
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: kBackgroundColor,
       ),
-      home: LoginScreen(),
+      home: kAuth.currentUser == null ? LoginScreen() : MainScreen(),
+      builder: EasyLoading.init(),
     );
   }
 }

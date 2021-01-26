@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
+import 'dart:io' show Platform;
 
 class BottomButton extends StatelessWidget {
   BottomButton({@required this.onTap, @required this.buttonTitle, @required this.disabled});
@@ -26,9 +27,7 @@ class BottomButton extends StatelessWidget {
         ),
         color: disabled ? kDisabledColor : kPrimaryColor,
         margin: EdgeInsets.only(top: 10.0),
-        padding: defaultTargetPlatform == TargetPlatform.iOS
-            ? EdgeInsets.only(bottom: 15.0)
-            : EdgeInsets.all(0),
+        padding: Platform.isIOS ? EdgeInsets.only(bottom: 15.0) : EdgeInsets.all(0),
         height: 85,
         width: double.infinity,
       ),

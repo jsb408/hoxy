@@ -1,12 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hoxy/screen/join_detail_screen.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/join_phone_number_text_field.dart';
 import 'package:hoxy/view/join_text_field.dart';
-import 'package:hoxy/view/progress_hud.dart';
 import 'package:hoxy/viewmodel/join_view_model.dart';
-
 import '../constants.dart';
 
 class JoinScreen extends StatefulWidget {
@@ -20,31 +19,20 @@ class _JoinScreenState extends State<JoinScreen> {
   JoinViewModel viewModel = JoinViewModel();
 
   bool _isComplete = false;
-  bool _isLoading = false;
   String _verificationId = '';
-
-  void showLoadingBar() {
-    setState(() {
-      _isLoading = true;
-    });
-  }
-
-  void hideLoadingBar() {
-    setState(() {
-      _isLoading = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('회원가입'),
-      ),
-      backgroundColor: Colors.white,
-      body: ProgressHUD(
-        inAsyncCall: _isLoading,
-        child: Column(
+    return WillPopScope(
+      onWillPop: () {
+        return Future(() => !EasyLoading.isShow);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('회원가입'),
+        ),
+        backgroundColor: Colors.white,
+        body: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
@@ -69,7 +57,8 @@ class _JoinScreenState extends State<JoinScreen> {
                         children: [
                           JoinTextField(
                             title: '이메일',
-                            textInputType: TextInputType.emailAddress,
+                            readOnly: _isComplete,
+                            keyboardType: TextInputType.emailAddress,
                             hintText: '양식에 맞게 입력해주세요',
                             validator: (value) {
                               return viewModel.checkEmail(value);
@@ -77,6 +66,7 @@ class _JoinScreenState extends State<JoinScreen> {
                           ),
                           JoinTextField(
                             title: '비밀번호',
+                            readOnly: _isComplete,
                             hintText: '영문/숫자/기호를 모두 포함한 8자리 이상 입력',
                             obscureText: true,
                             validator: (value) {
@@ -85,6 +75,7 @@ class _JoinScreenState extends State<JoinScreen> {
                           ),
                           JoinTextField(
                             title: '비밀번호 확인',
+                            readOnly: _isComplete,
                             hintText: '입력하신 비밀번호를 다시 한번 입력 해주세요.',
                             obscureText: true,
                             validator: (value) {
@@ -107,66 +98,72 @@ class _JoinScreenState extends State<JoinScreen> {
                                     children: [
                                       JoinPhoneNumberTextField(
                                         hintText: ' - 기호를 제외한 번호를 입력해주세요',
+                                        readOnly: _isComplete,
                                         buttonText: '인증하기',
-                                        disabled: _verificationId.isNotEmpty,
+                                        disabled: _verificationId.isNotEmpty || _isComplete,
                                         validator: (value) {
                                           return viewModel.checkPhone(value);
                                         },
                                         onPressed: () async {
-                                          showLoadingBar();
+                                          EasyLoading.show();
                                           if (_formKey.currentState.validate()) {
                                             await kAuth.verifyPhoneNumber(
                                               phoneNumber: viewModel.formattedPhone,
-                                              verificationCompleted: (credential) async {
+                                              verificationCompleted: (credential) {
                                                 setState(() {
                                                   _isComplete = true;
                                                 });
+                                                EasyLoading.dismiss();
                                               },
                                               verificationFailed: (e) {
                                                 print(e);
-                                                hideLoadingBar();
+                                                EasyLoading.showError('인증 실패');
                                               },
-                                              codeSent: (verificationId, resendToken) {
-                                                print(verificationId);
+                                              codeSent: (verificationId, resendToken) async {
+                                                EasyLoading.showSuccess('번호가 전송되었습니다');
                                                 setState(() {
                                                   _verificationId = verificationId;
-                                                  hideLoadingBar();
                                                 });
+                                                EasyLoading.dismiss();
                                               },
                                               codeAutoRetrievalTimeout: (verificationId) async {
-                                                setState(() {
-                                                  _verificationId = '';
-                                                });
+                                                print('codeAuthRetrievalTimeout');
                                               },
                                             );
-                                          } else hideLoadingBar();
+                                          } else EasyLoading.dismiss();
                                         },
                                       ),
                                       Visibility(
                                         visible: _verificationId.isNotEmpty,
                                         child: JoinPhoneNumberTextField(
                                           hintText: '인증번호 입력',
+                                          keyboardType: TextInputType.number,
                                           buttonText: '확인',
                                           validator: (value) {
                                             viewModel.certNumber = value;
                                             return null;
                                           },
                                           onPressed: () async {
-                                            showLoadingBar();
-                                            try {
-                                              print(_verificationId);
-                                              PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
-                                                  verificationId: _verificationId, smsCode: viewModel.certNumber);
-                                              final newUser = await kAuth.signInWithCredential(phoneAuthCredential);
-                                              if (newUser != null) {
-                                                setState(() {
-                                                  _isComplete = true;
-                                                });
+                                            EasyLoading.show();
+                                            if (_formKey.currentState.validate()) {
+                                              try {
+                                                PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
+                                                    verificationId: _verificationId, smsCode: viewModel.certNumber);
+                                                await kAuth.signInWithCredential(phoneAuthCredential);
+
+                                                if (kAuth.currentUser != null) {
+                                                  setState(() {
+                                                    EasyLoading.showSuccess('인증 완료');
+                                                    _verificationId = '';
+                                                    _isComplete = true;
+                                                  });
+                                                }
+                                              } catch (e) {
+                                                EasyLoading.showError('인증 실패');
+                                                print(e);
                                               }
-                                            } catch (e) {
-                                              print(e);
                                             }
-                                            hideLoadingBar();
+                                            EasyLoading.dismiss();
                                           },
                                         ),
                                       ),
@@ -185,10 +182,9 @@ class _JoinScreenState extends State<JoinScreen> {
             ),
             BottomButton(
               buttonTitle: '진행하기',
-              disabled: false,//!_isComplete,
+              disabled: !_isComplete,
               onTap: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => JoinDetailScreen(viewModel: viewModel)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => JoinDetailScreen(viewModel: viewModel)));
               },
             )
           ],

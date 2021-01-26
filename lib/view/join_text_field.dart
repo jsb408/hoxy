@@ -4,13 +4,15 @@ class JoinTextField extends StatelessWidget {
   JoinTextField(
       {@required this.title,
       @required this.hintText,
-      this.textInputType = TextInputType.text,
+      this.readOnly = false,
+      this.keyboardType = TextInputType.text,
       this.obscureText = false,
       @required this.validator});
 
   final String title;
   final String hintText;
-  final TextInputType textInputType;
+  final bool readOnly;
+  final TextInputType keyboardType;
   final bool obscureText;
   final Function validator;
 
@@ -31,7 +33,8 @@ class JoinTextField extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFormField(
-                  keyboardType: textInputType,
+                  readOnly: readOnly,
+                  keyboardType: keyboardType,
                   obscureText: obscureText,
                   decoration: InputDecoration(
                     hintText: hintText,

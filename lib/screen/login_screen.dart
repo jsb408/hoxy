@@ -4,13 +4,9 @@ import 'package:hoxy/constants.dart';
 import 'package:hoxy/screen/join_screen.dart';
 import 'package:hoxy/screen/main_screen.dart';
 import 'package:hoxy/view/login_button.dart';
+import 'package:hoxy/view/login_email_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
+class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +41,9 @@ class _LoginScreenState extends State<LoginScreen> {
             LoginButton(
               title: '이메일로 로그인',
               color: kPrimaryColor,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginEmailScreen()));
+              },
             ),
             Row(
               mainAxisSize: MainAxisSize.min,

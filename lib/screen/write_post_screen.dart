@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/view/bottom_button.dart';
@@ -81,7 +82,7 @@ class WritePostScreen extends StatelessWidget {
                         border: Border.all(color: kBackgroundColor, width: 0.5)),
                     child: Row(
                       children: [
-                        Icon(Icons.tag),
+                        Icon(CupertinoIcons.tag),
                         Flexible(
                           child: TextField(
                             decoration: InputDecoration(
