@@ -185,7 +185,7 @@ class _JoinScreenState extends State<JoinScreen> {
             ),
             BottomButton(
               buttonTitle: '진행하기',
-              disabled: !_isComplete,
+              disabled: false,//!_isComplete,
               onTap: () {
                 Navigator.push(
                     context, MaterialPageRoute(builder: (context) => JoinDetailScreen(viewModel: viewModel)));

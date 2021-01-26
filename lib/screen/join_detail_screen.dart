@@ -69,9 +69,6 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                             SizedBox(),
                             Row(
                               children: [
-                                BackgroundButton(
-                                    title: '설정하기', onPressed: () {}),
-                                SizedBox(width: 12),
                                 Text(
                                   '동네 이름',
                                   style: TextStyle(
@@ -80,6 +77,9 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                                     fontWeight: FontWeight.w100,
                                   ),
                                 ),
+                                SizedBox(width: 12),
+                                BackgroundButton(
+                                    title: '설정하기', onPressed: () {}),
                               ],
                             ),
                           ],

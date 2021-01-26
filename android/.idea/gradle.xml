@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
@@ -8,12 +9,12 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.flutter-io.cn/cloud_firestore-0.16.0/android" />
-            <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.flutter-io.cn/firebase_auth-0.20.0+1/android" />
-            <option value="$USER_HOME$/AppData/Local/Pub/Cache/hosted/pub.flutter-io.cn/firebase_core-0.7.0/android" />
+            <option value="/Applications/Android Studio.app/flutter/packages/integration_test/android" />
+            <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/cloud_firestore-0.16.0/android" />
+            <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_auth-0.20.0+1/android" />
+            <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/firebase_core-0.7.0/android" />
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/../../../flutter/packages/integration_test/android" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
