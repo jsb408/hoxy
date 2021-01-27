@@ -4,7 +4,8 @@ import 'package:hoxy/constants.dart';
 import 'package:hoxy/screen/join_screen.dart';
 import 'package:hoxy/screen/main_screen.dart';
 import 'package:hoxy/view/login_button.dart';
-import 'package:hoxy/view/login_email_screen.dart';
+
+import 'login_email_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   @override

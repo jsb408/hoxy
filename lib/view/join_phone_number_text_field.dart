@@ -6,7 +6,6 @@ class JoinPhoneNumberTextField extends StatelessWidget {
       {@required this.hintText,
       this.readOnly = false,
       @required this.buttonText,
-      this.keyboardType = TextInputType.text,
       this.disabled = false,
       @required this.validator,
       @required this.onPressed});
@@ -14,7 +13,6 @@ class JoinPhoneNumberTextField extends StatelessWidget {
   final String hintText;
   final bool readOnly;
   final String buttonText;
-  final TextInputType keyboardType;
   final bool disabled;
   final Function validator;
   final Function onPressed;
@@ -27,7 +25,7 @@ class JoinPhoneNumberTextField extends StatelessWidget {
         Flexible(
           child: TextFormField(
             readOnly: readOnly,
-            keyboardType: keyboardType,
+            keyboardType: TextInputType.number,
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: TextStyle(height: 0),

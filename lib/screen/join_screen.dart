@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hoxy/screen/join_detail_screen.dart';
+import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/join_phone_number_text_field.dart';
 import 'package:hoxy/view/join_text_field.dart';
@@ -105,7 +106,7 @@ class _JoinScreenState extends State<JoinScreen> {
                                           return viewModel.checkPhone(value);
                                         },
                                         onPressed: () async {
-                                          EasyLoading.show();
+                                          Loading.show();
                                           if (_formKey.currentState.validate()) {
                                             await kAuth.verifyPhoneNumber(
                                               phoneNumber: viewModel.formattedPhone,
@@ -113,38 +114,37 @@ class _JoinScreenState extends State<JoinScreen> {
                                                 setState(() {
                                                   _isComplete = true;
                                                 });
-                                                EasyLoading.dismiss();
+                                                Loading.dismiss();
                                               },
                                               verificationFailed: (e) {
                                                 print(e);
-                                                EasyLoading.showError('인증 실패');
+                                                Loading.showError('인증 실패');
                                               },
                                               codeSent: (verificationId, resendToken) async {
-                                                EasyLoading.showSuccess('번호가 전송되었습니다');
+                                                Loading.showSuccess('번호가 전송되었습니다');
                                                 setState(() {
                                                   _verificationId = verificationId;
                                                 });
-                                                EasyLoading.dismiss();
+                                                Loading.dismiss();
                                               },
                                               codeAutoRetrievalTimeout: (verificationId) async {
                                                 print('codeAuthRetrievalTimeout');
                                               },
                                             );
-                                          } else EasyLoading.dismiss();
+                                          } else Loading.dismiss();
                                         },
                                       ),
                                       Visibility(
                                         visible: _verificationId.isNotEmpty,
                                         child: JoinPhoneNumberTextField(
                                           hintText: '인증번호 입력',
-                                          keyboardType: TextInputType.number,
                                           buttonText: '확인',
                                           validator: (value) {
                                             viewModel.certNumber = value;
                                             return null;
                                           },
                                           onPressed: () async {
-                                            EasyLoading.show();
+                                            Loading.show();
                                             if (_formKey.currentState.validate()) {
                                               try {
                                                 PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
@@ -153,17 +153,17 @@ class _JoinScreenState extends State<JoinScreen> {
 
                                                 if (kAuth.currentUser != null) {
                                                   setState(() {
-                                                    EasyLoading.showSuccess('인증 완료');
+                                                    Loading.showSuccess('인증 완료');
                                                     _verificationId = '';
                                                     _isComplete = true;
                                                   });
                                                 }
                                               } catch (e) {
-                                                EasyLoading.showError('인증 실패');
+                                                Loading.showError('인증 실패');
                                                 print(e);
                                               }
                                             }
-                                            EasyLoading.dismiss();
+                                            Loading.dismiss();
                                           },
                                         ),
                                       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/screen/main_screen.dart';
+import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/service/location.dart';
 import 'package:hoxy/view/background_button.dart';
 import 'package:hoxy/view/bottom_button.dart';
@@ -111,10 +112,10 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                                     title: '설정하기',
                                     onPressed: () async {
                                       try {
-                                        EasyLoading.show();
+                                        Loading.show();
                                         if (await LocationService
                                             .getCurrentLocation())
-                                          EasyLoading.showError('권한을 설정해주세요');
+                                          Loading.showError('권한을 설정해주세요');
                                         else
                                           setState(() {
                                             _viewModel
@@ -123,10 +124,10 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                                               ..member.town = LocationService
                                                   .currentAddress.subLocality;
                                           });
-                                        EasyLoading.dismiss();
+                                        Loading.dismiss();
                                       } catch (e) {
                                         print(e);
-                                        EasyLoading.showError('오류가 발생했습니다');
+                                        Loading.showError('오류가 발생했습니다');
                                       }
                                     },
                                   ),
@@ -195,11 +196,11 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
               buttonTitle: '가입하기',
               disabled: !_viewModel.isComplete,
               onTap: () async {
-                EasyLoading.show();
+                Loading.show();
                 if (await _viewModel.createUser()) {
-                  EasyLoading.dismiss();
+                  Loading.dismiss();
                   Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
-                } else EasyLoading.showError('가입에 실패했습니다');
+                } else Loading.showError('가입에 실패했습니다');
               },
             ),
           ],
