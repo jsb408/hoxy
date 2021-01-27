@@ -46,7 +46,7 @@ class WritePostScreen extends StatelessWidget {
                           title: '모임인원',
                           onTap: () {},
                         ),
-                      )
+                      ),
                     ],
                   ),
                   WritePropertyButton(

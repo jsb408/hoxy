@@ -16,10 +16,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('풍덕천동'),
-        automaticallyImplyLeading: false,
-      ),
       body: WillPopScope(
         onWillPop: () {
           return Future(() => false);
@@ -45,8 +41,7 @@ class _MainScreenState extends State<MainScreen> {
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: '우리동네'),
             BottomNavigationBarItem(icon: Icon(Icons.whatshot_outlined), label: '이름없는기능'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.chat_bubble_outline), label: '채팅'),
+            BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: '채팅'),
             BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: '마이페이지'),
           ],
         ),

@@ -97,7 +97,7 @@ class _JoinScreenState extends State<JoinScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       JoinPhoneNumberTextField(
-                                        hintText: ' - 기호를 제외한 번호를 입력해주세요',
+                                        hintText: ' - 기호 없이 숫자만 입력해주세요',
                                         readOnly: _isComplete,
                                         buttonText: '인증하기',
                                         disabled: _verificationId.isNotEmpty || _isComplete,

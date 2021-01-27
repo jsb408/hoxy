@@ -1,21 +1,32 @@
-import 'package:geocoder/geocoder.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
-class Location {
-  double latitude;
-  double longitude;
+class LocationService {
+  static Placemark currentAddress;
 
-  Future<Address> getCurrentLocation() async {
+  static Future<bool> getCurrentLocation() async {
     try {
-      Position position = await Geolocator.getCurrentPosition();
-      latitude = position.latitude;
-      longitude = position.longitude;
+      if(!await Geolocator.isLocationServiceEnabled()) throw Exception();
 
-      final address = await Geocoder.local.findAddressesFromCoordinates(Coordinates(latitude, longitude));
-      return address.first;
+      LocationPermission permission = await Geolocator.checkPermission();
+
+      switch(permission) {
+        case LocationPermission.deniedForever:
+          throw Exception();
+          break;
+        default:
+          permission = await Geolocator.requestPermission();
+          if (permission != LocationPermission.whileInUse && permission != LocationPermission.always)
+            throw Exception();
+      }
+
+      Position position = await Geolocator.getCurrentPosition();
+      List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude, localeIdentifier: 'ko_KR');
+      currentAddress = placemarks.first;
+      return true;
     } catch (e) {
       print(e);
+      return false;
     }
-    return null;
   }
 }

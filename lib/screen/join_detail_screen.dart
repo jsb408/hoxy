@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/screen/main_screen.dart';
 import 'package:hoxy/service/location.dart';
@@ -9,9 +8,6 @@ import 'package:hoxy/view/background_button.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/grade_button.dart';
 import 'package:hoxy/viewmodel/join_view_model.dart';
-import 'dart:io' show Platform;
-
-import 'package:permission_handler/permission_handler.dart';
 
 class JoinDetailScreen extends StatefulWidget {
   JoinDetailScreen({this.viewModel});
@@ -25,8 +21,25 @@ class JoinDetailScreen extends StatefulWidget {
 class _JoinDetailScreenState extends State<JoinDetailScreen> {
   JoinViewModel _viewModel;
   TextEditingController _birthTextEditingController = TextEditingController();
-  FixedExtentScrollController _birthPickerController = FixedExtentScrollController();
-  Location _location = Location();
+  FixedExtentScrollController _birthPickerController =
+      FixedExtentScrollController();
+
+  CupertinoPicker birthPicker() {
+    return CupertinoPicker(
+      scrollController: _birthPickerController,
+      itemExtent: 50,
+      onSelectedItemChanged: (index) {
+        setState(() {
+          _viewModel.member.birth = DateTime.now().year - 19 - index;
+          _birthTextEditingController.text = _viewModel.member.birth.toString();
+        });
+      },
+      children: [
+        for (int i = DateTime.now().year - 19; i > DateTime.now().year - 49; i--)
+          Center(child: Text(i.toString()))
+      ],
+    );
+  }
 
   @override
   void initState() {
@@ -64,8 +77,12 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                     Padding(
                       padding: EdgeInsets.only(top: 40, bottom: 80),
                       child: Table(
-                        columnWidths: {0: FractionColumnWidth(0.35), 1: FixedColumnWidth(27)},
-                        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                        columnWidths: {
+                          0: FractionColumnWidth(0.35),
+                          1: FixedColumnWidth(27)
+                        },
+                        defaultVerticalAlignment:
+                            TableCellVerticalAlignment.middle,
                         children: [
                           TableRow(
                             children: [
@@ -78,10 +95,14 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    _viewModel.member.town.isNotEmpty ? _viewModel.member.town : '동네 이름',
+                                    _viewModel.member.town.isNotEmpty
+                                        ? _viewModel.member.town
+                                        : '동네 이름',
                                     style: TextStyle(
                                       fontSize: 18,
-                                      color: _viewModel.member.town.isNotEmpty ? Colors.black : Colors.grey,
+                                      color: _viewModel.member.town.isNotEmpty
+                                          ? Colors.black
+                                          : Colors.grey,
                                       fontWeight: FontWeight.w100,
                                     ),
                                   ),
@@ -90,19 +111,20 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                                     title: '설정하기',
                                     onPressed: () async {
                                       try {
-                                        if (await Permission.location
-                                            .request()
-                                            .isGranted) {
-                                          EasyLoading.show();
-                                          Address location = await _location.getCurrentLocation();
+                                        EasyLoading.show();
+                                        if (await LocationService
+                                            .getCurrentLocation())
+                                          EasyLoading.showError('권한을 설정해주세요');
+                                        else
                                           setState(() {
                                             _viewModel
-                                              ..member.city = location.subLocality
-                                              ..member.town = location.thoroughfare;
+                                              ..member.city = LocationService
+                                                  .currentAddress.locality
+                                              ..member.town = LocationService
+                                                  .currentAddress.subLocality;
                                           });
-                                          EasyLoading.dismiss();
-                                        }
-                                      } catch(e) {
+                                        EasyLoading.dismiss();
+                                      } catch (e) {
                                         print(e);
                                         EasyLoading.showError('오류가 발생했습니다');
                                       }
@@ -112,7 +134,11 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                               ),
                             ],
                           ),
-                          TableRow(children: [SizedBox(height: 30), SizedBox(height: 30), SizedBox(height: 30)]),
+                          TableRow(children: [
+                            SizedBox(height: 30),
+                            SizedBox(height: 30),
+                            SizedBox(height: 30)
+                          ]),
                           TableRow(
                             children: [
                               Text(
@@ -132,23 +158,7 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                                   showModalBottomSheet(
                                     context: context,
                                     builder: (context) => Container(
-                                      height: 250,
-                                      child: CupertinoPicker(
-                                        scrollController: _birthPickerController,
-                                        itemExtent: 50,
-                                        onSelectedItemChanged: (index) {
-                                          setState(() {
-                                            _viewModel.member.birth = DateTime.now().year - 19 - index;
-                                            _birthTextEditingController.text = _viewModel.member.birth.toString();
-                                            _birthPickerController = FixedExtentScrollController(initialItem: index);
-                                          });
-                                        },
-                                        children: [
-                                          for (int i = DateTime.now().year - 19; i > DateTime.now().year - 49; i--)
-                                            Center(child: Text(i.toString()))
-                                        ],
-                                      ),
-                                    ),
+                                        height: 250, child: birthPicker()),
                                   );
                                 },
                               ),
@@ -161,7 +171,8 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                       visible: _viewModel.member.birth > 0,
                       child: Column(
                         children: [
-                          Text('${_viewModel.member.email}님은', style: kJoinTextStyle),
+                          Text('${_viewModel.member.email}님은',
+                              style: kJoinTextStyle),
                           SizedBox(height: 18),
                           GradeButton(birth: _viewModel.member.birth),
                           SizedBox(height: 18),

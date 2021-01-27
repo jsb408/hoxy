@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hoxy/screen/login_screen.dart';
 import 'package:hoxy/screen/main_screen.dart';
+import 'package:hoxy/service/location.dart';
 import 'constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  if(kAuth.currentUser != null) await LocationService.getCurrentLocation();
   runApp(Hoxy());
   configLoading();
 }
