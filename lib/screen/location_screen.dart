@@ -1,0 +1,42 @@
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:hoxy/screen/main_screen.dart';
+import 'package:hoxy/service/loading.dart';
+import 'package:hoxy/service/location.dart';
+import 'package:hoxy/view/background_button.dart';
+
+class LocationScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: LocationService.getCurrentLocation(),
+        builder: (context, snapshot) {
+          if(snapshot.connectionState == ConnectionState.done) {
+            if(LocationService.currentAddress == null) {
+              return Center(
+                  child: BackgroundButton(
+                      title: '권한설정',
+                      onPressed: () async {
+                        Loading.show();
+                        if (await LocationService.getCurrentLocation()) {
+                          Navigator.pop(context);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MainScreen()));
+                          Loading.dismiss();
+                        } else {
+                          Loading.showError('권한을 설정해주세요');
+                          Geolocator.openAppSettings();
+                        }
+                      },
+                  ),
+              );
+            } else {
+              return MainScreen();
+            }
+          } else return Center(child: CircularProgressIndicator(),);
+        }
+    );
+  }
+}

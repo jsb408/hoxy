@@ -3,7 +3,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/screen/main_screen.dart';
 import 'package:hoxy/service/loading.dart';
-import 'package:hoxy/service/location.dart';
 import 'package:hoxy/view/background_button.dart';
 
 class LoginEmailScreen extends StatelessWidget {
@@ -73,11 +72,8 @@ class LoginEmailScreen extends StatelessWidget {
                     try {
                       await kAuth.signInWithEmailAndPassword(email: _email, password: _password);
                       if (kAuth.currentUser != null) {
-                        if(await LocationService.getCurrentLocation()) {
                           Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
                           Loading.dismiss();
-                        }
-                        else throw Exception();
                       } else
                         throw Exception();
                     } catch (e) {

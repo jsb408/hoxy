@@ -1,15 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:hoxy/screen/location_screen.dart';
 import 'package:hoxy/screen/login_screen.dart';
-import 'package:hoxy/screen/main_screen.dart';
-import 'package:hoxy/service/location.dart';
 import 'constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  if(kAuth.currentUser != null) await LocationService.getCurrentLocation();
+  //if(kAuth.currentUser != null) await LocationService.getCurrentLocation();
   runApp(Hoxy());
   configLoading();
 }
@@ -41,7 +40,7 @@ class Hoxy extends StatelessWidget {
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: kBackgroundColor,
       ),
-      home: kAuth.currentUser == null ? LoginScreen() : MainScreen(),
+      home: kAuth.currentUser == null ? LoginScreen() : LocationScreen(),
       builder: EasyLoading.init(),
     );
   }

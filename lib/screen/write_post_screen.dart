@@ -1,10 +1,32 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
+import 'package:hoxy/model/member.dart';
+import 'package:hoxy/model/post.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/write_property_button.dart';
 
-class WritePostScreen extends StatelessWidget {
+class WritePostScreen extends StatefulWidget {
+  WritePostScreen({@required this.user, @required this.selectedTown});
+
+  final DocumentReference user;
+  final String selectedTown;
+
+  @override
+  _WritePostScreenState createState() => _WritePostScreenState();
+}
+
+class _WritePostScreenState extends State<WritePostScreen> {
+  Post _post = Post();
+
+  @override
+  void initState() {
+    super.initState();
+    _post.writer = widget.user;
+    _post.town = widget.selectedTown;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +59,7 @@ class WritePostScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: WritePropertyButton(
-                          title: '모임지역',
+                          title: _post.town,
                           onTap: () {},
                         ),
                       ),

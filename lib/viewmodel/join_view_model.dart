@@ -5,7 +5,7 @@ import 'package:hoxy/model/member.dart';
 
 import '../constants.dart';
 
-class JoinViewModel {
+class JoinViewModel extends Member {
   Member member = Member();
   String phone = '';
   String password = '';

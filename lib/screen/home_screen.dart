@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hoxy/model/member.dart';
 import 'package:hoxy/screen/write_post_screen.dart';
 import 'package:hoxy/service/location.dart';
 
@@ -10,50 +12,56 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _selectedLocality = LocationService.currentAddress.subLocality;
+  String _selectedLocality = LocationService.townName;
 
-  DropdownButtonHideUnderline _localityDropdown() {
+  DropdownButtonHideUnderline _localityDropdown(String town) {
     List<DropdownMenuItem<String>> items = [
       DropdownMenuItem(
-        child: Text(LocationService.currentAddress.subLocality),
-        value: LocationService.currentAddress.subLocality,
+        child: Text(LocationService.townName),
+        value: LocationService.townName,
       ),
-      DropdownMenuItem(child: Text('양재동'), value: '양재동'),
+      if(LocationService.townName != town)
+        DropdownMenuItem(child: Text(town), value: town),
     ];
 
     return DropdownButtonHideUnderline(
       child: DropdownButton<String>(
-        value: _selectedLocality,
-        underline: null,
-        items: items,
-        onChanged: (value) {
-          setState(() {
-            _selectedLocality = value;
-          });
-        }
-      ),
+          value: _selectedLocality,
+          underline: null,
+          items: items,
+          onChanged: (value) {
+            setState(() {
+              _selectedLocality = value;
+            });
+          }),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: _localityDropdown(),
-        automaticallyImplyLeading: false,
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => WritePostScreen()));
-        },
-      ),
-      body: Container(
-        child: Center(
-          child: Text('${kCommunicateLevelIcons[0][0]} Home Screen'),
-        ),
-      ),
+    return FutureBuilder<DocumentSnapshot>(
+      future: kFirestore.collection('member').doc(kAuth.currentUser.uid).get(),
+      builder: (context, snapshot) {
+        Member user = snapshot.hasData? Member.from(snapshot.data) : Member();
+          return Scaffold(
+            appBar: AppBar(
+              title: snapshot.hasData ? _localityDropdown(user.town) : Text('우리 동네'),
+              automaticallyImplyLeading: false,
+            ),
+            floatingActionButton: FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => WritePostScreen(user: snapshot.data.reference, selectedTown: _selectedLocality,)));
+              },
+            ),
+            body: snapshot.hasData ? Container(
+              child: Center(
+                child: Text('${kCommunicateLevelIcons[0][0]} Home Screen'),
+              ),
+            ) : Center(child: CircularProgressIndicator()),
+          );
+      },
     );
   }
 }
