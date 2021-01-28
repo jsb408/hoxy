@@ -108,29 +108,35 @@ class _JoinScreenState extends State<JoinScreen> {
                                         onPressed: () async {
                                           Loading.show();
                                           if (_formKey.currentState.validate()) {
-                                            await kAuth.verifyPhoneNumber(
-                                              phoneNumber: viewModel.formattedPhone,
-                                              verificationCompleted: (credential) {
-                                                setState(() {
-                                                  _isComplete = true;
-                                                });
-                                                Loading.dismiss();
-                                              },
-                                              verificationFailed: (e) {
-                                                print(e);
-                                                Loading.showError('인증 실패');
-                                              },
-                                              codeSent: (verificationId, resendToken) async {
-                                                Loading.showSuccess('번호가 전송되었습니다');
-                                                setState(() {
-                                                  _verificationId = verificationId;
-                                                });
-                                                Loading.dismiss();
-                                              },
-                                              codeAutoRetrievalTimeout: (verificationId) async {
-                                                print('codeAuthRetrievalTimeout');
-                                              },
-                                            );
+                                            String duplicate = await viewModel.checkDuplicate();
+
+                                            if(duplicate != null) {
+                                              Loading.showError(duplicate);
+                                            } else {
+                                              await kAuth.verifyPhoneNumber(
+                                                phoneNumber: viewModel.formattedPhone,
+                                                verificationCompleted: (credential) {
+                                                  setState(() {
+                                                    _isComplete = true;
+                                                  });
+                                                  Loading.dismiss();
+                                                },
+                                                verificationFailed: (e) {
+                                                  print(e);
+                                                  Loading.showError('인증 실패');
+                                                },
+                                                codeSent: (verificationId, resendToken) async {
+                                                  Loading.showSuccess('번호가 전송되었습니다');
+                                                  setState(() {
+                                                    _verificationId = verificationId;
+                                                  });
+                                                  Loading.dismiss();
+                                                },
+                                                codeAutoRetrievalTimeout: (verificationId) async {
+                                                  print('codeAuthRetrievalTimeout');
+                                                },
+                                              );
+                                            }
                                           } else Loading.dismiss();
                                         },
                                       ),

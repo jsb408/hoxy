@@ -21,6 +21,7 @@ class WritePropertyButton extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
+            height: 1.25,
           ),
         ),
       ),

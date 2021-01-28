@@ -8,7 +8,6 @@ import 'constants.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  //if(kAuth.currentUser != null) await LocationService.getCurrentLocation();
   runApp(Hoxy());
   configLoading();
 }
@@ -40,7 +39,7 @@ class Hoxy extends StatelessWidget {
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: kBackgroundColor,
       ),
-      home: kAuth.currentUser == null ? LoginScreen() : LocationScreen(),
+      home: kAuth.currentUser == null || kAuth.currentUser.email.isEmpty ? LoginScreen() : LocationScreen(),
       builder: EasyLoading.init(),
     );
   }

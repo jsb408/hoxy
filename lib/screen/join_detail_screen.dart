@@ -22,8 +22,7 @@ class JoinDetailScreen extends StatefulWidget {
 class _JoinDetailScreenState extends State<JoinDetailScreen> {
   JoinViewModel _viewModel;
   TextEditingController _birthTextEditingController = TextEditingController();
-  FixedExtentScrollController _birthPickerController =
-      FixedExtentScrollController();
+  FixedExtentScrollController _birthPickerController = FixedExtentScrollController();
 
   CupertinoPicker birthPicker() {
     return CupertinoPicker(
@@ -31,13 +30,13 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
       itemExtent: 50,
       onSelectedItemChanged: (index) {
         setState(() {
+          _birthPickerController = FixedExtentScrollController(initialItem: index);
           _viewModel.member.birth = DateTime.now().year - 19 - index;
           _birthTextEditingController.text = _viewModel.member.birth.toString();
         });
       },
       children: [
-        for (int i = DateTime.now().year - 19; i > DateTime.now().year - 49; i--)
-          Center(child: Text(i.toString()))
+        for (int i = DateTime.now().year - 19; i > DateTime.now().year - 49; i--) Center(child: Text(i.toString()))
       ],
     );
   }
@@ -78,12 +77,8 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                     Padding(
                       padding: EdgeInsets.only(top: 40, bottom: 80),
                       child: Table(
-                        columnWidths: {
-                          0: FractionColumnWidth(0.35),
-                          1: FixedColumnWidth(27)
-                        },
-                        defaultVerticalAlignment:
-                            TableCellVerticalAlignment.middle,
+                        columnWidths: {0: FractionColumnWidth(0.35), 1: FixedColumnWidth(27)},
+                        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                         children: [
                           TableRow(
                             children: [
@@ -96,14 +91,10 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    _viewModel.member.town.isNotEmpty
-                                        ? _viewModel.member.town
-                                        : '동네 이름',
+                                    _viewModel.member.town.isNotEmpty ? _viewModel.member.town : '동네 이름',
                                     style: TextStyle(
                                       fontSize: 18,
-                                      color: _viewModel.member.town.isNotEmpty
-                                          ? Colors.black
-                                          : Colors.grey,
+                                      color: _viewModel.member.town.isNotEmpty ? Colors.black : Colors.grey,
                                       fontWeight: FontWeight.w100,
                                     ),
                                   ),
@@ -113,17 +104,13 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                                     onPressed: () async {
                                       try {
                                         Loading.show();
-                                        if (await LocationService
-                                            .getCurrentLocation())
-                                          Loading.showError('권한을 설정해주세요');
-                                        else
+                                        if (await LocationService.getCurrentLocation())
                                           setState(() {
                                             _viewModel
-                                              ..member.city = LocationService
-                                                  .currentAddress.locality
-                                              ..member.town = LocationService
-                                                  .currentAddress.subLocality;
+                                              ..member.city = LocationService.currentAddress.locality
+                                              ..member.town = LocationService.currentAddress.subLocality;
                                           });
+                                        else Loading.showError('권한을 설정해주세요');
                                         Loading.dismiss();
                                       } catch (e) {
                                         print(e);
@@ -135,11 +122,7 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                               ),
                             ],
                           ),
-                          TableRow(children: [
-                            SizedBox(height: 30),
-                            SizedBox(height: 30),
-                            SizedBox(height: 30)
-                          ]),
+                          TableRow(children: [SizedBox(height: 30), SizedBox(height: 30), SizedBox(height: 30)]),
                           TableRow(
                             children: [
                               Text(
@@ -159,7 +142,23 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                                   showModalBottomSheet(
                                     context: context,
                                     builder: (context) => Container(
-                                        height: 250, child: birthPicker()),
+                                      height: 280,
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              CupertinoButton(
+                                                child: Text('확인'),
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                          Expanded(child: birthPicker()),
+                                        ],
+                                      ),
+                                    ),
                                   );
                                 },
                               ),
@@ -172,8 +171,7 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                       visible: _viewModel.member.birth > 0,
                       child: Column(
                         children: [
-                          Text('${_viewModel.member.email}님은',
-                              style: kJoinTextStyle),
+                          Text('${_viewModel.member.email}님은', style: kJoinTextStyle),
                           SizedBox(height: 18),
                           GradeButton(birth: _viewModel.member.birth),
                           SizedBox(height: 18),
@@ -200,7 +198,8 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                 if (await _viewModel.createUser()) {
                   Loading.dismiss();
                   Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
-                } else Loading.showError('가입에 실패했습니다');
+                } else
+                  Loading.showError('가입에 실패했습니다');
               },
             ),
           ],

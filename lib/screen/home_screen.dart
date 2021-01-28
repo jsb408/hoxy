@@ -12,22 +12,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String _selectedLocality = LocationService.townName;
+  int _selectedLocality = 0;
 
-  DropdownButtonHideUnderline _localityDropdown(String town) {
-    List<DropdownMenuItem<String>> items = [
+  DropdownButtonHideUnderline _localityDropdown(String city, String town) {
+    List<DropdownMenuItem<int>> items = [
       DropdownMenuItem(
         child: Text(LocationService.townName),
-        value: LocationService.townName,
+        value: 0,
       ),
-      if(LocationService.townName != town)
-        DropdownMenuItem(child: Text(town), value: town),
+      if (LocationService.cityName != city || LocationService.townName != town)
+        DropdownMenuItem(child: Text(town), value: 1),
     ];
 
     return DropdownButtonHideUnderline(
-      child: DropdownButton<String>(
+      child: DropdownButton<int>(
           value: _selectedLocality,
-          underline: null,
           items: items,
           onChanged: (value) {
             setState(() {
@@ -42,25 +41,36 @@ class _HomeScreenState extends State<HomeScreen> {
     return FutureBuilder<DocumentSnapshot>(
       future: kFirestore.collection('member').doc(kAuth.currentUser.uid).get(),
       builder: (context, snapshot) {
-        Member user = snapshot.hasData? Member.from(snapshot.data) : Member();
-          return Scaffold(
-            appBar: AppBar(
-              title: snapshot.hasData ? _localityDropdown(user.town) : Text('우리 동네'),
-              automaticallyImplyLeading: false,
-            ),
-            floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => WritePostScreen(user: snapshot.data.reference, selectedTown: _selectedLocality,)));
-              },
-            ),
-            body: snapshot.hasData ? Container(
-              child: Center(
-                child: Text('${kCommunicateLevelIcons[0][0]} Home Screen'),
-              ),
-            ) : Center(child: CircularProgressIndicator()),
-          );
+        Member user = snapshot.hasData ? Member.from(snapshot.data) : Member();
+        List<List<String>> locationList = [
+          [LocationService.cityName, LocationService.townName]
+        ];
+        if (LocationService.cityName != user.city || LocationService.townName != user.town)
+          locationList.add([user.city, user.town]);
+        return Scaffold(
+          appBar: AppBar(
+            title: snapshot.hasData ? _localityDropdown(user.city, user.town) : Text('우리 동네'),
+            automaticallyImplyLeading: false,
+          ),
+          floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WritePostScreen(user: user, selectedTown: _selectedLocality, locationList: locationList),
+                ),
+              );
+            },
+          ),
+          body: snapshot.hasData
+              ? Container(
+                  child: Center(
+                    child: Text('${kCommunicateLevelIcons[0][0]} Home Screen'),
+                  ),
+                )
+              : Center(child: CircularProgressIndicator()),
+        );
       },
     );
   }

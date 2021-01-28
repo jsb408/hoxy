@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emojis/emoji.dart';
 import 'package:hoxy/model/member.dart';
 
@@ -7,11 +7,10 @@ import '../constants.dart';
 
 class JoinViewModel extends Member {
   Member member = Member();
-  String phone = '';
   String password = '';
   String certNumber = '';
 
-  String get formattedPhone => '+82 ${phone.substring(1)}';
+  String get formattedPhone => '+82 ${member.phone.substring(1)}';
   bool get isComplete => member.birth > 0 && member.city.isNotEmpty && member.town.isNotEmpty;
 
   String checkEmail(String email) {
@@ -46,12 +45,25 @@ class JoinViewModel extends Member {
   }
 
   String checkPhone(String phone) {
-    this.phone = phone;
+    member.phone = phone;
 
     if (phone.isEmpty)
       return '휴대폰 번호를 입력해주세요';
+    else if (!RegExp('^(?=.*[0-9]).{10,11}\$').hasMatch(phone))
+      return '숫자만 입력해주세요';
     else
       return null;
+  }
+
+  Future<String> checkDuplicate() async {
+    QuerySnapshot phone = await kFirestore.collection('member').where('phone', isEqualTo: member.phone).get();
+    QuerySnapshot email = await kFirestore.collection('member').where('email', isEqualTo: member.email).get();
+
+    if (phone.docs.isNotEmpty) {
+      return '이미 가입된 번호입니다';
+    } else if (email.docs.isNotEmpty) {
+      return '이미 가입된 메일입니다';
+    } else return null;
   }
 
   String randomEmoji() {
@@ -64,15 +76,10 @@ class JoinViewModel extends Member {
       await kAuth.currentUser.updateEmail(member.email);
       await kAuth.currentUser.updatePassword(password);
 
-      kFirestore.collection('member').doc(kAuth.currentUser.uid).set({
-        'uid' : kAuth.currentUser.uid,
-        'email' : member.email,
-        'birth' : member.birth,
-        'emoji' : randomEmoji(),
-        'city' : member.city,
-        'town' : member.town,
-        'exp' : 50
-      });
+      member.uid = kAuth.currentUser.uid;
+      member.emoji = randomEmoji();
+
+      kFirestore.collection('member').doc(kAuth.currentUser.uid).set(member.toMap());
 
       return true;
     } catch (e) {

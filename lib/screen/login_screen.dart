@@ -12,58 +12,60 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Hero(
-              tag: 'logo',
-              child: Image.asset(
-                'images/logo.png',
-                width: 300,
-              ),
-            ),
-            SizedBox(height: 50),
-            LoginButton(
-              title: '구글로 로그인',
-              color: Colors.white,
-              borderColor: Colors.black,
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => MainScreen()));
-              },
-            ),
-            LoginButton(
-              title: '애플로 로그인',
-              color: Colors.black,
-              textColor: Colors.white,
-              onPressed: () {},
-            ),
-            LoginButton(
-              title: '이메일로 로그인',
-              color: kPrimaryColor,
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LoginEmailScreen()));
-              },
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('처음 오셨나요 HOXY?'),
-                CupertinoButton(
-                  child: Text(
-                    '회원가입',
-                    style: TextStyle(
-                        fontSize: 14, color: Colors.blueAccent.shade400),
-                  ),
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => JoinScreen()));
-                  },
+      body: WillPopScope(
+        onWillPop: () {
+          return Future(() => false);
+        },
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Hero(
+                tag: 'logo',
+                child: Image.asset(
+                  'images/logo.png',
+                  width: 300,
                 ),
-              ],
-            ),
-          ],
+              ),
+              SizedBox(height: 50),
+              LoginButton(
+                title: '구글로 로그인',
+                color: Colors.white,
+                borderColor: Colors.black,
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
+                },
+              ),
+              LoginButton(
+                title: '애플로 로그인',
+                color: Colors.black,
+                textColor: Colors.white,
+                onPressed: () {},
+              ),
+              LoginButton(
+                title: '이메일로 로그인',
+                color: kPrimaryColor,
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginEmailScreen()));
+                },
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('처음 오셨나요 HOXY?'),
+                  CupertinoButton(
+                    child: Text(
+                      '회원가입',
+                      style: TextStyle(fontSize: 14, color: Colors.blueAccent.shade400),
+                    ),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => JoinScreen()));
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

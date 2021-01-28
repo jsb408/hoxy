@@ -26,7 +26,7 @@ class BottomButton extends StatelessWidget {
           ),
         ),
         color: disabled ? kDisabledColor : kPrimaryColor,
-        margin: EdgeInsets.only(top: 10.0),
+        //margin: EdgeInsets.only(top: 10.0),
         padding: Platform.isIOS ? EdgeInsets.only(bottom: 15.0) : EdgeInsets.all(0),
         height: 85,
         width: double.infinity,

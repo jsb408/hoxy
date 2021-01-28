@@ -22,3 +22,4 @@ const kJoinTextStyle = TextStyle(fontSize: 18, color: Colors.black);
 const kCommunicateLevelIcons = [
   ['😷', '🤫', '🤐'], ['😀', '😃', '😄'], ['😆', '🤩', '🥳']
 ];
+const kCommunicateLevels = [ '조용히 만나요', '대화는 해요', '재밌게 놀아요' ];
