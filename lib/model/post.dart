@@ -8,6 +8,7 @@ class Post {
   int headcount = 0;
   List<String> tag = [];
   DateTime date = DateTime.now();
+  String emoji;
   int communication;
   DateTime start;
   DateTime end;
@@ -24,11 +25,12 @@ class Post {
     this.content = doc['content'];
     this.writer = doc['writer'];
     this.headcount = doc['headcount'];
-    this.tag = doc['tag'];
-    this.date = doc['date'];
+    this.tag = (doc['tag'] as List<dynamic>).map((e) => e.toString()).toList();
+    this.date = (doc['date'] as Timestamp).toDate();
+    this.emoji = doc['emoji'];
     this.communication = doc['communication'];
-    this.start = doc['start'];
-    this.end = doc['end'];
+    this.start = (doc['start'] as Timestamp).toDate();
+    this.end = (doc['end'] as Timestamp).toDate();
     this.city = doc['city'];
     this.town = doc['town'];
     this.view = doc['view'];
@@ -42,6 +44,7 @@ class Post {
     'headcount' : this.headcount,
     'tag' : this.tag,
     'date' : this.date,
+    'emoji' : this.emoji,
     'communication' : this.communication,
     'start' : this.start,
     'end' : this.end,

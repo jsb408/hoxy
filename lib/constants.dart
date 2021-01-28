@@ -8,6 +8,9 @@ const kPrimaryColor = Color(0xFFF5DF4D);
 const kAccentColor = Color(0xFF003BFF);
 const kDisabledColor = Color(0xFF818181);
 const kGradeColor = Color(0xFF55CC91);
+const kTimeColor = Color(0xFFF5BB4D);
+const kSubContentColor = Color(0xFF89929A);
+const kTagColor = Color(0xFF0B8CFF);
 //endregion
 
 //region Firebase
@@ -20,6 +23,21 @@ const kJoinTextStyle = TextStyle(fontSize: 18, color: Colors.black);
 //endregion
 
 const kCommunicateLevelIcons = [
-  ['😷', '🤫', '🤐'], ['😀', '😃', '😄'], ['😆', '🤩', '🥳']
+  ['😷', '🤫', '🤐'],
+  ['😀', '😃', '😄'],
+  ['😆', '🤩', '🥳']
 ];
-const kCommunicateLevels = [ '조용히 만나요', '대화는 해요', '재밌게 놀아요' ];
+const kCommunicateLevels = ['조용히 만나요', '대화는 해요', '재밌게 놀아요'];
+
+timeText(DateTime date) {
+  Duration difference = DateTime.now().difference(date);
+
+  if (difference.inDays > 0)
+    return "${difference.inDays}일 전";
+  else if (difference.inHours > 0)
+    return "${difference.inHours}시간 전";
+  else if (difference.inMinutes > 0)
+    return "${difference.inMinutes}분 전";
+  else
+    return "${difference.inSeconds}초 전";
+}

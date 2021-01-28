@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/model/member.dart';
+import 'package:hoxy/model/post.dart';
 import 'package:hoxy/screen/write_post_screen.dart';
+import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/service/location.dart';
+import 'package:hoxy/view/item_post_list.dart';
 
 import '../constants.dart';
 
@@ -30,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
           items: items,
           onChanged: (value) {
             setState(() {
+              Loading.show();
               _selectedLocality = value;
             });
           }),
@@ -58,16 +63,39 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => WritePostScreen(user: user, selectedTown: _selectedLocality, locationList: locationList),
+                  builder: (context) =>
+                      WritePostScreen(user: user, selectedTown: _selectedLocality, locationList: locationList),
                 ),
               );
             },
           ),
           body: snapshot.hasData
-              ? Container(
-                  child: Center(
-                    child: Text('${kCommunicateLevelIcons[0][0]} Home Screen'),
-                  ),
+              ? StreamBuilder<QuerySnapshot>(
+                  stream: kFirestore
+                      .collection('post')
+                      .where('city', isEqualTo: locationList[_selectedLocality].first)
+                      .where('town', isEqualTo: locationList[_selectedLocality].last)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    Loading.dismiss();
+
+                    if (snapshot.data.docs.isEmpty) {
+                      return Center(child: Text('등록된 글이 없습니다'));
+                    }
+
+                    final posts = snapshot.data.docs.reversed;
+                    List<ItemPostList> postList = [
+                      for(var post in posts) ItemPostList(post: Post.from(post))
+                    ];
+
+                    return ListView(
+                      children: postList,
+                    );
+                  },
                 )
               : Center(child: CircularProgressIndicator()),
         );

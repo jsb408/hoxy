@@ -11,32 +11,33 @@ class LocationScreen extends StatelessWidget {
     return FutureBuilder(
         future: LocationService.getCurrentLocation(),
         builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.done) {
-            if(LocationService.currentAddress == null) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (LocationService.currentAddress == null) {
               return Center(
-                  child: BackgroundButton(
-                      title: '권한설정',
-                      onPressed: () async {
-                        Loading.show();
-                        if (await LocationService.getCurrentLocation()) {
-                          Navigator.pop(context);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MainScreen()));
-                          Loading.dismiss();
-                        } else {
-                          Loading.showError('권한을 설정해주세요');
-                          Geolocator.openAppSettings();
-                        }
-                      },
-                  ),
+                child: BackgroundButton(
+                  title: '권한설정',
+                  onPressed: () async {
+                    Loading.show();
+
+                    if (!await LocationService.getCurrentLocation()) {
+                      Loading.showError('권한을 설정해주세요');
+                      Geolocator.openAppSettings();
+                      return;
+                    }
+
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
+                    Loading.dismiss();
+                  },
+                ),
               );
             } else {
               return MainScreen();
             }
-          } else return Center(child: CircularProgressIndicator(),);
-        }
-    );
+          } else
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+        });
   }
 }

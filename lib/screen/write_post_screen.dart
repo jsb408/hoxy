@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
@@ -70,7 +72,9 @@ class _WritePostScreenState extends State<WritePostScreen> {
                         break;
                       case Property.COMMUNICATE:
                         _communicationController = FixedExtentScrollController(initialItem: index);
-                        _viewModel.post.communication = index;
+                        _viewModel.post
+                          ..emoji = kCommunicateLevelIcons[index][Random().nextInt(3)]
+                          ..communication = index;
                         break;
                     }
                   });
@@ -91,8 +95,9 @@ class _WritePostScreenState extends State<WritePostScreen> {
     _user = widget.user;
     _locationList = widget.locationList;
 
-    _viewModel.post.writer = kFirestore.collection('member').doc(_user.uid);
-    _viewModel.putLocation(_locationList[widget.selectedTown]);
+    _viewModel
+      ..post.writer = kFirestore.collection('member').doc(_user.uid)
+      ..putLocation(_locationList[widget.selectedTown]);
   }
 
   @override
@@ -156,7 +161,9 @@ class _WritePostScreenState extends State<WritePostScreen> {
                     onTap: () {
                       if (_viewModel.post.communication == null)
                         setState(() {
-                          _viewModel.post.communication = 0;
+                          _viewModel.post
+                            ..emoji = kCommunicateLevelIcons[0][Random().nextInt(3)]
+                            ..communication = 0;
                         });
                       postPicker(_communicationController, kCommunicateLevels, Property.COMMUNICATE);
                     },
@@ -281,12 +288,14 @@ class _WritePostScreenState extends State<WritePostScreen> {
             disabled: !_viewModel.isIncomplete,
             onTap: () async {
               Loading.show();
-              if(await _viewModel.createPost()) {
-                Loading.showSuccess('업로드 완료');
-                Navigator.pop(context);
-              } else {
+
+              if (!await _viewModel.createPost()) {
                 Loading.showError('업로드 실패');
+                return;
               }
+
+              Loading.showSuccess('업로드 완료');
+              Navigator.pop(context);
             },
           )
         ],

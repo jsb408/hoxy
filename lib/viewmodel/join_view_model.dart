@@ -63,7 +63,8 @@ class JoinViewModel extends Member {
       return '이미 가입된 번호입니다';
     } else if (email.docs.isNotEmpty) {
       return '이미 가입된 메일입니다';
-    } else return null;
+    } else
+      return null;
   }
 
   String randomEmoji() {
@@ -76,8 +77,9 @@ class JoinViewModel extends Member {
       await kAuth.currentUser.updateEmail(member.email);
       await kAuth.currentUser.updatePassword(password);
 
-      member.uid = kAuth.currentUser.uid;
-      member.emoji = randomEmoji();
+      member
+        ..uid = kAuth.currentUser.uid
+        ..emoji = randomEmoji();
 
       kFirestore.collection('member').doc(kAuth.currentUser.uid).set(member.toMap());
 

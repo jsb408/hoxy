@@ -13,11 +13,7 @@ class PostViewModel {
 
   get communicationLevel => kCommunicateLevels[post.communication];
   get formattedStartTime => DateFormat('yyyy년 MM월 dd일 HH:mm').format(post.start);
-  get isIncomplete =>
-    post.title.isNotEmpty
-    && post.content.isNotEmpty
-    && post.headcount > 0
-    && post.start != null;
+  get isIncomplete => post.title.isNotEmpty && post.content.isNotEmpty && post.headcount > 0 && post.start != null;
 
   putLocation(List<String> location) {
     post.city = location.first;
@@ -26,16 +22,17 @@ class PostViewModel {
 
   Future<bool> createPost() async {
     try {
-      this.post.date = DateTime.now();
-      this.post.tag.insert(0, kCommunicateLevels[this.post.communication]);
+      this.post
+        ..date = DateTime.now()
+        ..tag.insert(0, kCommunicateLevels[this.post.communication]);
       DocumentReference post = await kFirestore.collection('post').add(this.post.toMap());
 
       DocumentReference chatting = await kFirestore.collection('chatting').add({
-        'post' : post,
-        'member' : { nickname : this.post.writer.id }
+        'post': post,
+        'member': {nickname: this.post.writer.id}
       });
 
-      await post.update({ 'chat' : chatting });
+      await post.update({'chat': chatting});
 
       return true;
     } catch (e) {

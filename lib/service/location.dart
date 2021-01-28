@@ -15,6 +15,7 @@ class LocationService {
 
       Platform.isIOS ? await checkIOSPermission() : await checkPermission();
 
+
       Position position = await Geolocator.getCurrentPosition();
       List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude, localeIdentifier: 'ko_KR');
       currentAddress = placemarks.first;

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/screen/location_screen.dart';
-import 'package:hoxy/screen/main_screen.dart';
 import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/view/background_button.dart';
 
@@ -72,11 +71,11 @@ class LoginEmailScreen extends StatelessWidget {
                     Loading.show();
                     try {
                       await kAuth.signInWithEmailAndPassword(email: _email, password: _password);
-                      if (kAuth.currentUser != null) {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => LocationScreen()));
-                          Loading.dismiss();
-                      } else
-                        throw Exception();
+
+                      if (kAuth.currentUser == null) throw Exception();
+
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => LocationScreen()));
+                      Loading.dismiss();
                     } catch (e) {
                       print(e);
                       Loading.showError('로그인 실패');

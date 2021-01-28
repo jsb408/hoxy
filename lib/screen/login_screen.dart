@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/screen/join_screen.dart';
-import 'package:hoxy/screen/main_screen.dart';
+import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/view/login_button.dart';
 
 import 'login_email_screen.dart';
@@ -33,14 +33,16 @@ class LoginScreen extends StatelessWidget {
                 color: Colors.white,
                 borderColor: Colors.black,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
+                  Loading.showError('준비중입니다');
                 },
               ),
               LoginButton(
                 title: '애플로 로그인',
                 color: Colors.black,
                 textColor: Colors.white,
-                onPressed: () {},
+                onPressed: () {
+                  Loading.showError('준비중입니다');
+                },
               ),
               LoginButton(
                 title: '이메일로 로그인',

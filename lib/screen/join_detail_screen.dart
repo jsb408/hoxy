@@ -104,13 +104,17 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                                     onPressed: () async {
                                       try {
                                         Loading.show();
-                                        if (await LocationService.getCurrentLocation())
-                                          setState(() {
-                                            _viewModel
-                                              ..member.city = LocationService.currentAddress.locality
-                                              ..member.town = LocationService.currentAddress.subLocality;
-                                          });
-                                        else Loading.showError('권한을 설정해주세요');
+
+                                        if (!await LocationService.getCurrentLocation()) {
+                                          Loading.showError('권한을 설정해주세요');
+                                          return;
+                                        }
+
+                                        setState(() {
+                                          _viewModel
+                                            ..member.city = LocationService.currentAddress.locality
+                                            ..member.town = LocationService.currentAddress.subLocality;
+                                        });
                                         Loading.dismiss();
                                       } catch (e) {
                                         print(e);
@@ -173,7 +177,7 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                         children: [
                           Text('${_viewModel.member.email}님은', style: kJoinTextStyle),
                           SizedBox(height: 18),
-                          GradeButton(birth: _viewModel.member.birth),
+                          GradeButton(birth: _viewModel.member.birth, fontSize: 14),
                           SizedBox(height: 18),
                           Text('입니다.', style: kJoinTextStyle),
                           SizedBox(height: 50),
@@ -195,11 +199,14 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
               disabled: !_viewModel.isComplete,
               onTap: () async {
                 Loading.show();
-                if (await _viewModel.createUser()) {
-                  Loading.dismiss();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
-                } else
+
+                if (!await _viewModel.createUser()) {
                   Loading.showError('가입에 실패했습니다');
+                  return;
+                }
+
+                Loading.dismiss();
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
               },
             ),
           ],
