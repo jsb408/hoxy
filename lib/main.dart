@@ -21,15 +21,15 @@ class Hoxy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.light().copyWith(
-        floatingActionButtonTheme: FloatingActionButtonThemeData().copyWith(
+      theme: Theme.of(context).copyWith(
+        floatingActionButtonTheme: Theme.of(context).floatingActionButtonTheme.copyWith(
           backgroundColor: kPrimaryColor
         ),
-        appBarTheme: AppBarTheme().copyWith(
+        appBarTheme: Theme.of(context).appBarTheme.copyWith(
           iconTheme: IconThemeData().copyWith(
             color: Colors.black
           ),
-          textTheme: TextTheme(
+          textTheme: TextTheme().copyWith(
             headline6: TextStyle(
               fontSize: 24,
               color: Colors.black,
@@ -38,6 +38,11 @@ class Hoxy extends StatelessWidget {
         ),
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: kBackgroundColor,
+        /*textTheme: Theme.of(context).textTheme.copyWith(
+          bodyText2: Theme.of(context).textTheme.bodyText2.copyWith(
+            //fontWeight: FontWeight.w300
+          )
+        )*/
       ),
       home: kAuth.currentUser == null || kAuth.currentUser.email.isEmpty ? LoginScreen() : LocationScreen(),
       builder: EasyLoading.init(),

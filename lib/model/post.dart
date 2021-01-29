@@ -11,11 +11,10 @@ class Post {
   String emoji;
   int communication;
   DateTime start;
-  DateTime end;
+  int duration;
   String city = '';
   String town = '';
   GeoPoint location;
-  String geohash = '';
   int view = 0;
   DocumentReference chat;
 
@@ -32,11 +31,10 @@ class Post {
     this.emoji = doc['emoji'];
     this.communication = doc['communication'];
     this.start = (doc['start'] as Timestamp).toDate();
-    this.end = (doc['end'] as Timestamp).toDate();
+    this.duration = doc['duration'];
     this.city = doc['city'];
     this.town = doc['town'];
     this.location = doc['location'];
-    this.geohash = doc['geohash'];
     this.view = doc['view'];
     this.chat = doc['chat'];
   }
@@ -51,11 +49,10 @@ class Post {
     'emoji' : this.emoji,
     'communication' : this.communication,
     'start' : this.start,
-    'end' : this.end,
+    'duration' : this.duration,
     'city' : this.city,
     'town' : this.town,
     'location' : this.location,
-    'geohash' : this.geohash,
     'view' : this.view,
     'chat' : this.chat
   };

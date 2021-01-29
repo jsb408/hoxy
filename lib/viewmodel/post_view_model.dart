@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geohash/geohash.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/post.dart';
@@ -13,10 +12,7 @@ class PostViewModel {
   Post post = Post();
   String nickname = "${kNick[Random().nextInt(kNick.length)]} ${kName[Random().nextInt(kName.length)]}";
 
-  set geoPoint(GeoPoint geoPoint) {
-    post.location = geoPoint;
-    post.geohash = Geohash.encode(geoPoint.latitude, geoPoint.longitude);
-  }
+  set geoPoint(GeoPoint geoPoint) => post.location = geoPoint;
   set location(List<String> location) {
     post.city = location.first;
     post.town = location.last;
@@ -29,7 +25,6 @@ class PostViewModel {
   Future<bool> createPost() async {
     try {
       this.post
-        ..end = this.post.start.add(Duration(hours: 3))
         ..date = DateTime.now()
         ..tag.insert(0, kCommunicateLevels[this.post.communication]);
       DocumentReference post = await kFirestore.collection('post').add(this.post.toMap());

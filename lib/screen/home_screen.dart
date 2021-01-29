@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
 import 'package:hoxy/screen/write_post_screen.dart';
