@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
 import 'package:hoxy/screen/write_post_screen.dart';
@@ -52,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ];
         if (LocationService.cityName != user.city || LocationService.townName != user.town)
           locationList.add([user.city, user.town]);
+
         return Scaffold(
           appBar: AppBar(
             title: snapshot.hasData ? _localityDropdown(user.city, user.town) : Text('우리 동네'),
@@ -71,11 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: snapshot.hasData
               ? StreamBuilder<QuerySnapshot>(
-                  stream: kFirestore
-                      .collection('post')
-                      .where('city', isEqualTo: locationList[_selectedLocality].first)
-                      .where('town', isEqualTo: locationList[_selectedLocality].last)
-                      .snapshots(),
+                  stream: kFirestore.collection('post').orderBy('date', descending: true).snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
@@ -83,14 +81,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     Loading.dismiss();
 
-                    if (snapshot.data.docs.isEmpty) {
+                    Iterable<dynamic> posts = snapshot.data.docs;
+                    if (posts.isEmpty) {
                       return Center(child: Text('등록된 글이 없습니다'));
                     }
 
-                    final posts = snapshot.data.docs.reversed;
-                    List<ItemPostList> postList = [
-                      for(var post in posts) ItemPostList(post: Post.from(post))
-                    ];
+                    posts = posts.map((e) => Post.from(e)).where((element) =>
+                        LocationService.distanceBetween(
+                        _selectedLocality == 0 ? LocationService.geoPoint : user.location,
+                        element.location) < 5000
+                    );
+
+                    List<ItemPostList> postList = [for(var post in posts) ItemPostList(post: post)];
 
                     return ListView(
                       children: postList,

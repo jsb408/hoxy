@@ -28,6 +28,7 @@ dependencies:
   firebase_core: ^0.7.0
   firebase_auth: ^0.20.0+1
   cloud_firestore: ^0.16.0
+  geohash: ^0.2.1
   flutter_easyloading: ^2.2.2
   geolocator: ^6.1.13
   geocoding: ^1.0.5

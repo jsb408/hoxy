@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emojis/emoji.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hoxy/model/member.dart';
 
 import '../constants.dart';
@@ -9,6 +10,8 @@ class JoinViewModel extends Member {
   Member member = Member();
   String password = '';
   String certNumber = '';
+
+  set position(Position position) => member.location = GeoPoint(position.latitude, position.longitude);
 
   String get formattedPhone => '+82 ${member.phone.substring(1)}';
   bool get isComplete => member.birth > 0 && member.city.isNotEmpty && member.town.isNotEmpty;

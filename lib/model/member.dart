@@ -8,6 +8,7 @@ class Member {
   int birth = 0;
   String city = '';
   String town = '';
+  GeoPoint location;
   int exp = 50;
 
   Member();
@@ -19,6 +20,7 @@ class Member {
     this.birth = doc['birth'];
     this.city = doc['city'];
     this.town = doc['town'];
+    this.location = doc['location'];
     this.exp = doc['exp'];
   }
 
@@ -29,6 +31,7 @@ class Member {
     'emoji' : this.emoji,
     'city' : this.city,
     'town' : this.town,
+    'location' : this.location,
     'exp' : this.exp
   };
 }

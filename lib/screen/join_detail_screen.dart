@@ -36,7 +36,8 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
         });
       },
       children: [
-        for (int i = DateTime.now().year - 19; i > DateTime.now().year - 49; i--) Center(child: Text(i.toString()))
+        for (int i = DateTime.now().year - 19; i > DateTime.now().year - 49; i--)
+          Center(child: Text(i.toString()))
       ],
     );
   }
@@ -77,8 +78,12 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                     Padding(
                       padding: EdgeInsets.only(top: 40, bottom: 80),
                       child: Table(
-                        columnWidths: {0: FractionColumnWidth(0.35), 1: FixedColumnWidth(27)},
-                        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                        columnWidths: {
+                          0: FractionColumnWidth(0.35),
+                          1: FixedColumnWidth(27)
+                        },
+                        defaultVerticalAlignment:
+                            TableCellVerticalAlignment.middle,
                         children: [
                           TableRow(
                             children: [
@@ -91,10 +96,14 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    _viewModel.member.town.isNotEmpty ? _viewModel.member.town : '동네 이름',
+                                    _viewModel.member.town.isNotEmpty
+                                        ? _viewModel.member.town
+                                        : '동네 이름',
                                     style: TextStyle(
                                       fontSize: 18,
-                                      color: _viewModel.member.town.isNotEmpty ? Colors.black : Colors.grey,
+                                      color: _viewModel.member.town.isNotEmpty
+                                          ? Colors.black
+                                          : Colors.grey,
                                       fontWeight: FontWeight.w100,
                                     ),
                                   ),
@@ -105,7 +114,8 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                                       try {
                                         Loading.show();
 
-                                        if (!await LocationService.getCurrentLocation()) {
+                                        if (!await LocationService
+                                            .getCurrentLocation()) {
                                           Loading.showError('권한을 설정해주세요');
                                           return;
                                         }
@@ -113,7 +123,8 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                                         setState(() {
                                           _viewModel
                                             ..member.city = LocationService.currentAddress.locality
-                                            ..member.town = LocationService.currentAddress.subLocality;
+                                            ..member.town = LocationService.currentAddress.subLocality
+                                            ..location = LocationService.geoPoint;
                                         });
                                         Loading.dismiss();
                                       } catch (e) {
@@ -126,7 +137,11 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                               ),
                             ],
                           ),
-                          TableRow(children: [SizedBox(height: 30), SizedBox(height: 30), SizedBox(height: 30)]),
+                          TableRow(children: [
+                            SizedBox(height: 30),
+                            SizedBox(height: 30),
+                            SizedBox(height: 30)
+                          ]),
                           TableRow(
                             children: [
                               Text(
@@ -175,9 +190,11 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                       visible: _viewModel.member.birth > 0,
                       child: Column(
                         children: [
-                          Text('${_viewModel.member.email}님은', style: kJoinTextStyle),
+                          Text('${_viewModel.member.email}님은',
+                              style: kJoinTextStyle),
                           SizedBox(height: 18),
-                          GradeButton(birth: _viewModel.member.birth, fontSize: 14),
+                          GradeButton(
+                              birth: _viewModel.member.birth, fontSize: 14),
                           SizedBox(height: 18),
                           Text('입니다.', style: kJoinTextStyle),
                           SizedBox(height: 50),
@@ -206,7 +223,8 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                 }
 
                 Loading.dismiss();
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MainScreen()));
               },
             ),
           ],

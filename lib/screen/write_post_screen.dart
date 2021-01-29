@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/service/loading.dart';
+import 'package:hoxy/service/location.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/write_property_button.dart';
 import 'package:hoxy/viewmodel/post_view_model.dart';
@@ -12,7 +13,10 @@ import 'package:hoxy/viewmodel/post_view_model.dart';
 enum Property { LOCATION, HEADCOUNT, COMMUNICATE }
 
 class WritePostScreen extends StatefulWidget {
-  WritePostScreen({@required this.user, @required this.selectedTown, @required this.locationList});
+  WritePostScreen(
+      {@required this.user,
+      @required this.selectedTown,
+      @required this.locationList});
 
   final Member user;
   final int selectedTown;
@@ -39,7 +43,8 @@ class _WritePostScreenState extends State<WritePostScreen> {
     _locationController = FixedExtentScrollController(initialItem: initialLocation);
   }
 
-  postPicker(FixedExtentScrollController controller, List<String> children, Property target) {
+  postPicker(FixedExtentScrollController controller, List<String> children,
+      Property target) {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -64,7 +69,10 @@ class _WritePostScreenState extends State<WritePostScreen> {
                     switch (target) {
                       case Property.LOCATION:
                         _locationController = FixedExtentScrollController(initialItem: index);
-                        _viewModel.putLocation(_locationList[index]);
+                        _viewModel
+                          ..location = _locationList[index]
+                          ..geoPoint = index == 0 ? LocationService.geoPoint : _user.location;
+
                         break;
                       case Property.HEADCOUNT:
                         _headCountController = FixedExtentScrollController(initialItem: index);
@@ -79,7 +87,9 @@ class _WritePostScreenState extends State<WritePostScreen> {
                     }
                   });
                 },
-                children: [for (String child in children) Center(child: Text(child))],
+                children: [
+                  for (String child in children) Center(child: Text(child))
+                ],
               ),
             ),
           ],
@@ -97,7 +107,8 @@ class _WritePostScreenState extends State<WritePostScreen> {
 
     _viewModel
       ..post.writer = kFirestore.collection('member').doc(_user.uid)
-      ..putLocation(_locationList[widget.selectedTown]);
+      ..location = _locationList[widget.selectedTown]
+      ..geoPoint = widget.selectedTown == 0 ? LocationService.geoPoint : _user.location;
   }
 
   @override
@@ -113,7 +124,9 @@ class _WritePostScreenState extends State<WritePostScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    decoration: BoxDecoration(border: Border.all(color: kBackgroundColor, width: 0.5)),
+                    decoration: BoxDecoration(
+                        border:
+                            Border.all(color: kBackgroundColor, width: 0.5)),
                     child: TextField(
                       decoration: InputDecoration(
                         border: InputBorder.none,
@@ -138,38 +151,48 @@ class _WritePostScreenState extends State<WritePostScreen> {
                         child: WritePropertyButton(
                           title: _viewModel.post.town,
                           onTap: () {
-                            postPicker(_locationController, _townList, Property.LOCATION);
+                            postPicker(_locationController, _townList,
+                                Property.LOCATION);
                           },
                         ),
                       ),
                       Expanded(
                         child: WritePropertyButton(
-                          title: _viewModel.post.headcount == 0 ? '모집인원' : _viewModel.post.headcount.toString(),
+                          title: _viewModel.post.headcount == 0
+                              ? '모집인원'
+                              : _viewModel.post.headcount.toString(),
                           onTap: () {
                             if (_viewModel.post.headcount == 0)
                               setState(() {
                                 _viewModel.post.headcount = 2;
                               });
-                            postPicker(_headCountController, ['2', '3', '4'], Property.HEADCOUNT);
+                            postPicker(_headCountController, ['2', '3', '4'],
+                                Property.HEADCOUNT);
                           },
                         ),
                       ),
                     ],
                   ),
                   WritePropertyButton(
-                    title: _viewModel.post.communication == null ? '소통레벨' : _viewModel.communicationLevel,
+                    title: _viewModel.post.communication == null
+                        ? '소통레벨'
+                        : _viewModel.communicationLevel,
                     onTap: () {
                       if (_viewModel.post.communication == null)
                         setState(() {
                           _viewModel.post
-                            ..emoji = kCommunicateLevelIcons[0][Random().nextInt(3)]
+                            ..emoji =
+                                kCommunicateLevelIcons[0][Random().nextInt(3)]
                             ..communication = 0;
                         });
-                      postPicker(_communicationController, kCommunicateLevels, Property.COMMUNICATE);
+                      postPicker(_communicationController, kCommunicateLevels,
+                          Property.COMMUNICATE);
                     },
                   ),
                   WritePropertyButton(
-                    title: _viewModel.post.start == null ? '모임시간' : _viewModel.formattedStartTime,
+                    title: _viewModel.post.start == null
+                        ? '모임시간'
+                        : _viewModel.formattedStartTime,
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
@@ -188,8 +211,11 @@ class _WritePostScreenState extends State<WritePostScreen> {
                               ),
                               Expanded(
                                 child: CupertinoDatePicker(
+                                  minuteInterval: 30,
                                   minimumDate: DateTime.now(),
-                                  initialDateTime: _viewModel.post.start,
+                                  initialDateTime: DateTime.now().add(
+                                      Duration(minutes: DateTime.now().minute >= 30 ? 60 - DateTime.now().minute : 30 - DateTime.now().minute)
+                                  ),
                                   onDateTimeChanged: (DateTime value) {
                                     setState(() {
                                       _viewModel.post.start = value;
@@ -206,7 +232,9 @@ class _WritePostScreenState extends State<WritePostScreen> {
                   ),
                   Container(
                     height: 220,
-                    decoration: BoxDecoration(border: Border.all(color: kBackgroundColor, width: 0.5)),
+                    decoration: BoxDecoration(
+                        border:
+                            Border.all(color: kBackgroundColor, width: 0.5)),
                     child: TextField(
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
@@ -229,7 +257,9 @@ class _WritePostScreenState extends State<WritePostScreen> {
                   ),
                   Container(
                     padding: EdgeInsets.only(left: 20),
-                    decoration: BoxDecoration(border: Border.all(color: kBackgroundColor, width: 0.5)),
+                    decoration: BoxDecoration(
+                        border:
+                            Border.all(color: kBackgroundColor, width: 0.5)),
                     child: Row(
                       children: [
                         Icon(CupertinoIcons.tag),
@@ -255,7 +285,10 @@ class _WritePostScreenState extends State<WritePostScreen> {
                     ),
                   ),
                   Container(
-                    decoration: BoxDecoration(border: Border(top: BorderSide(width: 0.5, color: kBackgroundColor))),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            top: BorderSide(
+                                width: 0.5, color: kBackgroundColor))),
                     child: Center(
                       child: Column(
                         children: [
@@ -263,18 +296,26 @@ class _WritePostScreenState extends State<WritePostScreen> {
                             padding: EdgeInsets.symmetric(vertical: 10),
                             child: RichText(
                               textAlign: TextAlign.center,
-                              text: TextSpan(style: TextStyle(fontSize: 13, color: Colors.black), children: [
-                                TextSpan(text: '${_user.email}님은\n이번 모임에서 '),
-                                TextSpan(
-                                  text: _viewModel.nickname,
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                                ),
-                                TextSpan(text: ' (으)로 활동합니다.')
-                              ]),
+                              text: TextSpan(
+                                  style: TextStyle(
+                                      fontSize: 13, color: Colors.black),
+                                  children: [
+                                    TextSpan(
+                                        text: '${_user.email}님은\n이번 모임에서 '),
+                                    TextSpan(
+                                      text: _viewModel.nickname,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    TextSpan(text: ' (으)로 활동합니다.')
+                                  ]),
                             ),
                           ),
                           Text('글 작성 시 모임 대화방이 생성되며,\n신청자는 대화방에 참여됩니다.',
-                              textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: kAccentColor))
+                              textAlign: TextAlign.center,
+                              style:
+                                  TextStyle(fontSize: 11, color: kAccentColor))
                         ],
                       ),
                     ),

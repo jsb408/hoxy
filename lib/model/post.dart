@@ -14,6 +14,8 @@ class Post {
   DateTime end;
   String city = '';
   String town = '';
+  GeoPoint location;
+  String geohash = '';
   int view = 0;
   DocumentReference chat;
 
@@ -33,6 +35,8 @@ class Post {
     this.end = (doc['end'] as Timestamp).toDate();
     this.city = doc['city'];
     this.town = doc['town'];
+    this.location = doc['location'];
+    this.geohash = doc['geohash'];
     this.view = doc['view'];
     this.chat = doc['chat'];
   }
@@ -50,6 +54,8 @@ class Post {
     'end' : this.end,
     'city' : this.city,
     'town' : this.town,
+    'location' : this.location,
+    'geohash' : this.geohash,
     'view' : this.view,
     'chat' : this.chat
   };
