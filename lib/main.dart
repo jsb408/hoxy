@@ -38,11 +38,11 @@ class Hoxy extends StatelessWidget {
         ),
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: kBackgroundColor,
-        /*textTheme: Theme.of(context).textTheme.copyWith(
+        textTheme: Theme.of(context).textTheme.copyWith(
           bodyText2: Theme.of(context).textTheme.bodyText2.copyWith(
-            //fontWeight: FontWeight.w300
+            fontWeight: FontWeight.w300
           )
-        )*/
+        )
       ),
       home: kAuth.currentUser == null || kAuth.currentUser.email.isEmpty ? LoginScreen() : LocationScreen(),
       builder: EasyLoading.init(),
