@@ -6,14 +6,14 @@ import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
+import 'package:hoxy/screen/write_post_screen.dart';
 import 'package:hoxy/view/background_button.dart';
 import 'package:hoxy/view/grade_button.dart';
 import 'package:hoxy/view/item_relate_list.dart';
 import 'package:intl/intl.dart';
 
 class ReadPostScreen extends StatelessWidget {
-  ReadPostScreen(
-      {@required this.post, @required this.writer, @required this.chatting});
+  ReadPostScreen({@required this.post, @required this.writer, @required this.chatting});
 
   final Post post;
   final Member writer;
@@ -28,8 +28,7 @@ class ReadPostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String writerName = chatting.member.keys
-        .toList()[chatting.member.values.toList().indexOf(writer.uid)];
+    final String writerName = chatting.member.keys.toList()[chatting.member.values.toList().indexOf(writer.uid)];
 
     kFirestore.collection('post').doc(post.id).update({'view': post.view + 1});
 
@@ -38,10 +37,25 @@ class ReadPostScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(post.title),
         actions: [
-          IconButton(
-            icon: Icon(Icons.more_vert),
-            onPressed: () {},
-          ),
+          if (writer.uid == kAuth.currentUser.uid)
+            PopupMenuButton(
+              onSelected: (value) {
+                if(value == '수정') Navigator.push(context, MaterialPageRoute(builder: (context) => WritePostScreen(user: writer, originalPost: post, nickname: writerName)));
+              },
+              itemBuilder: (context) {
+                return [
+                  for (String item in ['수정', '삭제'])
+                    PopupMenuItem(
+                      value: item,
+                      child: Text(item),
+                    ),
+                ];
+              },
+            )
+          /*IconButton(
+              icon: Icon(Icons.more_vert),
+              onPressed: () {},
+            ),*/
         ],
       ),
       body: Column(
@@ -53,27 +67,21 @@ class ReadPostScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                       child: Row(
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Text(post.emoji,
-                                style: TextStyle(fontSize: 40)),
+                            child: Text(post.emoji, style: TextStyle(fontSize: 40)),
                           ),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('예정시간',
-                                    style: TextStyle(
-                                        color:
-                                            Color.fromRGBO(55, 68, 78, 1.0))),
+                                Text('예정시간', style: TextStyle(color: Color.fromRGBO(55, 68, 78, 1.0))),
                                 Text(
                                   '${DateFormat('MM.dd HH시 mm분').format(post.start)}~${DateFormat('HH시 mm분').format(post.start.add(Duration(minutes: post.duration)))} (${NumberFormat('0.#').format(post.duration / 60)}시간)',
-                                  style: TextStyle(
-                                      fontSize: 16, color: kTimeColor),
+                                  style: TextStyle(fontSize: 16, color: kTimeColor),
                                 ),
                                 SizedBox(height: 10),
                                 Row(
@@ -81,9 +89,7 @@ class ReadPostScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       "${post.town} ${timeText(post.date)}",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: kSubContentColor),
+                                      style: TextStyle(fontSize: 12, color: kSubContentColor),
                                     ),
                                     SizedBox(width: 9),
                                     Icon(
@@ -93,9 +99,7 @@ class ReadPostScreen extends StatelessWidget {
                                     ),
                                     SizedBox(width: 4),
                                     Text((post.view + 1).toString(),
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: kSubContentColor)),
+                                        style: TextStyle(fontSize: 12, color: kSubContentColor)),
                                     SizedBox(width: 12),
                                     GradeButton(birth: writer.birth),
                                   ],
@@ -110,8 +114,7 @@ class ReadPostScreen extends StatelessWidget {
                                 backgroundColor: kProgressBackgroundColor,
                                 value: chatting.member.length / post.headcount,
                               ),
-                              Text(
-                                  '${chatting.member.length}/${post.headcount}'),
+                              Text('${chatting.member.length}/${post.headcount}'),
                             ],
                           ),
                         ],
@@ -119,15 +122,13 @@ class ReadPostScreen extends StatelessWidget {
                     ),
                     divider(),
                     Container(
-                      padding: EdgeInsets.only(
-                          top: 20, right: 25, left: 25, bottom: 8),
+                      padding: EdgeInsets.only(top: 20, right: 25, left: 25, bottom: 8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ConstrainedBox(
                             constraints: BoxConstraints(minHeight: 300),
-                            child: Text(post.content,
-                                style: TextStyle(fontSize: 20)),
+                            child: Text(post.content, style: TextStyle(fontSize: 20)),
                           ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,8 +138,7 @@ class ReadPostScreen extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   '#${post.tag.join(' #')}',
-                                  style:
-                                      TextStyle(fontSize: 15, color: kTagColor),
+                                  style: TextStyle(fontSize: 15, color: kTagColor),
                                 ),
                               ),
                             ],
@@ -148,8 +148,7 @@ class ReadPostScreen extends StatelessWidget {
                     ),
                     divider(),
                     Container(
-                      padding: EdgeInsets.only(
-                          top: 10, right: 15, left: 25, bottom: 10),
+                      padding: EdgeInsets.only(top: 10, right: 15, left: 25, bottom: 10),
                       child: Row(
                         children: [
                           Expanded(
@@ -161,22 +160,15 @@ class ReadPostScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       writerName,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                     ),
-                                    Text(post.town,
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: kDisabledColor)),
+                                    Text(post.town, style: TextStyle(fontSize: 12, color: kDisabledColor)),
                                   ],
                                 ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text('인연지수',
-                                        style:
-                                            TextStyle(color: kDisabledColor)),
+                                    Text('인연지수', style: TextStyle(color: kDisabledColor)),
                                     Icon(Icons.help_outline, size: 14),
                                     Container(
                                       width: 53,
@@ -184,12 +176,9 @@ class ReadPostScreen extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(10),
                                         child: LinearProgressIndicator(
                                           minHeight: 8,
-                                          backgroundColor:
-                                              kProgressBackgroundColor,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                  kProgressValueColor),
-                                          value: 0.5,
+                                          backgroundColor: kProgressBackgroundColor,
+                                          valueColor: AlwaysStoppedAnimation<Color>(kProgressValueColor),
+                                          value: writer.exp / 100,
                                         ),
                                       ),
                                     ),
@@ -199,9 +188,8 @@ class ReadPostScreen extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '총 모임참여 55회',
-                            style:
-                                TextStyle(fontSize: 12, color: kDisabledColor),
+                            '총 모임참여 ${writer.participation}회',
+                            style: TextStyle(fontSize: 12, color: kDisabledColor),
                           ),
                         ],
                       ),
@@ -211,9 +199,7 @@ class ReadPostScreen extends StatelessWidget {
                       padding: EdgeInsets.only(left: 25, top: 8, right: 15),
                       child: Text('연관모임'),
                     ),
-                    for (int i = 0; i < 3; i++)
-                      ItemRelateList(
-                          tag: post.tag[Random().nextInt(post.tag.length)]),
+                    for (int i = 0; i < 3; i++) ItemRelateList(tag: post.tag[Random().nextInt(post.tag.length)]),
                   ],
                 ),
               ),
@@ -236,7 +222,7 @@ class ReadPostScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              '1월 19일 18시 예정',
+                              '${DateFormat('M월 dd일 HH시').format(post.start)} 예정',
                               style: TextStyle(
                                 color: Color.fromRGBO(26, 59, 196, 1.0),
                               ),
@@ -246,15 +232,12 @@ class ReadPostScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   post.town,
-                                  style: TextStyle(
-                                      fontSize: 16, color: kDisabledColor),
+                                  style: TextStyle(fontSize: 16, color: kDisabledColor),
                                 ),
                                 SizedBox(width: 4),
                                 Text(
                                   '$writerName님의 모임',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                 ),
                               ],
                             ),
@@ -263,11 +246,8 @@ class ReadPostScreen extends StatelessWidget {
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 8),
-                        child: SizedBox(
-                            width: 142,
-                            height: 44,
-                            child: BackgroundButton(
-                                title: '신청하기', onPressed: () {})),
+                        child:
+                            SizedBox(width: 142, height: 44, child: BackgroundButton(title: '신청하기', onPressed: () {})),
                       ),
                     ],
                   ),

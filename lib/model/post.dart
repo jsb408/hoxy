@@ -11,7 +11,7 @@ class Post {
   String emoji;
   int communication;
   DateTime start;
-  int duration;
+  int duration = 0;
   String city = '';
   String town = '';
   GeoPoint location;

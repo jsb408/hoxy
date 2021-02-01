@@ -4,23 +4,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/member.dart';
+import 'package:hoxy/model/post.dart';
 import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/service/location.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/write_property_button.dart';
 import 'package:hoxy/viewmodel/post_view_model.dart';
 
-enum Property { LOCATION, HEADCOUNT, COMMUNICATE }
+enum Property { LOCATION, HEADCOUNT, COMMUNICATE, DURATION }
 
 class WritePostScreen extends StatefulWidget {
   WritePostScreen(
       {@required this.user,
-      @required this.selectedTown,
-      @required this.locationList});
+      this.selectedTown,
+      this.locationList,
+      this.originalPost,
+      this.nickname});
 
   final Member user;
   final int selectedTown;
   final List<List<String>> locationList;
+  final Post originalPost;
+  final String nickname;
 
   @override
   _WritePostScreenState createState() => _WritePostScreenState(selectedTown);
@@ -30,17 +35,22 @@ class _WritePostScreenState extends State<WritePostScreen> {
   PostViewModel _viewModel = PostViewModel();
 
   Member _user;
+  Post _originalPost;
 
   List<List<String>> _locationList;
   get _townList => _locationList.map((e) => e.last).toList();
+
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _contentController = TextEditingController();
+  TextEditingController _tagController = TextEditingController();
+
   FixedExtentScrollController _locationController;
   FixedExtentScrollController _headCountController = FixedExtentScrollController();
   FixedExtentScrollController _communicationController = FixedExtentScrollController();
-
-  TextEditingController _tagController = TextEditingController();
+  FixedExtentScrollController _durationController = FixedExtentScrollController();
 
   _WritePostScreenState(int initialLocation) {
-    _locationController = FixedExtentScrollController(initialItem: initialLocation);
+    _locationController = FixedExtentScrollController(initialItem: _locationList == null ? 0 : initialLocation);
   }
 
   postPicker(FixedExtentScrollController controller, List<String> children,
@@ -84,6 +94,10 @@ class _WritePostScreenState extends State<WritePostScreen> {
                           ..emoji = kCommunicateLevelIcons[index][Random().nextInt(3)]
                           ..communication = index;
                         break;
+                      case Property.DURATION:
+                        _durationController = FixedExtentScrollController(initialItem: index);
+                        _viewModel.post.duration = (index + 1) * 30;
+                        break;
                     }
                   });
                 },
@@ -103,12 +117,23 @@ class _WritePostScreenState extends State<WritePostScreen> {
     super.initState();
 
     _user = widget.user;
-    _locationList = widget.locationList;
+    _originalPost = widget.originalPost;
 
-    _viewModel
-      ..post.writer = kFirestore.collection('member').doc(_user.uid)
-      ..location = _locationList[widget.selectedTown]
-      ..geoPoint = widget.selectedTown == 0 ? LocationService.geoPoint : _user.location;
+    if (_originalPost == null) {
+      _locationList = widget.locationList;
+
+      _viewModel
+        ..post.writer = kFirestore.collection('member').doc(_user.uid)
+        ..location = _locationList[widget.selectedTown]
+        ..geoPoint = widget.selectedTown == 0 ? LocationService.geoPoint : _user.location;
+    } else {
+      _viewModel
+        ..post = _originalPost
+        ..nickname = widget.nickname;
+      _titleController.text = _originalPost.title;
+      _contentController.text = _originalPost.content;
+      _tagController.text = _originalPost.tag.sublist(1).join(" ");
+    }
   }
 
   @override
@@ -128,6 +153,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                         border:
                             Border.all(color: kBackgroundColor, width: 0.5)),
                     child: TextField(
+                      controller: _titleController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: '글 제목',
@@ -189,46 +215,67 @@ class _WritePostScreenState extends State<WritePostScreen> {
                           Property.COMMUNICATE);
                     },
                   ),
-                  WritePropertyButton(
-                    title: _viewModel.post.start == null
-                        ? '모임시간'
-                        : _viewModel.formattedStartTime,
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (context) => Container(
-                          height: 280,
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  CupertinoButton(
-                                      child: Text('확인'),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      }),
-                                ],
-                              ),
-                              Expanded(
-                                child: CupertinoDatePicker(
-                                  minuteInterval: 30,
-                                  minimumDate: DateTime.now(),
-                                  initialDateTime: DateTime.now().add(
-                                      Duration(minutes: DateTime.now().minute >= 30 ? 60 - DateTime.now().minute : 30 - DateTime.now().minute)
-                                  ),
-                                  onDateTimeChanged: (DateTime value) {
-                                    setState(() {
-                                      _viewModel.post.start = value;
-                                    });
-                                    print(value);
-                                  },
+                  Row(
+                    children: [
+                      Expanded(
+                        child: WritePropertyButton(
+                          title: _viewModel.post.start == null
+                              ? '시작시간'
+                              : _viewModel.formattedStartTime,
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => Container(
+                                height: 280,
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        CupertinoButton(
+                                            child: Text('확인'),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            }),
+                                      ],
+                                    ),
+                                    Expanded(
+                                      child: CupertinoDatePicker(
+                                        minuteInterval: 30,
+                                        minimumDate: DateTime.now(),
+                                        initialDateTime: DateTime.now().add(
+                                            Duration(minutes: DateTime.now().minute >= 30 ? 60 - DateTime.now().minute : 30 - DateTime.now().minute)
+                                        ),
+                                        onDateTimeChanged: (DateTime value) {
+                                          setState(() {
+                                            _viewModel.post.start = value;
+                                          });
+                                          print(value);
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ),
+                      Expanded(
+                        child: WritePropertyButton(
+                          title: _viewModel.post.duration == 0
+                              ? '모임시간'
+                              : '${_viewModel.post.duration / 60}시간',
+                          onTap: () {
+                            if (_viewModel.post.duration == 0)
+                              setState(() {
+                                _viewModel.post.duration = 30;
+                              });
+                            postPicker(_durationController, ['30분', '1시간', '1시간 30분', '2시간', '2시간 30분', '3시간', '3시간 30분', '4시간'],
+                                Property.DURATION);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   Container(
                     height: 220,
@@ -236,6 +283,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                         border:
                             Border.all(color: kBackgroundColor, width: 0.5)),
                     child: TextField(
+                      controller: _contentController,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       decoration: InputDecoration(

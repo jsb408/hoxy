@@ -19,7 +19,7 @@ class PostViewModel {
   }
 
   get communicationLevel => kCommunicateLevels[post.communication];
-  get formattedStartTime => DateFormat('yyyy년 MM월 dd일 HH:mm').format(post.start);
+  get formattedStartTime => DateFormat('MM월 dd일 HH:mm').format(post.start);
   get isIncomplete => post.title.isNotEmpty && post.content.isNotEmpty && post.headcount > 0 && post.start != null;
 
   Future<bool> createPost() async {
