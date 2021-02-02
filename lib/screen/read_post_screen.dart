@@ -252,6 +252,8 @@ class ReadPostScreen extends StatelessWidget {
                       padding: EdgeInsets.only(left: 25, top: 8, right: 15),
                       child: Text('연관모임'),
                     ),
+                    //TODO: 연관 글 중복글 안 뜨게 해야함
+                    //TODO: 연관 글에 자기 자신은 안 뜨게 해야함
                     for (int i = 0; i < 3; i++) ItemRelateList(tag: post.tag[Random().nextInt(post.tag.length)]),
                   ],
                 ),
