@@ -177,9 +177,10 @@ class _WritePostScreenState extends State<WritePostScreen> {
                         child: WritePropertyButton(
                           title: _viewModel.post.town,
                           onTap: () {
-                            postPicker(_locationController, _townList,
-                                Property.LOCATION);
+                            postPicker(_locationController, _townList, Property.LOCATION);
                           },
+                          hasData: true,
+                          disabled: _originalPost != null,
                         ),
                       ),
                       Expanded(
@@ -195,6 +196,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                             postPicker(_headCountController, ['2', '3', '4'],
                                 Property.HEADCOUNT);
                           },
+                          hasData: _viewModel.post.headcount > 0,
                         ),
                       ),
                     ],
@@ -214,6 +216,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                       postPicker(_communicationController, kCommunicateLevels,
                           Property.COMMUNICATE);
                     },
+                    hasData: _viewModel.post.communication != null,
                   ),
                   Row(
                     children: [
@@ -258,6 +261,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                               ),
                             );
                           },
+                          hasData: _viewModel.post.start != null,
                         ),
                       ),
                       Expanded(
@@ -273,6 +277,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                             postPicker(_durationController, ['30분', '1시간', '1시간 30분', '2시간', '2시간 30분', '3시간', '3시간 30분', '4시간'],
                                 Property.DURATION);
                           },
+                          hasData: _viewModel.post.duration > 0,
                         ),
                       ),
                     ],

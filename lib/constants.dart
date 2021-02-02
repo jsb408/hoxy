@@ -16,8 +16,8 @@ const kProgressValueColor = Color.fromRGBO(77, 244, 96, 1.0);
 //endregion
 
 //region Firebase
-FirebaseAuth kAuth = FirebaseAuth.instance;
-FirebaseFirestore kFirestore = FirebaseFirestore.instance;
+final FirebaseAuth kAuth = FirebaseAuth.instance;
+final FirebaseFirestore kFirestore = FirebaseFirestore.instance;
 //endregion
 
 //region Styles
@@ -31,7 +31,7 @@ const kCommunicateLevelIcons = [
 ];
 const kCommunicateLevels = ['조용히 만나요', '대화는 해요', '재밌게 놀아요'];
 
-timeText(DateTime date) {
+String timeText(DateTime date) {
   Duration difference = DateTime.now().difference(date);
 
   if (difference.inDays > 0)
