@@ -124,3 +124,11 @@ class ItemPostList extends StatelessWidget {
     );
   }
 }
+
+class PostSkeleton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+    );
+  }
+}

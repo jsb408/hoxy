@@ -130,9 +130,14 @@ class _WritePostScreenState extends State<WritePostScreen> {
       _viewModel
         ..post = _originalPost
         ..nickname = widget.nickname;
+
       _titleController.text = _originalPost.title;
       _contentController.text = _originalPost.content;
       _tagController.text = _originalPost.tag.sublist(1).join(" ");
+
+      _headCountController = FixedExtentScrollController(initialItem: _originalPost.headcount - 2);
+      _communicationController = FixedExtentScrollController(initialItem: _originalPost.communication);
+      _durationController = FixedExtentScrollController(initialItem: _originalPost.duration ~/ 30 - 1);
     }
   }
 
@@ -383,7 +388,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
             onTap: () async {
               Loading.show();
 
-              if (!await _viewModel.createPost()) {
+              if (!(_originalPost == null ? await _viewModel.createPost() : await _viewModel.updatePost())) {
                 Loading.showError('업로드 실패');
                 return;
               }

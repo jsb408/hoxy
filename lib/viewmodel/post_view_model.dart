@@ -42,6 +42,17 @@ class PostViewModel {
     }
   }
 
+  Future<bool> updatePost() async {
+    try {
+      post.tag.insert(0, kCommunicateLevels[this.post.communication]);
+      await kFirestore.collection('post').doc(post.id).update(this.post.toMap());
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   List<Post> filterPosts(List<QueryDocumentSnapshot> docs, GeoPoint location) {
     final posts = docs.map((e) => Post.from(e)).toList();
 
