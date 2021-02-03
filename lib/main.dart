@@ -39,7 +39,7 @@ class Hoxy extends StatelessWidget {
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: kBackgroundColor,
         textTheme: Theme.of(context).textTheme.copyWith(
-          bodyText2: Theme.of(context).textTheme.bodyText2.copyWith(
+          bodyText2: Theme.of(context).textTheme.bodyText2?.copyWith(
             fontWeight: FontWeight.w300
           )
         )

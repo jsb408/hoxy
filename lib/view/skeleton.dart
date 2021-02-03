@@ -11,8 +11,8 @@ class Skeleton extends StatefulWidget {
 }
 
 class _SkeletonState extends State<Skeleton> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation gradientPosition;
+  late AnimationController _controller;
+  late Animation gradientPosition;
 
   @override
   void initState() {

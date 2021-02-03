@@ -2,13 +2,12 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hoxy/model/post.dart';
 import 'package:hoxy/view/item_post_list.dart';
 
 import '../constants.dart';
 
 class ItemRelateList extends StatelessWidget {
-  ItemRelateList({@required this.tag});
+  ItemRelateList({required this.tag});
 
   final String tag;
 
@@ -24,7 +23,7 @@ class ItemRelateList extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
         }
 
-        List<QueryDocumentSnapshot> posts = snapshot.data.docs;
+        List<QueryDocumentSnapshot> posts = snapshot.data!.docs;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

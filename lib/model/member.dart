@@ -8,7 +8,7 @@ class Member {
   int birth = 0;
   String city = '';
   String town = '';
-  GeoPoint location;
+  GeoPoint? location;
   int participation = 0;
   int exp = 50;
 

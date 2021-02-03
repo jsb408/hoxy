@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/model/member.dart';
-import 'package:hoxy/model/post.dart';
 import 'package:hoxy/screen/write_post_screen.dart';
 import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/service/location.dart';
@@ -35,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onChanged: (value) {
             setState(() {
               Loading.show();
-              _selectedLocality = value;
+              _selectedLocality = value ?? 0;
             });
           }),
     );
@@ -46,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return FutureBuilder<DocumentSnapshot>(
       future: kFirestore.collection('member').doc(kAuth.currentUser.uid).get(),
       builder: (context, snapshot) {
-        Member user = snapshot.hasData ? Member.from(snapshot.data) : Member();
+        Member user = snapshot.hasData ? Member.from(snapshot.data!) : Member();
         List<List<String>> locationList = [
           [LocationService.cityName, LocationService.townName]
         ];
@@ -80,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     Loading.dismiss();
 
-                    Iterable<QueryDocumentSnapshot> posts = snapshot.data.docs;
+                    Iterable<QueryDocumentSnapshot> posts = snapshot.data!.docs;
                     if (posts.isEmpty) {
                       return Center(child: Text('등록된 글이 없습니다'));
                     }

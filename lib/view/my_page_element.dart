@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MyPageElement extends StatelessWidget {
-  MyPageElement(
-      {@required this.icon, @required this.child, this.isLocation = false});
+  MyPageElement({required this.icon, required this.child, this.isLocation = false});
 
   final IconData icon;
   final Widget child;
@@ -39,9 +38,9 @@ class MyPageElement extends StatelessWidget {
 
 class MyPageLocation extends StatelessWidget {
   MyPageLocation(
-      {@required this.icon,
-        @required this.title,
-        @required this.location,
+      {required this.icon,
+        required this.title,
+        required this.location,
         this.titleColor = Colors.black});
 
   final IconData icon;
@@ -72,7 +71,7 @@ class MyPageLocation extends StatelessWidget {
 }
 
 class MyPageButton extends StatelessWidget {
-  MyPageButton({@required this.icon, @required this.title});
+  MyPageButton({required this.icon, required this.title});
 
   final IconData icon;
   final String title;

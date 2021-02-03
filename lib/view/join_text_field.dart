@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 
 class JoinTextField extends StatelessWidget {
   JoinTextField(
-      {@required this.title,
-      @required this.hintText,
+      {required this.title,
+      required this.hintText,
       this.readOnly = false,
       this.keyboardType = TextInputType.text,
       this.obscureText = false,
-      @required this.validator});
+      required this.validator});
 
   final String title;
   final String hintText;
   final bool readOnly;
   final TextInputType keyboardType;
   final bool obscureText;
-  final Function validator;
+  final String? Function(String?) validator;
 
   @override
   Widget build(BuildContext context) {

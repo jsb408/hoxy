@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 
 class WritePropertyButton extends StatelessWidget {
-  WritePropertyButton({@required this.title, @required this.onTap, this.hasData = false, this.disabled = false});
+  WritePropertyButton({required this.title, required this.onTap, this.hasData = false, this.disabled = false});
 
   final String title;
-  final Function onTap;
+  final void Function() onTap;
   final bool hasData;
   final bool disabled;
 

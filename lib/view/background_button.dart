@@ -3,17 +3,17 @@ import '../constants.dart';
 
 class BackgroundButton extends StatelessWidget {
   const BackgroundButton(
-      {@required this.title,
+      {required this.title,
       this.textStyle,
       this.color = kPrimaryColor,
       this.disabled = false,
-      @required this.onPressed});
+      required this.onPressed});
 
   final String title;
-  final TextStyle textStyle;
+  final TextStyle? textStyle;
   final Color color;
   final bool disabled;
-  final Function onPressed;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {

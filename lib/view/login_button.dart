@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class LoginButton extends StatelessWidget {
   LoginButton(
-      {@required this.title,
-      @required this.color,
-      @required this.onPressed,
+      {required this.title,
+      required this.color,
+      required this.onPressed,
       this.textColor = Colors.black,
       this.borderColor = Colors.transparent});
 
@@ -12,7 +12,7 @@ class LoginButton extends StatelessWidget {
   final Color color;
   final Color textColor;
   final Color borderColor;
-  final Function onPressed;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {

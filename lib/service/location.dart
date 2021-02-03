@@ -5,11 +5,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:io' show Platform;
 
 class LocationService {
-  static Placemark currentAddress;
-  static Position position;
+  static Placemark? currentAddress;
+  static late Position position;
 
-  static get cityName => currentAddress == null ? '동구' : currentAddress.locality;
-  static get townName => currentAddress == null ? '범일동' : currentAddress.thoroughfare;
+  static get cityName => currentAddress?.locality ?? '동구';
+  static get townName => currentAddress?.thoroughfare ?? '범일';
   static get geoPoint => GeoPoint(position.latitude, position.longitude);
 
   static Future<bool> getCurrentLocation() async {

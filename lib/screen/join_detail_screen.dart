@@ -20,7 +20,8 @@ class JoinDetailScreen extends StatefulWidget {
 }
 
 class _JoinDetailScreenState extends State<JoinDetailScreen> {
-  JoinViewModel _viewModel;
+  late JoinViewModel _viewModel;
+
   TextEditingController _birthTextEditingController = TextEditingController();
   FixedExtentScrollController _birthPickerController = FixedExtentScrollController();
 
@@ -122,8 +123,8 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
 
                                         setState(() {
                                           _viewModel
-                                            ..member.city = LocationService.currentAddress.locality
-                                            ..member.town = LocationService.currentAddress.subLocality
+                                            ..member.city = LocationService.cityName
+                                            ..member.town = LocationService.townName
                                             ..location = LocationService.geoPoint;
                                         });
                                         Loading.dismiss();

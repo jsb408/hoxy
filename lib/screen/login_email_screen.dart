@@ -8,8 +8,8 @@ import 'package:hoxy/view/background_button.dart';
 class LoginEmailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String _email;
-    String _password;
+    String _email = '';
+    String _password = '';
 
     return WillPopScope(
       onWillPop: () {

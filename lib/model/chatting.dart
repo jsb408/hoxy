@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Chatting {
-  Map<String, dynamic> member;
-  DocumentReference post;
+  Map<String, dynamic> member = {};
+  DocumentReference? post;
 
   Chatting();
 

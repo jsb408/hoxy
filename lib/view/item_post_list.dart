@@ -11,7 +11,7 @@ import '../constants.dart';
 import 'grade_button.dart';
 
 class ItemPostList extends StatelessWidget {
-  ItemPostList({@required this.post});
+  ItemPostList({required this.post});
 
   final QueryDocumentSnapshot post;
 
@@ -20,21 +20,21 @@ class ItemPostList extends StatelessWidget {
     Post post = Post.from(this.post);
 
     return FutureBuilder<DocumentSnapshot>(
-      future: post.writer.get(),
+      future: post.writer!.get(),
       builder: (context, writerSnapshot) {
         if (!writerSnapshot.hasData) {
           return Container(height: 120, child: Center(child: CircularProgressIndicator()));
         }
 
-        Member writer = Member.from(writerSnapshot.data);
+        Member writer = Member.from(writerSnapshot.data!);
         return FutureBuilder<DocumentSnapshot>(
-          future: post.chat.get(),
+          future: post.chat!.get(),
           builder: (context, chatSnapshot) {
             if (!chatSnapshot.hasData) {
               return Container(height: 120, child: Center(child: CircularProgressIndicator()));
             }
 
-            Chatting chatting = Chatting.from(chatSnapshot.data);
+            Chatting chatting = Chatting.from(chatSnapshot.data!);
             return GestureDetector(
               child: Column(
                 children: [

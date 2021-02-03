@@ -24,7 +24,7 @@ class MyPageScreen extends StatelessWidget {
             return Center(child: CircularProgressIndicator());
           }
 
-          Member user = Member.from(snapshot.data);
+          Member user = Member.from(snapshot.data!);
           return Column(
             children: [
               Container(

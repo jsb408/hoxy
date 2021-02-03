@@ -16,7 +16,7 @@ class JoinViewModel extends Member {
   String get formattedPhone => '+82 ${member.phone.substring(1)}';
   bool get isComplete => member.birth > 0 && member.city.isNotEmpty && member.town.isNotEmpty;
 
-  String checkEmail(String email) {
+  String? checkEmail(String email) {
     member.email = email;
 
     if (email.isEmpty)
@@ -27,7 +27,7 @@ class JoinViewModel extends Member {
       return null;
   }
 
-  String checkPassword(String password) {
+  String? checkPassword(String password) {
     this.password = password;
 
     if (password.isEmpty)
@@ -38,7 +38,7 @@ class JoinViewModel extends Member {
       return null;
   }
 
-  String checkConfirm(String confirm) {
+  String? checkConfirm(String confirm) {
     if (confirm.isEmpty)
       return '비밀번호를 입력해주세요';
     else if (confirm != password)
@@ -47,7 +47,7 @@ class JoinViewModel extends Member {
       return null;
   }
 
-  String checkPhone(String phone) {
+  String? checkPhone(String phone) {
     member.phone = phone;
 
     if (phone.isEmpty)
@@ -58,7 +58,7 @@ class JoinViewModel extends Member {
       return null;
   }
 
-  Future<String> checkDuplicate() async {
+  Future<String?> checkDuplicate() async {
     QuerySnapshot phone = await kFirestore.collection('member').where('phone', isEqualTo: member.phone).get();
     QuerySnapshot email = await kFirestore.collection('member').where('email', isEqualTo: member.email).get();
 

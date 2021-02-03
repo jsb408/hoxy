@@ -4,19 +4,19 @@ class Post {
   String id = '';
   String title = '';
   String content = '';
-  DocumentReference writer;
+  DocumentReference? writer;
   int headcount = 0;
   List<String> tag = [];
   DateTime date = DateTime.now();
-  String emoji;
-  int communication;
-  DateTime start;
+  String emoji = '😀';
+  int communication = 9;
+  DateTime start = DateTime.now();
   int duration = 0;
   String city = '';
   String town = '';
-  GeoPoint location;
+  GeoPoint? location;
   int view = 0;
-  DocumentReference chat;
+  DocumentReference? chat;
 
   Post();
 

@@ -4,9 +4,9 @@ import 'package:hoxy/constants.dart';
 import 'dart:io' show Platform;
 
 class BottomButton extends StatelessWidget {
-  BottomButton({@required this.onTap, @required this.buttonTitle, @required this.disabled});
+  BottomButton({required this.onTap, required this.buttonTitle, required this.disabled});
 
-  final Function onTap;
+  final void Function() onTap;
   final String buttonTitle;
   final bool disabled;
 

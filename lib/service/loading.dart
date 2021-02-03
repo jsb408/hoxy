@@ -1,7 +1,7 @@
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 class Loading {
-  static show({String status}) {
+  static show({String? status}) {
     EasyLoading.show(status: status);
   }
 

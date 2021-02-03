@@ -30,7 +30,7 @@ class PostViewModel {
       DocumentReference post = await kFirestore.collection('post').add(this.post.toMap());
       DocumentReference chatting = await kFirestore.collection('chatting').add({
         'post': post,
-        'member': { nickname: this.post.writer.id }
+        'member': { nickname: this.post.writer!.id }
       });
 
       await post.update({'chat': chatting});
@@ -54,10 +54,10 @@ class PostViewModel {
   }
 
   List<Post> filterPosts(List<QueryDocumentSnapshot> docs, GeoPoint location) {
-    final posts = docs.map((e) => Post.from(e)).toList();
+    final posts = docs.map((e) => Post.from(e));
 
     return posts.where((element) => Geolocator.distanceBetween(
         location.latitude, location.longitude,
-        element.location.latitude, element.location.longitude) < 5000);
+        element.location!.latitude, element.location!.longitude) < 5000).toList();
   }
 }

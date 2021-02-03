@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 
 class GradeButton extends StatelessWidget {
-  GradeButton({@required this.birth, this.fontSize = 8});
+  GradeButton({required this.birth, this.fontSize = 8});
 
   final int birth;
   final double fontSize;

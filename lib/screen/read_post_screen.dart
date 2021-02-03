@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
@@ -16,7 +15,7 @@ import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
 
 class ReadPostScreen extends StatelessWidget {
-  ReadPostScreen({@required this.post, @required this.writer, @required this.chatting});
+  ReadPostScreen({required this.post, required this.writer, required this.chatting});
 
   final Post post;
   final Member writer;
@@ -37,7 +36,7 @@ class ReadPostScreen extends StatelessWidget {
 
   void deletePost(BuildContext context) {
     Loading.show();
-    post.chat
+    post.chat!
         .delete()
         .whenComplete(() => kFirestore.collection('post').doc(post.id).delete().whenComplete(() {
               Navigator.pop(context);

@@ -62,7 +62,7 @@ class _JoinScreenState extends State<JoinScreen> {
                             keyboardType: TextInputType.emailAddress,
                             hintText: '양식에 맞게 입력해주세요',
                             validator: (value) {
-                              return viewModel.checkEmail(value);
+                              return viewModel.checkEmail(value ?? '');
                             },
                           ),
                           JoinTextField(
@@ -71,7 +71,7 @@ class _JoinScreenState extends State<JoinScreen> {
                             hintText: '영문/숫자/기호를 모두 포함한 8자리 이상 입력',
                             obscureText: true,
                             validator: (value) {
-                              return viewModel.checkPassword(value);
+                              return viewModel.checkPassword(value ?? '');
                             },
                           ),
                           JoinTextField(
@@ -80,7 +80,7 @@ class _JoinScreenState extends State<JoinScreen> {
                             hintText: '입력하신 비밀번호를 다시 한번 입력 해주세요.',
                             obscureText: true,
                             validator: (value) {
-                              return viewModel.checkConfirm(value);
+                              return viewModel.checkConfirm(value ?? '');
                             },
                           ),
                           Container(
@@ -103,17 +103,17 @@ class _JoinScreenState extends State<JoinScreen> {
                                         buttonText: '인증하기',
                                         disabled: _verificationId.isNotEmpty || _isComplete,
                                         validator: (value) {
-                                          return viewModel.checkPhone(value);
+                                          return viewModel.checkPhone(value ?? '');
                                         },
                                         onPressed: () async {
                                           Loading.show();
 
-                                          if (!_formKey.currentState.validate()) {
+                                          if (!_formKey.currentState!.validate()) {
                                             Loading.dismiss();
                                             return;
                                           }
 
-                                          String duplicate = await viewModel.checkDuplicate();
+                                          String? duplicate = await viewModel.checkDuplicate();
 
                                           if (duplicate != null) {
                                             Loading.showError(duplicate);
@@ -151,14 +151,14 @@ class _JoinScreenState extends State<JoinScreen> {
                                           hintText: '인증번호 입력',
                                           buttonText: '확인',
                                           validator: (value) {
-                                            viewModel.certNumber = value;
+                                            viewModel.certNumber = value ?? '';
                                             return null;
                                           },
                                           onPressed: () async {
                                             Loading.show();
-                                            if (_formKey.currentState.validate()) {
+                                            if (_formKey.currentState!.validate()) {
                                               try {
-                                                PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
+                                                AuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
                                                     verificationId: _verificationId, smsCode: viewModel.certNumber);
                                                 await kAuth.signInWithCredential(phoneAuthCredential);
 

@@ -15,16 +15,16 @@ enum Property { LOCATION, HEADCOUNT, COMMUNICATE, DURATION }
 
 class WritePostScreen extends StatefulWidget {
   WritePostScreen(
-      {@required this.user,
+      {required this.user,
       this.selectedTown,
       this.locationList,
       this.originalPost,
-      this.nickname});
+      this.nickname = ''});
 
   final Member user;
-  final int selectedTown;
-  final List<List<String>> locationList;
-  final Post originalPost;
+  final int? selectedTown;
+  final List<List<String>>? locationList;
+  final Post? originalPost;
   final String nickname;
 
   @override
@@ -34,27 +34,26 @@ class WritePostScreen extends StatefulWidget {
 class _WritePostScreenState extends State<WritePostScreen> {
   PostViewModel _viewModel = PostViewModel();
 
-  Member _user;
-  Post _originalPost;
+  late Member _user;
+  Post? _originalPost;
 
-  List<List<String>> _locationList;
-  get _townList => _locationList.map((e) => e.last).toList();
+  List<List<String>>? _locationList;
+  get _townList => _locationList?.map((e) => e.last).toList();
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _contentController = TextEditingController();
   TextEditingController _tagController = TextEditingController();
 
-  FixedExtentScrollController _locationController;
+  late FixedExtentScrollController _locationController;
   FixedExtentScrollController _headCountController = FixedExtentScrollController();
   FixedExtentScrollController _communicationController = FixedExtentScrollController();
   FixedExtentScrollController _durationController = FixedExtentScrollController();
 
-  _WritePostScreenState(int initialLocation) {
-    _locationController = FixedExtentScrollController(initialItem: _locationList == null ? 0 : initialLocation);
+  _WritePostScreenState(int? initialLocation) {
+    _locationController = FixedExtentScrollController(initialItem: initialLocation ?? 0);
   }
 
-  postPicker(FixedExtentScrollController controller, List<String> children,
-      Property target) {
+  postPicker(FixedExtentScrollController controller, List<String> children, Property target) {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
@@ -80,7 +79,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                       case Property.LOCATION:
                         _locationController = FixedExtentScrollController(initialItem: index);
                         _viewModel
-                          ..location = _locationList[index]
+                          ..location = _locationList![index]
                           ..geoPoint = index == 0 ? LocationService.geoPoint : _user.location;
 
                         break;
@@ -124,20 +123,20 @@ class _WritePostScreenState extends State<WritePostScreen> {
 
       _viewModel
         ..post.writer = kFirestore.collection('member').doc(_user.uid)
-        ..location = _locationList[widget.selectedTown]
+        ..location = _locationList![widget.selectedTown!]
         ..geoPoint = widget.selectedTown == 0 ? LocationService.geoPoint : _user.location;
     } else {
       _viewModel
-        ..post = _originalPost
+        ..post = _originalPost!
         ..nickname = widget.nickname;
 
-      _titleController.text = _originalPost.title;
-      _contentController.text = _originalPost.content;
-      _tagController.text = _originalPost.tag.sublist(1).join(" ");
+      _titleController.text = _originalPost!.title;
+      _contentController.text = _originalPost!.content;
+      _tagController.text = _originalPost!.tag.sublist(1).join(" ");
 
-      _headCountController = FixedExtentScrollController(initialItem: _originalPost.headcount - 2);
-      _communicationController = FixedExtentScrollController(initialItem: _originalPost.communication);
-      _durationController = FixedExtentScrollController(initialItem: _originalPost.duration ~/ 30 - 1);
+      _headCountController = FixedExtentScrollController(initialItem: _originalPost!.headcount - 2);
+      _communicationController = FixedExtentScrollController(initialItem: _originalPost!.communication);
+      _durationController = FixedExtentScrollController(initialItem: _originalPost!.duration ~/ 30 - 1);
     }
   }
 
