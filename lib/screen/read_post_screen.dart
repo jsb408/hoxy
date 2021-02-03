@@ -229,8 +229,8 @@ class ReadPostScreen extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(10),
                                         child: LinearProgressIndicator(
                                           minHeight: 8,
-                                          backgroundColor: kProgressBackgroundColor,
-                                          valueColor: AlwaysStoppedAnimation<Color>(kProgressValueColor),
+                                          backgroundColor: kExpBackgroundColor,
+                                          valueColor: AlwaysStoppedAnimation<Color>(kExpValueColor),
                                           value: writer.exp / 100,
                                         ),
                                       ),

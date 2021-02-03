@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 
 class BackgroundButton extends StatelessWidget {
-  const BackgroundButton({@required this.title, this.color = kPrimaryColor, this.disabled = false, @required this.onPressed});
+  const BackgroundButton(
+      {@required this.title,
+      this.textStyle,
+      this.color = kPrimaryColor,
+      this.disabled = false,
+      @required this.onPressed});
 
   final String title;
+  final TextStyle textStyle;
   final Color color;
   final bool disabled;
   final Function onPressed;
@@ -12,7 +18,10 @@ class BackgroundButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlatButton(
-      child: Text(title),
+      child: Text(
+        title,
+        style: textStyle,
+      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5),
       ),

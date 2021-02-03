@@ -12,7 +12,8 @@ const kTimeColor = Color(0xFFF5BB4D);
 const kSubContentColor = Color(0xFF89929A);
 const kTagColor = Color(0xFF0B8CFF);
 const kProgressBackgroundColor = Color.fromRGBO(234, 234, 234, 1.0);
-const kProgressValueColor = Color.fromRGBO(77, 244, 96, 1.0);
+const kExpBackgroundColor = Color(0xAC939597);
+const kExpValueColor = Color.fromRGBO(77, 244, 96, 1.0);
 //endregion
 
 //region Firebase
