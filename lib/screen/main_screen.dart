@@ -21,9 +21,9 @@ class _MainScreenState extends State<MainScreen> {
           return Future(() => false);
         },
         child: Center(
-          child: _screens[_selectedIndex],
+            child: _screens[_selectedIndex],
+          ),
         ),
-      ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           canvasColor: kPrimaryColor,

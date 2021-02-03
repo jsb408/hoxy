@@ -13,10 +13,12 @@ import 'grade_button.dart';
 class ItemPostList extends StatelessWidget {
   ItemPostList({@required this.post});
 
-  final Post post;
+  final QueryDocumentSnapshot post;
 
   @override
   Widget build(BuildContext context) {
+    Post post = Post.from(this.post);
+
     return FutureBuilder<DocumentSnapshot>(
       future: post.writer.get(),
       builder: (context, writerSnapshot) {

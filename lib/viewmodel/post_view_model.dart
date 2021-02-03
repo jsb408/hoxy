@@ -44,7 +44,7 @@ class PostViewModel {
 
   Future<bool> updatePost() async {
     try {
-      post.tag.insert(0, kCommunicateLevels[this.post.communication]);
+      post.tag[0] = kCommunicateLevels[this.post.communication];
       await kFirestore.collection('post').doc(post.id).update(this.post.toMap());
       return true;
     } catch (e) {

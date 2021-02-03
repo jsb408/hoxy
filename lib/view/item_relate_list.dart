@@ -24,7 +24,7 @@ class ItemRelateList extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
         }
 
-        List<Post> posts = snapshot.data.docs.map((e) => Post.from(e)).toList();
+        List<QueryDocumentSnapshot> posts = snapshot.data.docs;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

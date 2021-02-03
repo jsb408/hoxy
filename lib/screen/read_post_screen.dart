@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
@@ -36,8 +37,9 @@ class ReadPostScreen extends StatelessWidget {
 
   void deletePost(BuildContext context) {
     Loading.show();
-    post.chat.delete().whenComplete(() =>
-        kFirestore.collection('post').doc(post.id).delete().whenComplete(() {
+    post.chat
+        .delete()
+        .whenComplete(() => kFirestore.collection('post').doc(post.id).delete().whenComplete(() {
               Navigator.pop(context);
               Loading.showSuccess('삭제 성공');
             }).catchError((error) {
@@ -112,206 +114,208 @@ class ReadPostScreen extends StatelessWidget {
         ],
       ),
       body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Text(post.emoji, style: TextStyle(fontSize: 40)),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('예정시간', style: TextStyle(color: Color.fromRGBO(55, 68, 78, 1.0))),
-                                Text(
-                                  '${DateFormat('MM.dd HH시 mm분').format(post.start)}~${DateFormat('HH시 mm분').format(post.start.add(Duration(minutes: post.duration)))} (${NumberFormat('0.#').format(post.duration / 60)}시간)',
-                                  style: TextStyle(fontSize: 14, color: kTimeColor),
-                                ),
-                                SizedBox(height: 6),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                child: Text(post.emoji, style: TextStyle(fontSize: 40)),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    Text('예정시간', style: TextStyle(color: Color.fromRGBO(55, 68, 78, 1.0))),
                                     Text(
-                                      "${post.town} ${timeText(post.date)}",
-                                      style: TextStyle(fontSize: 12, color: kSubContentColor),
+                                      '${DateFormat('MM.dd HH시 mm분').format(post.start)}~${DateFormat('HH시 mm분').format(post.start.add(Duration(minutes: post.duration)))} (${NumberFormat('0.#').format(post.duration / 60)}시간)',
+                                      style: TextStyle(fontSize: 14, color: kTimeColor),
                                     ),
-                                    SizedBox(width: 9),
-                                    Icon(
-                                      Icons.remove_red_eye_outlined,
-                                      size: 12,
-                                      color: kSubContentColor,
+                                    SizedBox(height: 6),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "${post.town} ${timeText(post.date)}",
+                                          style: TextStyle(fontSize: 12, color: kSubContentColor),
+                                        ),
+                                        SizedBox(width: 9),
+                                        Icon(
+                                          Icons.remove_red_eye_outlined,
+                                          size: 12,
+                                          color: kSubContentColor,
+                                        ),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          (post.view).toString(),
+                                          style: TextStyle(fontSize: 12, color: kSubContentColor),
+                                        ),
+                                        SizedBox(width: 12),
+                                        GradeButton(birth: writer.birth),
+                                      ],
                                     ),
-                                    SizedBox(width: 4),
-                                    Text((post.view + 1).toString(),
-                                        style: TextStyle(fontSize: 12, color: kSubContentColor)),
-                                    SizedBox(width: 12),
-                                    GradeButton(birth: writer.birth),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              CircularProgressIndicator(
-                                backgroundColor: kProgressBackgroundColor,
-                                value: chatting.member.length / post.headcount,
                               ),
-                              Text('${chatting.member.length}/${post.headcount}'),
+                              Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  CircularProgressIndicator(
+                                    backgroundColor: kProgressBackgroundColor,
+                                    value: chatting.member.length / post.headcount,
+                                  ),
+                                  Text('${chatting.member.length}/${post.headcount}'),
+                                ],
+                              ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                    divider(),
-                    Container(
-                      padding: EdgeInsets.only(top: 20, right: 25, left: 25, bottom: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ConstrainedBox(
-                            constraints: BoxConstraints(minHeight: 300),
-                            child: Text(post.content, style: TextStyle(fontSize: 20)),
-                          ),
-                          Row(
+                        ),
+                        divider(),
+                        Container(
+                          padding: EdgeInsets.only(top: 20, right: 25, left: 25, bottom: 8),
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(CupertinoIcons.tag),
-                              SizedBox(width: 5),
-                              Expanded(
-                                child: Text(
-                                  '#${post.tag.join(' #')}',
-                                  style: TextStyle(fontSize: 15, color: kTagColor),
-                                ),
+                              ConstrainedBox(
+                                constraints: BoxConstraints(minHeight: 300),
+                                child: Text(post.content, style: TextStyle(fontSize: 20)),
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(CupertinoIcons.tag),
+                                  SizedBox(width: 5),
+                                  Expanded(
+                                    child: Text(
+                                      '#${post.tag.join(' #')}',
+                                      style: TextStyle(fontSize: 15, color: kTagColor),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        divider(),
+                        Container(
+                          padding: EdgeInsets.only(top: 10, right: 15, left: 25, bottom: 10),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          writerName,
+                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                                        ),
+                                        Text(post.town, style: TextStyle(fontSize: 12, color: kDisabledColor)),
+                                      ],
+                                    ),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text('인연지수', style: TextStyle(color: kDisabledColor)),
+                                        Icon(Icons.help_outline, size: 14),
+                                        Container(
+                                          width: 53,
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: LinearProgressIndicator(
+                                              minHeight: 8,
+                                              backgroundColor: kExpBackgroundColor,
+                                              valueColor: AlwaysStoppedAnimation<Color>(kExpValueColor),
+                                              value: writer.exp / 100,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                '총 모임참여 ${writer.participation}회',
+                                style: TextStyle(fontSize: 12, color: kDisabledColor),
+                              ),
+                            ],
+                          ),
+                        ),
+                        divider(),
+                        Padding(
+                          padding: EdgeInsets.only(left: 25, top: 8, right: 15),
+                          child: Text('연관모임'),
+                        ),
+                        //TODO: 연관 글 중복글 안 뜨게 해야함
+                        //TODO: 연관 글에 자기 자신은 안 뜨게 해야함
+                        for (int i = 0; i < 3; i++) ItemRelateList(tag: post.tag[Random().nextInt(post.tag.length)]),
+                      ],
                     ),
-                    divider(),
-                    Container(
-                      padding: EdgeInsets.only(top: 10, right: 15, left: 25, bottom: 10),
+                  ),
+                ),
+              ),
+              Container(
+                //height: 110,
+                child: Column(
+                  children: [
+                    Divider(
+                      height: 1,
+                      thickness: 2,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 16, right: 16, bottom: Platform.isIOS ? 48 : 16),
                       child: Row(
                         children: [
                           Expanded(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      writerName,
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                                    ),
-                                    Text(post.town, style: TextStyle(fontSize: 12, color: kDisabledColor)),
-                                  ],
+                                Text(
+                                  '${DateFormat('M월 dd일 HH시').format(post.start)} 예정',
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(26, 59, 196, 1.0),
+                                  ),
                                 ),
                                 Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text('인연지수', style: TextStyle(color: kDisabledColor)),
-                                    Icon(Icons.help_outline, size: 14),
-                                    Container(
-                                      width: 53,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: LinearProgressIndicator(
-                                          minHeight: 8,
-                                          backgroundColor: kExpBackgroundColor,
-                                          valueColor: AlwaysStoppedAnimation<Color>(kExpValueColor),
-                                          value: writer.exp / 100,
-                                        ),
-                                      ),
+                                    Text(
+                                      post.town,
+                                      style: TextStyle(fontSize: 14, color: kDisabledColor),
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      '$writerName님의 모임',
+                                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                                     ),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          Text(
-                            '총 모임참여 ${writer.participation}회',
-                            style: TextStyle(fontSize: 12, color: kDisabledColor),
+                          Padding(
+                            padding: EdgeInsets.only(left: 8),
+                            child: SizedBox(
+                                width: 142, height: 44, child: BackgroundButton(title: '신청하기', onPressed: () {})),
                           ),
                         ],
                       ),
                     ),
-                    divider(),
-                    Padding(
-                      padding: EdgeInsets.only(left: 25, top: 8, right: 15),
-                      child: Text('연관모임'),
-                    ),
-                    //TODO: 연관 글 중복글 안 뜨게 해야함
-                    //TODO: 연관 글에 자기 자신은 안 뜨게 해야함
-                    for (int i = 0; i < 3; i++) ItemRelateList(tag: post.tag[Random().nextInt(post.tag.length)]),
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-          Container(
-            //height: 110,
-            child: Column(
-              children: [
-                Divider(
-                  height: 1,
-                  thickness: 2,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 16, right: 16, bottom: Platform.isIOS ? 48 : 16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '${DateFormat('M월 dd일 HH시').format(post.start)} 예정',
-                              style: TextStyle(
-                                color: Color.fromRGBO(26, 59, 196, 1.0),
-                              ),
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  post.town,
-                                  style: TextStyle(fontSize: 14, color: kDisabledColor),
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  '$writerName님의 모임',
-                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 8),
-                        child:
-                            SizedBox(width: 142, height: 44, child: BackgroundButton(title: '신청하기', onPressed: () {})),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

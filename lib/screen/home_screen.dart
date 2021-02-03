@@ -80,15 +80,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     Loading.dismiss();
 
-                    Iterable<dynamic> posts = snapshot.data.docs;
+                    Iterable<QueryDocumentSnapshot> posts = snapshot.data.docs;
                     if (posts.isEmpty) {
                       return Center(child: Text('등록된 글이 없습니다'));
                     }
 
-                    posts = posts.map((e) => Post.from(e)).where((element) =>
+                    posts = posts.where((element) =>
                         LocationService.distanceBetween(
                         _selectedLocality == 0 ? LocationService.geoPoint : user.location,
-                        element.location) < 5000
+                        element.get('location')) < 5000
                     );
 
                     List<ItemPostList> postList = [for(var post in posts) ItemPostList(post: post)];

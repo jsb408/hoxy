@@ -155,8 +155,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                        border:
-                            Border.all(color: kBackgroundColor, width: 0.5)),
+                        border: Border.all(color: kBackgroundColor, width: 0.5)),
                     child: TextField(
                       controller: _titleController,
                       decoration: InputDecoration(
