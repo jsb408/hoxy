@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'dart:io' show Platform;

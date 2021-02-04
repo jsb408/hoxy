@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hoxy/constants.dart';
-import 'package:hoxy/screen/main_screen.dart';
+import 'package:hoxy/screen/location_screen.dart';
 import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/service/location.dart';
 import 'package:hoxy/view/background_button.dart';
@@ -224,8 +224,7 @@ class _JoinDetailScreenState extends State<JoinDetailScreen> {
                 }
 
                 Loading.dismiss();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => MainScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LocationScreen()));
               },
             ),
           ],

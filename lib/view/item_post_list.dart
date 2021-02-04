@@ -60,7 +60,7 @@ class ItemPostList extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                      '${DateFormat('MM.dd HH시 mm분').format(post.start)}~${DateFormat('HH시 mm분').format(post.start.add(Duration(minutes: post.duration)))} (${NumberFormat('0.#').format(post.duration / 60)}시간)',
+                                      '${DateFormat('MM.dd HH시 mm분').format(post.start)}~${DateFormat('HH시 mm분').format(post.start?.add(Duration(minutes: post.duration)))} (${NumberFormat('0.#').format(post.duration / 60)}시간)',
                                       style: TextStyle(fontSize: 11, color: kTimeColor)),
                                   SizedBox(width: 12),
                                   GradeButton(birth: writer.birth),

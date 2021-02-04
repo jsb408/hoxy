@@ -205,11 +205,11 @@ class _WritePostScreenState extends State<WritePostScreen> {
                     ],
                   ),
                   WritePropertyButton(
-                    title: _viewModel.post.communication == null
+                    title: _viewModel.post.communication == 9
                         ? '소통레벨'
                         : _viewModel.communicationLevel,
                     onTap: () {
-                      if (_viewModel.post.communication == null)
+                      if (_viewModel.post.communication == 9)
                         setState(() {
                           _viewModel.post
                             ..emoji =
@@ -219,7 +219,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                       postPicker(_communicationController, kCommunicateLevels,
                           Property.COMMUNICATE);
                     },
-                    hasData: _viewModel.post.communication != null,
+                    hasData: _viewModel.post.communication != 9,
                   ),
                   Row(
                     children: [

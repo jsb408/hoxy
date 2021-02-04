@@ -53,7 +53,8 @@ class ReadPostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String writerName = chatting.member.keys.toList()[chatting.member.values.toList().indexOf(writer.uid)];
+    //final String writerName = chatting.member.keys.toList()[chatting.member.values.toList().indexOf(writer.uid)];
+    final String writerName = chatting.member[writer.uid];
 
     kFirestore.collection('post').doc(post.id).update({'view': post.view + 1});
 
@@ -134,7 +135,7 @@ class ReadPostScreen extends StatelessWidget {
                                   children: [
                                     Text('예정시간', style: TextStyle(color: Color.fromRGBO(55, 68, 78, 1.0))),
                                     Text(
-                                      '${DateFormat('MM.dd HH시 mm분').format(post.start)}~${DateFormat('HH시 mm분').format(post.start.add(Duration(minutes: post.duration)))} (${NumberFormat('0.#').format(post.duration / 60)}시간)',
+                                      '${DateFormat('MM.dd HH시 mm분').format(post.start)}~${DateFormat('HH시 mm분').format(post.start?.add(Duration(minutes: post.duration)))} (${NumberFormat('0.#').format(post.duration / 60)}시간)',
                                       style: TextStyle(fontSize: 14, color: kTimeColor),
                                     ),
                                     SizedBox(height: 6),

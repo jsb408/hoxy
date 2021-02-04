@@ -37,7 +37,6 @@ class LocationService {
     switch (permission) {
       case LocationPermission.deniedForever:
         throw Exception('Location Permission is denied forever.');
-        break;
       default:
         permission = await Geolocator.requestPermission();
         if (permission != LocationPermission.whileInUse && permission != LocationPermission.always)

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/model/member.dart';
+import 'package:hoxy/screen/login_screen.dart';
 import 'package:hoxy/service/location.dart';
 import 'package:hoxy/view/background_button.dart';
 import 'package:hoxy/view/grade_button.dart';
@@ -50,7 +51,8 @@ class MyPageScreen extends StatelessWidget {
                                 textStyle: TextStyle(fontSize: 12, color: Colors.white),
                                 color: kDisabledColor,
                                 onPressed: () {
-
+                                  kAuth.signOut();
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
                                 },
                               ),
                             ),

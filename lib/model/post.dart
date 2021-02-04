@@ -10,7 +10,7 @@ class Post {
   DateTime date = DateTime.now();
   String emoji = '😀';
   int communication = 9;
-  DateTime start = DateTime.now();
+  DateTime? start;
   int duration = 0;
   String city = '';
   String town = '';
