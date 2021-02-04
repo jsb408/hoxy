@@ -10,7 +10,12 @@ import 'package:hoxy/view/my_page_element.dart';
 
 import '../constants.dart';
 
-class MyPageScreen extends StatelessWidget {
+class MyPageScreen extends StatefulWidget {
+  @override
+  _MyPageScreenState createState() => _MyPageScreenState();
+}
+
+class _MyPageScreenState extends State<MyPageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

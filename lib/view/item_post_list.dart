@@ -117,7 +117,7 @@ class ItemPostList extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ReadPostScreen(post: post, writer: writer, chatting: chatting)));
+                        builder: (context) => ReadPostScreen(postSnapshot: this.post, writer: writer, chatting: chatting)));
               },
             );
           },

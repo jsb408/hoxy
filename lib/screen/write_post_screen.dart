@@ -23,7 +23,7 @@ class WritePostScreen extends StatefulWidget {
 
   final Member user;
   final int? selectedTown;
-  final List<List<String>>? locationList;
+  final List<String>? locationList;
   final Post? originalPost;
   final String nickname;
 
@@ -37,8 +37,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
   late Member _user;
   Post? _originalPost;
 
-  List<List<String>>? _locationList;
-  get _townList => _locationList?.map((e) => e.last).toList();
+  List<String>? _locationList;
 
   TextEditingController _titleController = TextEditingController();
   TextEditingController _contentController = TextEditingController();
@@ -79,7 +78,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                       case Property.LOCATION:
                         _locationController = FixedExtentScrollController(initialItem: index);
                         _viewModel
-                          ..location = _locationList![index]
+                        ..post.town = _locationList![index]
                           ..geoPoint = index == 0 ? LocationService.geoPoint : _user.location;
 
                         break;
@@ -123,7 +122,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
 
       _viewModel
         ..post.writer = kFirestore.collection('member').doc(_user.uid)
-        ..location = _locationList![widget.selectedTown!]
+        ..post.town = _locationList![widget.selectedTown!]
         ..geoPoint = widget.selectedTown == 0 ? LocationService.geoPoint : _user.location;
     } else {
       _viewModel
@@ -180,7 +179,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                         child: WritePropertyButton(
                           title: _viewModel.post.town,
                           onTap: () {
-                            postPicker(_locationController, _townList, Property.LOCATION);
+                            postPicker(_locationController, _locationList!, Property.LOCATION);
                           },
                           hasData: true,
                           disabled: _originalPost != null,

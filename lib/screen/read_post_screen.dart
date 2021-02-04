@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
@@ -15,11 +16,13 @@ import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
 
 class ReadPostScreen extends StatelessWidget {
-  ReadPostScreen({required this.post, required this.writer, required this.chatting});
+  ReadPostScreen({required this.postSnapshot, required this.writer, required this.chatting});
 
-  final Post post;
+  final QueryDocumentSnapshot postSnapshot;
   final Member writer;
   final Chatting chatting;
+
+  Post get post => Post.from(postSnapshot);
 
   Divider divider() {
     return Divider(

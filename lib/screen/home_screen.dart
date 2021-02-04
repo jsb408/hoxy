@@ -46,11 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
       future: kFirestore.collection('member').doc(kAuth.currentUser.uid).get(),
       builder: (context, snapshot) {
         Member user = snapshot.hasData ? Member.from(snapshot.data!) : Member();
-        List<List<String>> locationList = [
-          [LocationService.cityName, LocationService.townName]
-        ];
+        List<String> locationList = [LocationService.townName];
         if (LocationService.cityName != user.city || LocationService.townName != user.town)
-          locationList.add([user.city, user.town]);
+          locationList.add(user.town);
 
         return Scaffold(
           appBar: AppBar(

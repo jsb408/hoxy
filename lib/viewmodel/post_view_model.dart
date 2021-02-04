@@ -13,10 +13,6 @@ class PostViewModel {
   String nickname = "${kNick[Random().nextInt(kNick.length)]} ${kName[Random().nextInt(kName.length)]}";
 
   set geoPoint(GeoPoint geoPoint) => post.location = geoPoint;
-  set location(List<String> location) {
-    post.city = location.first;
-    post.town = location.last;
-  }
 
   get communicationLevel => kCommunicateLevels[post.communication];
   get formattedStartTime => DateFormat('MM월 dd일 HH:mm').format(post.start);

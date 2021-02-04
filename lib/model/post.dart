@@ -12,7 +12,6 @@ class Post {
   int communication = 9;
   DateTime? start;
   int duration = 0;
-  String city = '';
   String town = '';
   GeoPoint? location;
   int view = 0;
@@ -32,7 +31,6 @@ class Post {
     this.communication = doc['communication'];
     this.start = (doc['start'] as Timestamp).toDate();
     this.duration = doc['duration'];
-    this.city = doc['city'];
     this.town = doc['town'];
     this.location = doc['location'];
     this.view = doc['view'];
@@ -50,7 +48,6 @@ class Post {
     'communication' : this.communication,
     'start' : this.start,
     'duration' : this.duration,
-    'city' : this.city,
     'town' : this.town,
     'location' : this.location,
     'view' : this.view,
