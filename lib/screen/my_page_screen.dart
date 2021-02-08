@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/screen/login_screen.dart';
 import 'package:hoxy/service/location.dart';
+import 'package:hoxy/view/alert_platform_dialog.dart';
 import 'package:hoxy/view/background_button.dart';
 import 'package:hoxy/view/grade_button.dart';
 import 'package:hoxy/view/my_page_element.dart';
+import 'package:hoxy/service/loading.dart';
 
 import '../constants.dart';
 
@@ -16,6 +18,9 @@ class MyPageScreen extends StatefulWidget {
 }
 
 class _MyPageScreenState extends State<MyPageScreen> {
+  String _currentTownName = LocationService.townName;
+  late String _myTownName;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +36,8 @@ class _MyPageScreenState extends State<MyPageScreen> {
           }
 
           Member user = Member.from(snapshot.data!);
+          _myTownName = user.town;
+
           return Column(
             children: [
               Container(
@@ -112,12 +119,49 @@ class _MyPageScreenState extends State<MyPageScreen> {
                       icon: CupertinoIcons.map_pin_ellipse,
                       title: '현재 동네',
                       titleColor: Color(0xFFF58651),
-                      location: LocationService.townName,
+                      location: _currentTownName,
+                      onTap: () async {
+                        Loading.show();
+                        if (await LocationService.getCurrentLocation()) {
+                          setState(() {
+                            print(LocationService.townName);
+                            _currentTownName = LocationService.townName;
+                          });
+                          Loading.showSuccess('위치 변경 완료');
+                        } else
+                          Loading.showError('위치 읽기 실패');
+                      },
                     ),
                     MyPageLocation(
                       icon: Icons.home_outlined,
                       title: '우리 동네',
-                      location: user.town,
+                      location: _myTownName,
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertPlatformDialog(
+                              title: Text('동네 변경'),
+                              content: Text('우리 동네를 현재 동네로 변경하시겠습니까?'),
+                              children: [
+                                AlertPlatformDialogButton(child: Text('아니오'), onPressed: () {}),
+                                AlertPlatformDialogButton(child: Text('네'), onPressed: () async {
+                                  Loading.show();
+                                  await kFirestore.collection('member').doc(kAuth.currentUser.uid).update({
+                                    'city' : LocationService.cityName,
+                                    'town' : LocationService.townName,
+                                    'location' : LocationService.geoPoint
+                                  }).catchError((error) {
+                                    print(error);
+                                    Loading.showError('변경 실패');
+                                  });
+                                  Loading.showSuccess('변경되었습니다');
+                                })
+                              ],
+                            );
+                          }
+                        );
+                      },
                     ),
                   ],
                 ),

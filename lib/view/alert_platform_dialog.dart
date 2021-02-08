@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 
+import 'package:hoxy/constants.dart';
+
 class AlertPlatformDialog extends StatelessWidget {
   const AlertPlatformDialog({required this.title, required this.content, required this.children});
 
@@ -20,6 +22,7 @@ class AlertPlatformDialog extends StatelessWidget {
                 CupertinoDialogAction(
                   child: child.child,
                   onPressed: () {
+                    Navigator.pop(context);
                     child.onPressed();
                   },
                 ),
@@ -32,7 +35,14 @@ class AlertPlatformDialog extends StatelessWidget {
               for (AlertPlatformDialogButton child in children)
                 TextButton(
                   child: child.child,
-                  onPressed: child.onPressed,
+                  style: ButtonStyle(
+                    textStyle: MaterialStateProperty.all(TextStyle(color: kAccentColor)),
+                    overlayColor: MaterialStateProperty.all(Color(0x44AAAAAA)),
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    child.onPressed();
+                  },
                 ),
             ],
           );

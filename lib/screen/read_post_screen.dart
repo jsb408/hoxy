@@ -59,14 +59,11 @@ class ReadPostScreen extends StatelessWidget {
           children: [
             AlertPlatformDialogButton(
               child: Text('아니오'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () { },
             ),
             AlertPlatformDialogButton(
               child: Text('예'),
               onPressed: () {
-                if(Platform.isIOS) Navigator.pop(context);
                 deletePost(context);
               },
             ),
@@ -379,15 +376,11 @@ class ReadPostScreen extends StatelessWidget {
                                                       children: [
                                                         AlertPlatformDialogButton(
                                                           child: Text('아니오'),
-                                                          onPressed: () {
-                                                            Navigator.pop(context);
-                                                          },
+                                                          onPressed: () { },
                                                         ),
                                                         AlertPlatformDialogButton(
                                                           child: Text('예'),
-                                                          onPressed: () {
-                                                            Navigator.pop(context);
-                                                          },
+                                                          onPressed: () { },
                                                         ),
                                                       ],
                                                     );

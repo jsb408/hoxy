@@ -15,7 +15,7 @@ class PostViewModel {
   set geoPoint(GeoPoint geoPoint) => post.location = geoPoint;
 
   get communicationLevel => kCommunicateLevels[post.communication];
-  get formattedStartTime => DateFormat('MM월 dd일 HH:mm').format(post.start);
+  get formattedStartTime => DateFormat('MM월 dd일 HH:mm').format(post.start ?? DateTime.now());
   get isIncomplete => post.title.isNotEmpty && post.content.isNotEmpty && post.headcount > 0 && post.start != null;
 
   Future<bool> createPost() async {
