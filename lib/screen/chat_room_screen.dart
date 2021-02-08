@@ -41,6 +41,15 @@ class ChatRoomScreen extends StatelessWidget {
                 return Scaffold(
                   appBar: AppBar(
                     title: Text('${chatting.member[post.writer!.id]}님의 모임'),
+                    leading: IconButton(
+                      icon: Icon(Icons.arrow_back),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                  endDrawer: Drawer(
+                    child: Container(),
                   ),
                   body: StreamBuilder<QuerySnapshot>(
                     stream: kFirestore.collection('member').snapshots(),
@@ -127,23 +136,25 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       padding: EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        children: <Widget>[
-          if (!isMe)
-            Text(
-              nickname,
-              style: TextStyle(
-                fontSize: 12.0,
-                color: Colors.black,
-              ),
-            ),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              if (!isMe) Text(sender.emoji, style: TextStyle(fontSize: 30)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (!isMe) Text(sender.emoji, style: TextStyle(fontSize: 30)),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              if (!isMe)
+                Text(
+                  nickname,
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: Colors.black,
+                  ),
+                ),
               Material(
                 borderRadius: isMe
                     ? BorderRadius.only(

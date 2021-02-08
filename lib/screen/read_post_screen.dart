@@ -7,6 +7,7 @@ import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
+import 'package:hoxy/nickname.dart';
 import 'package:hoxy/screen/write_post_screen.dart';
 import 'package:hoxy/view/alert_platform_dialog.dart';
 import 'package:hoxy/service/loading.dart';
@@ -21,8 +22,8 @@ class ReadPostScreen extends StatelessWidget {
 
   final String postId;
 
-  Post post = Post();
-  Member writer = Member();
+  late Post post = Post();
+  late Member writer = Member();
 
   Divider divider() {
     return Divider(
@@ -380,7 +381,17 @@ class ReadPostScreen extends StatelessWidget {
                                                         ),
                                                         AlertPlatformDialogButton(
                                                           child: Text('예'),
-                                                          onPressed: () { },
+                                                          onPressed: () async {
+                                                            Loading.show();
+                                                            chatting.member[kAuth.currentUser.uid] = randomNickname;
+                                                            await kFirestore.collection('chatting').doc(chatting.id).update({
+                                                              'member' : chatting.member,
+                                                            }).catchError((error) {
+                                                              print(error);
+                                                              Loading.showError('신청 오류');
+                                                            });
+                                                            Loading.showSuccess('신청이 완료되었습니다');
+                                                          },
                                                         ),
                                                       ],
                                                     );
