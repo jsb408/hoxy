@@ -37,19 +37,6 @@ class LoginButton extends StatelessWidget {
               )),
           onPressed: onPressed,
         ),
-/*      FlatButton(
-        height: 48,
-        minWidth: 286,
-        child: Text(title),
-        color: color,
-        textColor: textColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-            color: borderColor,
-            width: 1,
-          ),
-        ),*/
       ),
     );
   }

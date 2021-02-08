@@ -36,7 +36,7 @@ class AlertPlatformDialog extends StatelessWidget {
                 TextButton(
                   child: child.child,
                   style: ButtonStyle(
-                    textStyle: MaterialStateProperty.all(TextStyle(color: kAccentColor)),
+                    textStyle: MaterialStateProperty.all(TextStyle(color: kPrimaryColor)),
                     overlayColor: MaterialStateProperty.all(Color(0x44AAAAAA)),
                   ),
                   onPressed: () {

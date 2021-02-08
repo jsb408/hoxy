@@ -1,3 +1,5 @@
+import 'dart:math';
+
 List<String> kNick = [
   "하얀",
   "파란",
@@ -113,3 +115,5 @@ List<String> kName = [
   "여치",
   "앵무새",
 ];
+
+String get randomNickname => '${kNick[Random().nextInt(kNick.length)]} ${kName[Random().nextInt(kName.length)]}';

@@ -85,7 +85,7 @@ class ItemChattingList extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoomScreen(chattingSnapshot: this.chatting, chatSnapshot: snapshot.data!, postSnapshot: postSnapshot)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoomScreen(chattingId: this.chatting.id)));
               },
             );
           },

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hoxy/constants.dart';
@@ -10,7 +8,7 @@ import '../nickname.dart';
 
 class PostViewModel {
   Post post = Post();
-  String nickname = "${kNick[Random().nextInt(kNick.length)]} ${kName[Random().nextInt(kName.length)]}";
+  String nickname = randomNickname;
 
   set geoPoint(GeoPoint geoPoint) => post.location = geoPoint;
 
