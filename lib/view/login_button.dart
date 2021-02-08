@@ -18,7 +18,26 @@ class LoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(10),
-      child: FlatButton(
+      child: SizedBox(
+        height: 48,
+        width: 286,
+        child: TextButton(
+          child: Text(title, style: TextStyle(color: textColor)),
+          style: ButtonStyle(
+              overlayColor: MaterialStateProperty.all(Color(0x44AAAAAA)),
+              backgroundColor: MaterialStateProperty.all<Color>(color),
+              shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: borderColor,
+                    width: 1,
+                  ),
+                ),
+              )),
+          onPressed: onPressed,
+        ),
+/*      FlatButton(
         height: 48,
         minWidth: 286,
         child: Text(title),
@@ -30,8 +49,7 @@ class LoginButton extends StatelessWidget {
             color: borderColor,
             width: 1,
           ),
-        ),
-        onPressed: onPressed,
+        ),*/
       ),
     );
   }

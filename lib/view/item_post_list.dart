@@ -28,7 +28,7 @@ class ItemPostList extends StatelessWidget {
 
         Member writer = Member.from(writerSnapshot.data!);
         return FutureBuilder<DocumentSnapshot>(
-          future: post.chat!.get(),
+          future: post.chat?.get(),
           builder: (context, chatSnapshot) {
             if (!chatSnapshot.hasData) {
               return Container(height: 120, child: Center(child: CircularProgressIndicator()));
@@ -114,10 +114,11 @@ class ItemPostList extends StatelessWidget {
                 ],
               ),
               onTap: () {
+                kFirestore.collection('post').doc(post.id).update({ 'view' : post.view + 1});
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ReadPostScreen(postSnapshot: this.post, writer: writer, chatting: chatting)));
+                        builder: (context) => ReadPostScreen(postId: post.id)));
               },
             );
           },

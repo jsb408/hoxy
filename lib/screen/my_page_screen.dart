@@ -49,11 +49,11 @@ class _MyPageScreenState extends State<MyPageScreen> {
                               style: TextStyle(fontSize: 60),
                             ),
                             Container(
-                              width: 55,
-                              height: 22,
+                              width: 42,
+                              height: 24,
                               child: BackgroundButton(
                                 title: '변경',
-                                textStyle: TextStyle(fontSize: 12, color: Colors.white),
+                                textStyle: TextStyle(fontSize: 8, color: Colors.white),
                                 color: kDisabledColor,
                                 onPressed: () {
                                   kAuth.signOut();

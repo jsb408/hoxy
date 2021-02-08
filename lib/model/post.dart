@@ -5,7 +5,7 @@ class Post {
   String title = '';
   String content = '';
   DocumentReference? writer;
-  int headcount = 0;
+  int headcount = 1;
   List<String> tag = [];
   DateTime date = DateTime.now();
   String emoji = '😀';

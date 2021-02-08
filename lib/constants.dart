@@ -7,13 +7,16 @@ const kBackgroundColor = Color(0xFFF2F2F2);
 const kPrimaryColor = Color(0xFFF5DF4D);
 const kAccentColor = Color(0xFF003BFF);
 const kDisabledColor = Color(0xFF818181);
-const kGradeColor = Color(0xFF55CC91);
 const kTimeColor = Color(0xFFF5BB4D);
 const kSubContentColor = Color(0xFF89929A);
 const kTagColor = Color(0xFF0B8CFF);
 const kProgressBackgroundColor = Color.fromRGBO(234, 234, 234, 1.0);
 const kExpBackgroundColor = Color(0xAC939597);
 const kExpValueColor = Color.fromRGBO(77, 244, 96, 1.0);
+
+const kGradeColors = [
+  Colors.black, Colors.black, Colors.blue, Color(0xFF55CC91), kPrimaryColor, Colors.deepPurple
+];
 //endregion
 
 //region Firebase

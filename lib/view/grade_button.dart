@@ -14,7 +14,7 @@ class GradeButton extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 3, horizontal: 8 * fontSize / 14),
       decoration: BoxDecoration(
-        color: kGradeColor,
+        color: kGradeColors[grade <= 4 ? grade : 0],
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text('$grade학년', style: TextStyle(fontSize: fontSize, color: Colors.white)),
