@@ -5,6 +5,7 @@ import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/post.dart';
 import 'package:hoxy/screen/chat_room_screen.dart';
+import 'package:intl/intl.dart';
 
 class ItemChattingList extends StatelessWidget {
   ItemChattingList({required this.chatting});
@@ -75,7 +76,7 @@ class ItemChattingList extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '1/19 18시 예정',
+                          DateFormat('M/dd HH시 예정').format(post.start!),
                           style: TextStyle(color: kTimeColor),
                         ),
                       ],

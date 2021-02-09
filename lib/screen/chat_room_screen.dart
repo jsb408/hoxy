@@ -1,24 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/chat.dart';
 import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
+import 'package:hoxy/view/grade_button.dart';
 
 import '../constants.dart';
 
-class ChatRoomScreen extends StatelessWidget {
+class ChatRoomScreen extends StatefulWidget {
   const ChatRoomScreen({required this.chattingId});
 
   final String chattingId;
 
   @override
+  _ChatRoomScreenState createState() => _ChatRoomScreenState();
+}
+
+class _ChatRoomScreenState extends State<ChatRoomScreen> {
+  @override
   Widget build(BuildContext context) {
     TextEditingController _chatController = TextEditingController();
+    ScrollController _chatListScrollController = ScrollController();
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: kFirestore.collection('chatting').doc(chattingId).snapshots(),
+      stream: kFirestore.collection('chatting').doc(widget.chattingId).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
 
@@ -48,9 +56,7 @@ class ChatRoomScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  endDrawer: Drawer(
-                    child: Container(),
-                  ),
+                  endDrawer: ChatRoomDrawer(chatting: chatting, post: post),
                   body: StreamBuilder<QuerySnapshot>(
                     stream: kFirestore.collection('member').snapshots(),
                     builder: (context, snapshot) {
@@ -59,11 +65,15 @@ class ChatRoomScreen extends StatelessWidget {
                       }
 
                       List<Member> members = snapshot.data!.docs.map((e) => Member.from(e)).toList();
+                      SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+                        _chatListScrollController.jumpTo(_chatListScrollController.position.maxScrollExtent);
+                      });
 
                       return Column(
                         children: [
                           Expanded(
                             child: ListView(
+                              controller: _chatListScrollController,
                               children: [
                                 for (Chat chat in chats)
                                   MessageBubble(
@@ -100,7 +110,7 @@ class ChatRoomScreen extends StatelessWidget {
                                 TextButton(
                                   child: Icon(Icons.send),
                                   onPressed: () async {
-                                    await kFirestore.collection('chatting').doc(chattingId).collection('chat').add({
+                                    await kFirestore.collection('chatting').doc(widget.chattingId).collection('chat').add({
                                       'content': _chatController.text,
                                       'sender': kFirestore.collection('member').doc(kAuth.currentUser.uid),
                                       'date': DateTime.now()
@@ -121,6 +131,48 @@ class ChatRoomScreen extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+class ChatRoomDrawer extends StatelessWidget {
+  const ChatRoomDrawer({required this.chatting, required this.post});
+
+  final Chatting chatting;
+  final Post post;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Drawer(
+        child: Column(
+          children: [
+            Container(
+              child: Row(
+                children: [
+                  Text(post.emoji, style: TextStyle(fontSize: 40)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('수지구청 30대초 술번개'),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('01.19 18~21시 (3시간)'),
+                            GradeButton(birth: 1990),
+                          ],
+                        ),
+                        Text('#재밌게 놀아요'),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
