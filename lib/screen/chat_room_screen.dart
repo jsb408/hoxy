@@ -8,6 +8,8 @@ import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
 import 'package:hoxy/screen/read_post_screen.dart';
+import 'package:hoxy/service/loading.dart';
+import 'package:hoxy/view/alert_platform_dialog.dart';
 import 'package:hoxy/view/grade_button.dart';
 import 'package:hoxy/view/item_member_list.dart';
 import 'dart:io' show Platform;
@@ -253,23 +255,49 @@ class ChatRoomDrawer extends StatelessWidget {
                 icon: CupertinoIcons.doc_text,
                 text: '모임글 보기',
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ReadPostScreen(postId: post.id)));
-                }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ReadPostScreen(postId: post.id)),
+                  );
+                },
               ),
-              ChattingDrawerButton(
-                  icon: CupertinoIcons.xmark_circle,
-                  text: '모임 종료하기',
-                  onTap: () {
+              post.writer!.id == kAuth.currentUser.uid
+                  ? ChattingDrawerButton(
+                      icon: CupertinoIcons.xmark_circle,
+                      text: '모임 종료하기',
+                      onTap: () {},
+                    )
+                  : ChattingDrawerButton(
+                      icon: CupertinoIcons.escape,
+                      text: '나가기',
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertPlatformDialog(
+                            title: Text('나가기'),
+                            content: Text('모임에서 퇴장하시겠습니까?'),
+                            children: [
+                              AlertPlatformDialogButton(child: Text('아니오'), onPressed: () {}),
+                              AlertPlatformDialogButton(
+                                child: Text('예'),
+                                onPressed: () async {
+                                  Loading.show();
+                                  chatting.member.remove(kAuth.currentUser.uid);
+                                  await kFirestore
+                                      .collection('chatting')
+                                      .doc(chatting.id)
+                                      .update({'member' : chatting.member});
 
-                  }
-              ),
-              ChattingDrawerButton(
-                  icon: CupertinoIcons.escape,
-                  text: '나가기',
-                  onTap: () {
-
-                  }
-              ),
+                                  int popPage = 0;
+                                  Navigator.popUntil(context, (route) => popPage++ == 2);
+                                  Loading.dismiss();
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
               SizedBox(height: Platform.isIOS ? 30 : 0),
             ],
           ),
@@ -297,9 +325,15 @@ class ChattingDrawerButton extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
             child: Row(
               children: [
-                Icon(icon, color: Color(0xFF707070),),
+                Icon(
+                  icon,
+                  color: Color(0xFF707070),
+                ),
                 SizedBox(width: 8),
-                Text(text, style: TextStyle(fontSize: 18),),
+                Text(
+                  text,
+                  style: TextStyle(fontSize: 18),
+                ),
               ],
             ),
           ),
