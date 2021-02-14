@@ -53,24 +53,22 @@ class ReadPostScreen extends StatelessWidget {
   void showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertPlatformDialog(
-          title: Text('삭제하기'),
-          content: Text('삭제하시겠습니까?'),
-          children: [
-            AlertPlatformDialogButton(
-              child: Text('아니오'),
-              onPressed: () { },
-            ),
-            AlertPlatformDialogButton(
-              child: Text('예'),
-              onPressed: () {
-                deletePost(context);
-              },
-            ),
-          ],
-        );
-      },
+      builder: (context) => AlertPlatformDialog(
+        title: Text('삭제하기'),
+        content: Text('삭제하시겠습니까?'),
+        children: [
+          AlertPlatformDialogButton(
+            child: Text('아니오'),
+            onPressed: () {},
+          ),
+          AlertPlatformDialogButton(
+            child: Text('예'),
+            onPressed: () {
+              deletePost(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -84,10 +82,12 @@ class ReadPostScreen extends StatelessWidget {
             }).catchError((error) {
               print(error);
               Loading.showError('삭제 실패');
-            })).catchError((error) {
-              print(error);
-              Loading.showError('삭제 실패');
-            },
+            }))
+        .catchError(
+      (error) {
+        print(error);
+        Loading.showError('삭제 실패');
+      },
     );
   }
 
@@ -152,15 +152,13 @@ class ReadPostScreen extends StatelessWidget {
                                           updatePost(context, writerName);
                                         else if (value == '삭제') showDeleteDialog(context);
                                       },
-                                      itemBuilder: (context) {
-                                        return [
-                                          for (String item in ['수정', '삭제'])
-                                            PopupMenuItem(
-                                              value: item,
-                                              child: Text(item),
-                                            ),
-                                        ];
-                                      },
+                                      itemBuilder: (context) => [
+                                        for (String item in ['수정', '삭제'])
+                                          PopupMenuItem(
+                                            value: item,
+                                            child: Text(item),
+                                          ),
+                                      ],
                                     ),
                           ],
                         ),
@@ -370,32 +368,33 @@ class ReadPostScreen extends StatelessWidget {
                                               onPressed: () {
                                                 showDialog(
                                                   context: context,
-                                                  builder: (context) {
-                                                    return AlertPlatformDialog(
-                                                      title: Text('신청하기'),
-                                                      content: Text('참가를 신청하시겠습니까?'),
-                                                      children: [
-                                                        AlertPlatformDialogButton(
-                                                          child: Text('아니오'),
-                                                          onPressed: () { },
-                                                        ),
-                                                        AlertPlatformDialogButton(
-                                                          child: Text('예'),
-                                                          onPressed: () async {
-                                                            Loading.show();
-                                                            chatting.member[kAuth.currentUser.uid] = randomNickname;
-                                                            await kFirestore.collection('chatting').doc(chatting.id).update({
-                                                              'member' : chatting.member,
-                                                            }).catchError((error) {
-                                                              print(error);
-                                                              Loading.showError('신청 오류');
-                                                            });
-                                                            Loading.showSuccess('신청이 완료되었습니다');
-                                                          },
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
+                                                  builder: (context) => AlertPlatformDialog(
+                                                    title: Text('신청하기'),
+                                                    content: Text('참가를 신청하시겠습니까?'),
+                                                    children: [
+                                                      AlertPlatformDialogButton(
+                                                        child: Text('아니오'),
+                                                        onPressed: () {},
+                                                      ),
+                                                      AlertPlatformDialogButton(
+                                                        child: Text('예'),
+                                                        onPressed: () async {
+                                                          Loading.show();
+                                                          chatting.member[kAuth.currentUser.uid] = randomNickname;
+                                                          await kFirestore
+                                                              .collection('chatting')
+                                                              .doc(chatting.id)
+                                                              .update({
+                                                            'member': chatting.member,
+                                                          }).catchError((error) {
+                                                            print(error);
+                                                            Loading.showError('신청 오류');
+                                                          });
+                                                          Loading.showSuccess('신청이 완료되었습니다');
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
                                                 );
                                               },
                                               disabled: chatting.member.containsKey(kAuth.currentUser.uid),

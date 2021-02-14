@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:hoxy/constants.dart';
@@ -6,7 +7,10 @@ import 'package:hoxy/model/chat.dart';
 import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
+import 'package:hoxy/screen/read_post_screen.dart';
 import 'package:hoxy/view/grade_button.dart';
+import 'package:hoxy/view/item_member_list.dart';
+import 'dart:io' show Platform;
 
 import '../constants.dart';
 
@@ -45,19 +49,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
 
                 Post post = Post.from(snapshot.data!);
-
-                return Scaffold(
-                  appBar: AppBar(
-                    title: Text('${chatting.member[post.writer!.id]}님의 모임'),
-                    leading: IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
+                AppBar appBar = AppBar(
+                  title: Text('${chatting.member[post.writer!.id]}님의 모임'),
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
                   ),
-                  endDrawer: ChatRoomDrawer(chatting: chatting, post: post),
-                  body: StreamBuilder<QuerySnapshot>(
+                );
+
+                return StreamBuilder<QuerySnapshot>(
                     stream: kFirestore.collection('member').snapshots(),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
@@ -69,63 +71,77 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         _chatListScrollController.jumpTo(_chatListScrollController.position.maxScrollExtent);
                       });
 
-                      return Column(
-                        children: [
-                          Expanded(
-                            child: ListView(
-                              controller: _chatListScrollController,
-                              children: [
-                                for (Chat chat in chats)
-                                  MessageBubble(
-                                    text: chat.content,
-                                    sender: members.singleWhere((element) => chat.sender!.id == element.uid),
-                                    nickname: chatting.member[chat.sender!.id],
-                                  ),
-                              ],
+                      return Scaffold(
+                        appBar: appBar,
+                        endDrawer: ChatRoomDrawer(
+                          chatting: chatting,
+                          post: post,
+                          members: members,
+                          topPadding: appBar.preferredSize.height,
+                        ),
+                        body: Column(
+                          children: [
+                            Expanded(
+                              child: ListView(
+                                controller: _chatListScrollController,
+                                children: [
+                                  for (Chat chat in chats)
+                                    MessageBubble(
+                                      text: chat.content,
+                                      sender: members.singleWhere((element) => chat.sender!.id == element.uid),
+                                      nickname: chatting.member[chat.sender!.id],
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(vertical: 8),
-                            color: kPrimaryColor,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 14),
-                                    child: TextField(
-                                      controller: _chatController,
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.only(left: 14),
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        hintText: '메세지 입력',
-                                        border: OutlineInputBorder(
-                                          borderSide: BorderSide.none,
-                                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                            Container(
+                              padding: EdgeInsets.only(
+                                top: 8,
+                                bottom: Platform.isIOS ? 28 : 8,
+                              ),
+                              color: kPrimaryColor,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 14),
+                                      child: TextField(
+                                        controller: _chatController,
+                                        decoration: InputDecoration(
+                                          contentPadding: EdgeInsets.only(left: 14),
+                                          fillColor: Colors.white,
+                                          filled: true,
+                                          hintText: '메세지 입력',
+                                          border: OutlineInputBorder(
+                                            borderSide: BorderSide.none,
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                TextButton(
-                                  child: Icon(Icons.send),
-                                  onPressed: () async {
-                                    await kFirestore.collection('chatting').doc(widget.chattingId).collection('chat').add({
-                                      'content': _chatController.text,
-                                      'sender': kFirestore.collection('member').doc(kAuth.currentUser.uid),
-                                      'date': DateTime.now()
-                                    });
-                                    _chatController.clear();
-                                  },
-                                )
-                              ],
+                                  TextButton(
+                                    child: Icon(Icons.send),
+                                    onPressed: () async {
+                                      await kFirestore
+                                          .collection('chatting')
+                                          .doc(widget.chattingId)
+                                          .collection('chat')
+                                          .add({
+                                        'content': _chatController.text,
+                                        'sender': kFirestore.collection('member').doc(kAuth.currentUser.uid),
+                                        'date': DateTime.now()
+                                      });
+                                      _chatController.clear();
+                                    },
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       );
-                    },
-                  ),
-                );
+                    });
               },
             );
           },
@@ -136,43 +152,159 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 }
 
 class ChatRoomDrawer extends StatelessWidget {
-  const ChatRoomDrawer({required this.chatting, required this.post});
+  const ChatRoomDrawer({required this.chatting, required this.post, required this.members, this.topPadding = 0});
 
   final Chatting chatting;
   final Post post;
+  final List<Member> members;
+  final double topPadding;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Drawer(
-        child: Column(
-          children: [
-            Container(
-              child: Row(
-                children: [
-                  Text(post.emoji, style: TextStyle(fontSize: 40)),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('수지구청 30대초 술번개'),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text('01.19 18~21시 (3시간)'),
-                            GradeButton(birth: 1990),
-                          ],
-                        ),
-                        Text('#재밌게 놀아요'),
-                      ],
+    return Padding(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + topPadding),
+      child: ClipRRect(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
+        child: Drawer(
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 32, bottom: 24, left: 8, right: 8),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14),
+                      child: Text(post.emoji, style: TextStyle(fontSize: 40)),
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(post.title, style: TextStyle(fontSize: 18)),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '01.19 18~21시 (3시간)',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: kTimeColor,
+                                ),
+                              ),
+                              GradeButton(birth: 1990),
+                            ],
+                          ),
+                          Text(
+                            '#재밌게 놀아요',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: kTagColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              Divider(),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 22, top: 18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            '참여 멤버 ',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Color(0xFF707070),
+                            ),
+                          ),
+                          Text(
+                            '${chatting.member.length}/${post.headcount}',
+                            style: TextStyle(fontSize: 12, color: kTimeColor),
+                          ),
+                        ],
+                      ),
+                      ItemMemberList(
+                        member: members.singleWhere((element) => element.uid == post.writer!.id),
+                        chatting: chatting,
+                        isLeader: true,
+                        isMe: post.writer!.id == kAuth.currentUser.uid,
+                      ),
+                      if (post.writer!.id != kAuth.currentUser.uid)
+                        ItemMemberList(
+                            member: members.singleWhere((element) => element.uid == kAuth.currentUser.uid),
+                            chatting: chatting,
+                            isMe: true),
+                      for (Member member in members.where((element) =>
+                          chatting.member.containsKey(element.uid) &&
+                          element.uid != post.writer!.id &&
+                          element.uid != kAuth.currentUser.uid))
+                        ItemMemberList(member: member, chatting: chatting),
+                    ],
+                  ),
+                ),
+              ),
+              ChattingDrawerButton(
+                icon: CupertinoIcons.doc_text,
+                text: '모임글 보기',
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ReadPostScreen(postId: post.id)));
+                }
+              ),
+              ChattingDrawerButton(
+                  icon: CupertinoIcons.xmark_circle,
+                  text: '모임 종료하기',
+                  onTap: () {
+
+                  }
+              ),
+              ChattingDrawerButton(
+                  icon: CupertinoIcons.escape,
+                  text: '나가기',
+                  onTap: () {
+
+                  }
+              ),
+              SizedBox(height: Platform.isIOS ? 30 : 0),
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class ChattingDrawerButton extends StatelessWidget {
+  const ChattingDrawerButton({required this.icon, required this.text, required this.onTap});
+
+  final IconData icon;
+  final String text;
+  final void Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Divider(),
+        GestureDetector(
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+            child: Row(
+              children: [
+                Icon(icon, color: Color(0xFF707070),),
+                SizedBox(width: 8),
+                Text(text, style: TextStyle(fontSize: 18),),
+              ],
+            ),
+          ),
+        )
+      ],
     );
   }
 }
@@ -195,7 +327,11 @@ class MessageBubble extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (!isMe) Text(sender.emoji, style: TextStyle(fontSize: 30)),
+          if (!isMe)
+            Padding(
+              padding: EdgeInsets.only(right: 5),
+              child: Text(sender.emoji, style: TextStyle(fontSize: 30)),
+            ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

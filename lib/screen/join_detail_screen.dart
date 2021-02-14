@@ -4,7 +4,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/screen/location_screen.dart';
 import 'package:hoxy/service/loading.dart';
-import 'package:hoxy/service/location.dart';
+import 'package:hoxy/service/location_service.dart';
 import 'package:hoxy/view/background_button.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/grade_button.dart';

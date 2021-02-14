@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hoxy/screen/main_screen.dart';
 import 'package:hoxy/service/loading.dart';
-import 'package:hoxy/service/location.dart';
+import 'package:hoxy/service/location_service.dart';
 import 'package:hoxy/view/background_button.dart';
 
 class LocationScreen extends StatelessWidget {

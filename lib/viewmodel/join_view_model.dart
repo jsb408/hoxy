@@ -1,8 +1,7 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:emojis/emoji.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hoxy/model/member.dart';
+import 'package:hoxy/service/emoji_service.dart';
 
 import '../constants.dart';
 
@@ -70,11 +69,6 @@ class JoinViewModel extends Member {
       return null;
   }
 
-  String randomEmoji() {
-    List<String> emojis = Emoji.all().map((e) => e.toString()).toList();
-    return emojis[Random().nextInt(emojis.length)];
-  }
-
   Future<bool> createUser() async {
     try {
       await kAuth.currentUser.updateEmail(member.email);
@@ -82,7 +76,7 @@ class JoinViewModel extends Member {
 
       member
         ..uid = kAuth.currentUser.uid
-        ..emoji = randomEmoji();
+        ..emoji = EmojiService.randomEmoji();
 
       kFirestore.collection('member').doc(kAuth.currentUser.uid).set(member.toMap());
 

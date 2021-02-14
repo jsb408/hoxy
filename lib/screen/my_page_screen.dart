@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/model/member.dart';
-import 'package:hoxy/screen/login_screen.dart';
-import 'package:hoxy/service/location.dart';
+import 'package:hoxy/service/emoji_service.dart';
+import 'package:hoxy/service/location_service.dart';
 import 'package:hoxy/view/alert_platform_dialog.dart';
 import 'package:hoxy/view/background_button.dart';
 import 'package:hoxy/view/grade_button.dart';
@@ -20,6 +20,36 @@ class MyPageScreen extends StatefulWidget {
 class _MyPageScreenState extends State<MyPageScreen> {
   String _currentTownName = LocationService.townName;
   late String _myTownName;
+
+  showEmojiDialog(String emoji) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertPlatformDialog(
+        title: Text('이모지 변경'),
+        content: Text(emoji, style: TextStyle(fontSize: 40)),
+        children: [
+          AlertPlatformDialogButton(
+            child: Text('적용'),
+            onPressed: () async {
+              Loading.show();
+              await kFirestore.collection('member').doc(kAuth.currentUser.uid).update({'emoji': emoji});
+              Loading.dismiss();
+            },
+          ),
+          AlertPlatformDialogButton(
+            child: Text('재시도'),
+            onPressed: () {
+              showEmojiDialog(EmojiService.randomEmoji());
+            },
+          ),
+          AlertPlatformDialogButton(
+            child: Text('취소'),
+            onPressed: () {},
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +93,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                                 textStyle: TextStyle(fontSize: 8, color: Colors.white),
                                 color: kDisabledColor,
                                 onPressed: () {
-                                  kAuth.signOut();
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                                  showEmojiDialog(EmojiService.randomEmoji());
                                 },
                               ),
                             ),
@@ -138,29 +167,30 @@ class _MyPageScreenState extends State<MyPageScreen> {
                       location: _myTownName,
                       onTap: () {
                         showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertPlatformDialog(
-                              title: Text('동네 변경'),
-                              content: Text('우리 동네를 현재 동네로 변경하시겠습니까?'),
-                              children: [
-                                AlertPlatformDialogButton(child: Text('아니오'), onPressed: () {}),
-                                AlertPlatformDialogButton(child: Text('네'), onPressed: () async {
-                                  Loading.show();
-                                  await kFirestore.collection('member').doc(kAuth.currentUser.uid).update({
-                                    'city' : LocationService.cityName,
-                                    'town' : LocationService.townName,
-                                    'location' : LocationService.geoPoint
-                                  }).catchError((error) {
-                                    print(error);
-                                    Loading.showError('변경 실패');
-                                  });
-                                  Loading.showSuccess('변경되었습니다');
-                                })
-                              ],
-                            );
-                          }
-                        );
+                            context: context,
+                            builder: (context) {
+                              return AlertPlatformDialog(
+                                title: Text('동네 변경'),
+                                content: Text('우리 동네를 현재 동네로 변경하시겠습니까?'),
+                                children: [
+                                  AlertPlatformDialogButton(child: Text('아니오'), onPressed: () {}),
+                                  AlertPlatformDialogButton(
+                                      child: Text('네'),
+                                      onPressed: () async {
+                                        Loading.show();
+                                        await kFirestore.collection('member').doc(kAuth.currentUser.uid).update({
+                                          'city': LocationService.cityName,
+                                          'town': LocationService.townName,
+                                          'location': LocationService.geoPoint
+                                        }).catchError((error) {
+                                          print(error);
+                                          Loading.showError('변경 실패');
+                                        });
+                                        Loading.showSuccess('변경되었습니다');
+                                      })
+                                ],
+                              );
+                            });
                       },
                     ),
                   ],

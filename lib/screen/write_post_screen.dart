@@ -6,7 +6,7 @@ import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
 import 'package:hoxy/service/loading.dart';
-import 'package:hoxy/service/location.dart';
+import 'package:hoxy/service/location_service.dart';
 import 'package:hoxy/view/alert_platform_dialog.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/write_property_button.dart';

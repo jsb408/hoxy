@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/screen/write_post_screen.dart';
 import 'package:hoxy/service/loading.dart';
-import 'package:hoxy/service/location.dart';
+import 'package:hoxy/service/location_service.dart';
 import 'package:hoxy/view/item_post_list.dart';
 
 import '../constants.dart';
