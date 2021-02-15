@@ -12,6 +12,7 @@ import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/view/alert_platform_dialog.dart';
 import 'package:hoxy/view/grade_button.dart';
 import 'package:hoxy/view/item_member_list.dart';
+import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
 
 import '../constants.dart';
@@ -34,25 +35,21 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     return StreamBuilder<DocumentSnapshot>(
       stream: kFirestore.collection('chatting').doc(widget.chattingId).snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
-
-        Chatting chatting = Chatting.from(snapshot.data!);
-
+        Chatting chatting = Chatting();
+        if (snapshot.hasData) chatting = Chatting.from(snapshot.data!);
         return StreamBuilder<QuerySnapshot>(
           stream: chatting.chat?.orderBy('date').snapshots(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
-
-            List<Chat> chats = snapshot.data!.docs.map((e) => Chat.from(e)).toList();
-
+            List<Chat> chats = [];
+            if (snapshot.hasData) chats = snapshot.data!.docs.map((e) => Chat.from(e)).toList();
             return StreamBuilder<DocumentSnapshot>(
-              stream: chatting.post!.snapshots(),
+              stream: chatting.post?.snapshots(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+                Post post = Post();
+                if (snapshot.hasData) post = Post.from(snapshot.data!);
 
-                Post post = Post.from(snapshot.data!);
                 AppBar appBar = AppBar(
-                  title: Text('${chatting.member[post.writer!.id]}님의 모임'),
+                  title: post.writer != null ? Text('${chatting.member[post.writer?.id]}님의 모임') : null,
                   leading: IconButton(
                     icon: Icon(Icons.arrow_back),
                     onPressed: () {
@@ -64,11 +61,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 return StreamBuilder<QuerySnapshot>(
                     stream: kFirestore.collection('member').snapshots(),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return Center(child: CircularProgressIndicator());
-                      }
+                      List<Member> members = [];
+                      if (snapshot.hasData) members = snapshot.data!.docs.map((e) => Member.from(e)).toList();
 
-                      List<Member> members = snapshot.data!.docs.map((e) => Member.from(e)).toList();
                       SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
                         _chatListScrollController.jumpTo(_chatListScrollController.position.maxScrollExtent);
                       });
@@ -125,16 +120,18 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   TextButton(
                                     child: Icon(Icons.send),
                                     onPressed: () async {
-                                      await kFirestore
-                                          .collection('chatting')
-                                          .doc(widget.chattingId)
-                                          .collection('chat')
-                                          .add({
-                                        'content': _chatController.text,
-                                        'sender': kFirestore.collection('member').doc(kAuth.currentUser.uid),
-                                        'date': DateTime.now()
-                                      });
-                                      _chatController.clear();
+                                      if(_chatController.text.isNotEmpty) {
+                                        await kFirestore
+                                            .collection('chatting')
+                                            .doc(widget.chattingId)
+                                            .collection('chat')
+                                            .add({
+                                          'content': _chatController.text,
+                                          'sender': kFirestore.collection('member').doc(kAuth.currentUser.uid),
+                                          'date': DateTime.now()
+                                        });
+                                        _chatController.clear();
+                                      }
                                     },
                                   )
                                 ],
@@ -187,17 +184,17 @@ class ChatRoomDrawer extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                '01.19 18~21시 (3시간)',
+                                '${DateFormat('MM.dd HH시 mm분').format(post.start ?? DateTime.now())}~${DateFormat('HH시 mm분').format(post.start?.add(Duration(minutes: post.duration)) ?? DateTime.now())} (${NumberFormat('0.#').format(post.duration / 60)}시간)',
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: kTimeColor,
                                 ),
                               ),
-                              GradeButton(birth: 1990),
+                              GradeButton(birth: members.singleWhere((element) => element.uid == post.writer!.id).birth),
                             ],
                           ),
                           Text(
-                            '#재밌게 놀아요',
+                            '#${post.tag.join(' #')}',
                             style: TextStyle(
                               fontSize: 11,
                               color: kTagColor,
@@ -271,6 +268,7 @@ class ChatRoomDrawer extends StatelessWidget {
                       icon: CupertinoIcons.escape,
                       text: '나가기',
                       onTap: () {
+                        Navigator.pop(context);
                         showDialog(
                           context: context,
                           builder: (context) => AlertPlatformDialog(
@@ -287,9 +285,7 @@ class ChatRoomDrawer extends StatelessWidget {
                                       .collection('chatting')
                                       .doc(chatting.id)
                                       .update({'member' : chatting.member});
-
-                                  int popPage = 0;
-                                  Navigator.popUntil(context, (route) => popPage++ == 2);
+                                  Navigator.pop(context);
                                   Loading.dismiss();
                                 },
                               ),

@@ -26,6 +26,7 @@ class ProfileScreen extends StatelessWidget {
               Navigator.pop(context);
             }),
         actions: [
+          if(member.uid != kAuth.currentUser.uid)
           Platform.isIOS
               ? IconButton(
                   icon: Icon(Icons.more_vert),

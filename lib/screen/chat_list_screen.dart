@@ -12,16 +12,13 @@ class ChatListScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: kFirestore.collection('chatting').snapshots(),
+        stream: kFirestore.collection('chatting').where('member.${kAuth.currentUser.uid}', isNotEqualTo: '').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           }
 
-          List<QueryDocumentSnapshot> myChattingList = snapshot.data!.docs
-              .where((element) =>
-                  (element.get('member') as Map<String, dynamic>)
-                      .containsKey(kAuth.currentUser.uid)).toList();
+          List<QueryDocumentSnapshot> myChattingList = snapshot.data!.docs;
 
           if (myChattingList.isEmpty) {
             return Center(child: Text('채팅이 없습니다'));
