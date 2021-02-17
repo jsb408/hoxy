@@ -389,6 +389,12 @@ class ReadPostScreen extends StatelessWidget {
                                                             print(error);
                                                             Loading.showError('신청 오류');
                                                           });
+                                                          await kFirestore
+                                                          .collection('chatting')
+                                                          .doc(chatting.id)
+                                                          .update({
+                                                            'date': DateTime.now()
+                                                          });
                                                           Loading.showSuccess('신청이 완료되었습니다');
                                                         },
                                                       ),

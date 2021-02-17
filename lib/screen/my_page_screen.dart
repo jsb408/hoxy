@@ -9,6 +9,7 @@ import 'package:hoxy/view/background_button.dart';
 import 'package:hoxy/view/grade_button.dart';
 import 'package:hoxy/view/my_page_element.dart';
 import 'package:hoxy/service/loading.dart';
+import 'package:hoxy/view/skeleton.dart';
 
 import '../constants.dart';
 

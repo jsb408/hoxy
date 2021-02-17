@@ -49,7 +49,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 if (snapshot.hasData) post = Post.from(snapshot.data!);
 
                 AppBar appBar = AppBar(
-                  title: post.writer != null ? Text('${chatting.member[post.writer?.id]}님의 모임') : null,
+                  title: Text(post.title),
                   leading: IconButton(
                     icon: Icon(Icons.arrow_back),
                     onPressed: () {
@@ -120,7 +120,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   TextButton(
                                     child: Icon(Icons.send),
                                     onPressed: () async {
-                                      if(_chatController.text.isNotEmpty) {
+                                      if (_chatController.text.isNotEmpty) {
                                         await kFirestore
                                             .collection('chatting')
                                             .doc(widget.chattingId)
@@ -130,6 +130,10 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           'sender': kFirestore.collection('member').doc(kAuth.currentUser.uid),
                                           'date': DateTime.now()
                                         });
+                                        await kFirestore
+                                            .collection('chatting')
+                                            .doc(widget.chattingId)
+                                            .update({'date': DateTime.now()});
                                         _chatController.clear();
                                       }
                                     },
@@ -190,7 +194,8 @@ class ChatRoomDrawer extends StatelessWidget {
                                   color: kTimeColor,
                                 ),
                               ),
-                              GradeButton(birth: members.singleWhere((element) => element.uid == post.writer!.id).birth),
+                              GradeButton(
+                                  birth: members.singleWhere((element) => element.uid == post.writer!.id).birth),
                             ],
                           ),
                           Text(
@@ -283,7 +288,7 @@ class ChatRoomDrawer extends StatelessWidget {
                                   await kFirestore
                                       .collection('chatting')
                                       .doc(chatting.id)
-                                    .update({'member.${kAuth.currentUser.uid}' : ''});
+                                      .update({'member.${kAuth.currentUser.uid}': ''});
                                   Navigator.pop(context);
                                   Loading.dismiss();
                                 },

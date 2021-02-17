@@ -24,7 +24,8 @@ class PostViewModel {
       DocumentReference post = await kFirestore.collection('post').add(this.post.toMap());
       DocumentReference chatting = await kFirestore.collection('chatting').add({
         'post': post,
-        'member': { this.post.writer!.id : nickname }
+        'member': { this.post.writer!.id : nickname },
+        'date' : DateTime.now(),
       });
 
       await post.update({'chat': chatting});

@@ -5,6 +5,7 @@ class Chatting {
   Map<String, dynamic> member = {};
   CollectionReference? chat;
   DocumentReference? post;
+  DateTime date = DateTime.now();
 
   Chatting();
 
@@ -13,10 +14,12 @@ class Chatting {
     this.member = chatting['member'];
     this.post = chatting['post'];
     this.chat = chatting.reference.collection('chat');
+    this.date = (chatting['date'] as Timestamp).toDate();
   }
 
   Map<String, dynamic> toMap() => {
     'member' : this.member,
     'post' : this.post,
+    'date' : this.date,
   };
 }

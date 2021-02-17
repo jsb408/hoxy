@@ -5,6 +5,7 @@ import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/post.dart';
 import 'package:hoxy/screen/chat_room_screen.dart';
+import 'package:hoxy/view/skeleton.dart';
 import 'package:intl/intl.dart';
 
 class ItemChattingList extends StatelessWidget {
@@ -19,18 +20,14 @@ class ItemChattingList extends StatelessWidget {
     return StreamBuilder<DocumentSnapshot>(
       stream: chatting.post!.snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        DocumentSnapshot postSnapshot = snapshot.data!;
-        Post post = Post.from(postSnapshot);
+        Post post = Post();
+        if (snapshot.hasData) post = Post.from(snapshot.data!);
 
         return StreamBuilder<QuerySnapshot>(
           stream: chatting.chat?.orderBy('date', descending: true).snapshots(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
+            if (post.id.isEmpty || !snapshot.hasData) {
+              return ItemChattingSkeleton();
             }
 
             QueryDocumentSnapshot? recentChat = snapshot.data!.docs.isNotEmpty ? snapshot.data!.docs.first : null;
@@ -52,7 +49,7 @@ class ItemChattingList extends StatelessWidget {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: '${chatting.member[post.writer!.id]}님의 모임',
+                                      text: '${post.title} ',
                                       style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.w600),
                                     ),
                                     TextSpan(

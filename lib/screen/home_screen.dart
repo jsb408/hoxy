@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: snapshot.hasData ? _localityDropdown(user.city, user.town) : Text('우리 동네'),
+            title: snapshot.hasData ? _localityDropdown(user.city, user.town) : null,
             automaticallyImplyLeading: false,
           ),
           floatingActionButton: FloatingActionButton(
@@ -77,16 +77,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     Loading.dismiss();
 
-                    Iterable<QueryDocumentSnapshot> posts = snapshot.data!.docs;
-                    if (posts.isEmpty) {
-                      return Center(child: Text('등록된 글이 없습니다'));
-                    }
-
-                    posts = posts.where((element) =>
+                    Iterable<QueryDocumentSnapshot> posts = snapshot.data!.docs.where((element) =>
                         LocationService.distanceBetween(
                         _selectedLocality == 0 ? LocationService.geoPoint : user.location,
                         element.get('location')) < 5000
                     );
+
+                    if (posts.isEmpty) {
+                      return Center(child: Text('등록된 글이 없습니다'));
+                    }
 
                     List<ItemPostList> postList = [for(var post in posts) ItemPostList(post: post)];
 

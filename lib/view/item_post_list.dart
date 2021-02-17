@@ -5,6 +5,7 @@ import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
 import 'package:hoxy/screen/read_post_screen.dart';
+import 'package:hoxy/view/skeleton.dart';
 import 'package:intl/intl.dart';
 
 import '../constants.dart';
@@ -22,19 +23,16 @@ class ItemPostList extends StatelessWidget {
     return FutureBuilder<DocumentSnapshot>(
       future: post.writer!.get(),
       builder: (context, writerSnapshot) {
-        if (!writerSnapshot.hasData) {
-          return Container(height: 120, child: Center(child: CircularProgressIndicator()));
-        }
-
-        Member writer = Member.from(writerSnapshot.data!);
+        Member writer = Member();
+        if (writerSnapshot.hasData) writer = Member.from(writerSnapshot.data!);
         return FutureBuilder<DocumentSnapshot>(
           future: post.chat?.get(),
           builder: (context, chatSnapshot) {
-            if (!chatSnapshot.hasData) {
-              return Container(height: 120, child: Center(child: CircularProgressIndicator()));
-            }
+            Chatting chatting = Chatting();
+            if (chatSnapshot.hasData) chatting = Chatting.from(chatSnapshot.data!);
 
-            Chatting chatting = Chatting.from(chatSnapshot.data!);
+            if (writer.uid.isEmpty || chatting.id.isEmpty) return ItemPostSkeleton();
+
             return GestureDetector(
               child: Column(
                 children: [
@@ -124,14 +122,6 @@ class ItemPostList extends StatelessWidget {
           },
         );
       },
-    );
-  }
-}
-
-class PostSkeleton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
     );
   }
 }
