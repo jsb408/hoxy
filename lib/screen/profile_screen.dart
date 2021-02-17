@@ -20,11 +20,6 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: Color(0x0BDDDDDD),
       appBar: AppBar(
         elevation: 0,
-        leading: IconButton(
-            icon: Icon(CupertinoIcons.xmark),
-            onPressed: () {
-              Navigator.pop(context);
-            }),
         actions: [
           if(member.uid != kAuth.currentUser.uid)
           Platform.isIOS
@@ -42,6 +37,7 @@ class ProfileScreen extends StatelessWidget {
                             },
                           ),
                           CupertinoActionSheetAction(
+                            isDestructiveAction: true,
                             child: Text('신고하기'),
                             onPressed: () {
                               Navigator.pop(context);

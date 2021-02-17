@@ -59,92 +59,93 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 );
 
                 return StreamBuilder<QuerySnapshot>(
-                    stream: kFirestore.collection('member').snapshots(),
-                    builder: (context, snapshot) {
-                      List<Member> members = [];
-                      if (snapshot.hasData) members = snapshot.data!.docs.map((e) => Member.from(e)).toList();
+                  stream: kFirestore.collection('member').snapshots(),
+                  builder: (context, snapshot) {
+                    List<Member> members = [];
+                    if (snapshot.hasData) members = snapshot.data!.docs.map((e) => Member.from(e)).toList();
 
-                      SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-                        _chatListScrollController.jumpTo(_chatListScrollController.position.maxScrollExtent);
-                      });
+                    SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+                      _chatListScrollController.jumpTo(_chatListScrollController.position.maxScrollExtent);
+                    });
 
-                      return Scaffold(
-                        appBar: appBar,
-                        endDrawer: ChatRoomDrawer(
-                          chatting: chatting,
-                          post: post,
-                          members: members,
-                          topPadding: appBar.preferredSize.height,
-                        ),
-                        body: Column(
-                          children: [
-                            Expanded(
-                              child: ListView(
-                                controller: _chatListScrollController,
-                                children: [
-                                  for (Chat chat in chats)
-                                    MessageBubble(
-                                      text: chat.content,
-                                      sender: members.singleWhere((element) => chat.sender!.id == element.uid),
-                                      nickname: chatting.member[chat.sender!.id],
-                                    ),
-                                ],
-                              ),
+                    return Scaffold(
+                      appBar: appBar,
+                      endDrawer: ChatRoomDrawer(
+                        chatting: chatting,
+                        post: post,
+                        members: members,
+                        topPadding: appBar.preferredSize.height,
+                      ),
+                      body: Column(
+                        children: [
+                          Expanded(
+                            child: ListView(
+                              controller: _chatListScrollController,
+                              children: [
+                                for (Chat chat in chats)
+                                  MessageBubble(
+                                    text: chat.content,
+                                    sender: members.singleWhere((element) => chat.sender!.id == element.uid),
+                                    nickname: chatting.member[chat.sender!.id],
+                                  ),
+                              ],
                             ),
-                            Container(
-                              padding: EdgeInsets.only(
-                                top: 8,
-                                bottom: Platform.isIOS ? 28 : 8,
-                              ),
-                              color: kPrimaryColor,
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(left: 14),
-                                      child: TextField(
-                                        controller: _chatController,
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.only(left: 14),
-                                          fillColor: Colors.white,
-                                          filled: true,
-                                          hintText: '메세지 입력',
-                                          border: OutlineInputBorder(
-                                            borderSide: BorderSide.none,
-                                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                                          ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(
+                              top: 8,
+                              bottom: Platform.isIOS ? 28 : 8,
+                            ),
+                            color: kPrimaryColor,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(left: 14),
+                                    child: TextField(
+                                      controller: _chatController,
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.only(left: 14),
+                                        fillColor: Colors.white,
+                                        filled: true,
+                                        hintText: '메세지 입력',
+                                        border: OutlineInputBorder(
+                                          borderSide: BorderSide.none,
+                                          borderRadius: BorderRadius.all(Radius.circular(10)),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  TextButton(
-                                    child: Icon(Icons.send),
-                                    onPressed: () async {
-                                      if (_chatController.text.isNotEmpty) {
-                                        await kFirestore
-                                            .collection('chatting')
-                                            .doc(widget.chattingId)
-                                            .collection('chat')
-                                            .add({
-                                          'content': _chatController.text,
-                                          'sender': kFirestore.collection('member').doc(kAuth.currentUser.uid),
-                                          'date': DateTime.now()
-                                        });
-                                        await kFirestore
-                                            .collection('chatting')
-                                            .doc(widget.chattingId)
-                                            .update({'date': DateTime.now()});
-                                        _chatController.clear();
-                                      }
-                                    },
-                                  )
-                                ],
-                              ),
+                                ),
+                                TextButton(
+                                  child: Icon(Icons.send),
+                                  onPressed: () async {
+                                    if (_chatController.text.isNotEmpty) {
+                                      await kFirestore
+                                          .collection('chatting')
+                                          .doc(widget.chattingId)
+                                          .collection('chat')
+                                          .add({
+                                        'content': _chatController.text,
+                                        'sender': kFirestore.collection('member').doc(kAuth.currentUser.uid),
+                                        'date': DateTime.now()
+                                      });
+                                      await kFirestore
+                                          .collection('chatting')
+                                          .doc(widget.chattingId)
+                                          .update({'date': DateTime.now()});
+                                      _chatController.clear();
+                                    }
+                                  },
+                                )
+                              ],
                             ),
-                          ],
-                        ),
-                      );
-                    });
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
               },
             );
           },

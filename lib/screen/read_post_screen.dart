@@ -130,6 +130,7 @@ class ReadPostScreen extends StatelessWidget {
                                                 child: Text('수정'),
                                               ),
                                               CupertinoActionSheetAction(
+                                                isDestructiveAction: true,
                                                   onPressed: () {
                                                     Navigator.pop(context);
                                                     showDeleteDialog(context);
