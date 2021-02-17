@@ -280,11 +280,10 @@ class ChatRoomDrawer extends StatelessWidget {
                                 child: Text('예'),
                                 onPressed: () async {
                                   Loading.show();
-                                  chatting.member.remove(kAuth.currentUser.uid);
                                   await kFirestore
                                       .collection('chatting')
                                       .doc(chatting.id)
-                                      .update({'member' : chatting.member});
+                                    .update({'member.${kAuth.currentUser.uid}' : ''});
                                   Navigator.pop(context);
                                   Loading.dismiss();
                                 },
@@ -294,7 +293,7 @@ class ChatRoomDrawer extends StatelessWidget {
                         );
                       },
                     ),
-              SizedBox(height: Platform.isIOS ? 30 : 0),
+              SizedBox(height: Platform.isIOS ? 30 : 10),
             ],
           ),
         ),

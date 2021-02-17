@@ -380,12 +380,11 @@ class ReadPostScreen extends StatelessWidget {
                                                         child: Text('예'),
                                                         onPressed: () async {
                                                           Loading.show();
-                                                          chatting.member[kAuth.currentUser.uid] = randomNickname;
                                                           await kFirestore
                                                               .collection('chatting')
                                                               .doc(chatting.id)
                                                               .update({
-                                                            'member': chatting.member,
+                                                            'member.${kAuth.currentUser.uid}': randomNickname,
                                                           }).catchError((error) {
                                                             print(error);
                                                             Loading.showError('신청 오류');
