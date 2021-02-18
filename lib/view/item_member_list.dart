@@ -19,7 +19,7 @@ class ItemMemberList extends StatelessWidget {
         child: Row(
           children: [
             Text(
-              '${member.emoji} ${chatting.member[member.uid]}',
+              '${member.emoji} ${chatting.nickname[member.uid]}',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.black,

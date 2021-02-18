@@ -119,7 +119,7 @@ class ProfileScreen extends StatelessWidget {
                         Text(member.town, style: TextStyle(fontWeight: FontWeight.w600)),
                         Row(
                           children: [
-                            Text(chatting.member[member.uid],
+                            Text(chatting.nickname[member.uid],
                                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
                             SizedBox(width: 5),
                             GradeButton(birth: member.birth),

@@ -105,7 +105,7 @@ class ReadPostScreen extends StatelessWidget {
                     stream: post.chat?.snapshots(),
                     builder: (context, snapshot) {
                       Chatting chatting = snapshot.hasData ? Chatting.from(snapshot.data!) : Chatting();
-                      final String writerName = chatting.member[writer.uid] ?? '';
+                      final String writerName = chatting.nickname[writer.uid] ?? '';
                       return Scaffold(
                         backgroundColor: Colors.white,
                         appBar: AppBar(
@@ -404,7 +404,7 @@ class ReadPostScreen extends StatelessWidget {
                                                   ),
                                                 );
                                               },
-                                              disabled: chatting.member.containsKey(kAuth.currentUser.uid),
+                                              disabled: chatting.member.contains(kAuth.currentUser.uid),
                                             ),
                                           ),
                                         ),

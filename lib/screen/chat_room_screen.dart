@@ -234,7 +234,7 @@ class ChatRoomDrawer extends StatelessWidget {
                             chatting: chatting,
                             isMe: true),
                       for (Member member in members.where((element) =>
-                          chatting.member.containsKey(element.uid) &&
+                          chatting.member.contains(element.uid) &&
                           element.uid != post.writer!.id &&
                           element.uid != kAuth.currentUser.uid))
                         ItemMemberList(member: member, chatting: chatting),
@@ -274,7 +274,7 @@ class ChatRoomDrawer extends StatelessWidget {
                                 child: Text('예'),
                                 onPressed: () async {
                                   Loading.show();
-                                  Map<String, dynamic> member = chatting.member;
+                                  List<String> member = chatting.member;
                                   member.remove(kAuth.currentUser.uid);
                                   await kFirestore
                                       .collection('chatting')
@@ -367,7 +367,7 @@ class MessageBubble extends StatelessWidget {
             children: <Widget>[
               if (!isMe)
                 Text(
-                  chatting.member[sender.uid],
+                  chatting.nickname[sender.uid],
                   style: TextStyle(
                     fontSize: 12.0,
                     color: Colors.black,
