@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/model/member.dart';
+import 'package:hoxy/screen/login_screen.dart';
 import 'package:hoxy/service/emoji_service.dart';
 import 'package:hoxy/service/location_service.dart';
 import 'package:hoxy/view/alert_platform_dialog.dart';
@@ -57,6 +58,30 @@ class _MyPageScreenState extends State<MyPageScreen> {
       appBar: AppBar(
         title: Text('마이페이지'),
         automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertPlatformDialog(
+                  title: Text('로그아웃'),
+                  content: Text('로그아웃하시겠습니까?'),
+                  children: [
+                    AlertPlatformDialogButton(child: Text('아니오'), onPressed: () {}),
+                    AlertPlatformDialogButton(
+                      child: Text('네'),
+                      onPressed: () {
+                        kAuth.signOut();
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          )
+        ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: kFirestore.collection('member').doc(kAuth.currentUser.uid).snapshots(),

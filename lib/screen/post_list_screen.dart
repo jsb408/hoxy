@@ -9,12 +9,12 @@ import 'package:hoxy/view/item_post_list.dart';
 
 import '../constants.dart';
 
-class HomeScreen extends StatefulWidget {
+class PostListScreen extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _PostListScreenState createState() => _PostListScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _PostListScreenState extends State<PostListScreen> {
   int _selectedLocality = 0;
 
   DropdownButtonHideUnderline _localityDropdown(String city, String town) {
@@ -67,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
+          backgroundColor: kBackgroundColor,
           body: snapshot.hasData
               ? StreamBuilder<QuerySnapshot>(
                   stream: kFirestore.collection('post').orderBy('date', descending: true).snapshots(),

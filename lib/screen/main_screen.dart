@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/screen/chat_list_screen.dart';
-import 'package:hoxy/screen/home_screen.dart';
+import 'package:hoxy/screen/post_list_screen.dart';
 import 'package:hoxy/screen/my_page_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -10,7 +10,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final _screens = [HomeScreen(), HomeScreen(), ChatListScreen(), MyPageScreen()];
+  final _screens = [PostListScreen(), PostListScreen(), ChatListScreen(), MyPageScreen()];
   int _selectedIndex = 0;
 
   @override
@@ -24,6 +24,7 @@ class _MainScreenState extends State<MainScreen> {
             child: _screens[_selectedIndex],
           ),
         ),
+      backgroundColor: kBackgroundColor,
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           canvasColor: kPrimaryColor,

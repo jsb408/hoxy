@@ -93,8 +93,6 @@ class ReadPostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final String writerName = chatting.member.keys.toList()[chatting.member.values.toList().indexOf(writer.uid)];
-
     return StreamBuilder<DocumentSnapshot>(
         stream: kFirestore.collection('post').doc(postId).snapshots(),
         builder: (context, snapshot) {
@@ -367,11 +365,14 @@ class ReadPostScreen extends StatelessWidget {
                                             child: BackgroundButton(
                                               title: '신청하기',
                                               onPressed: () {
+                                                String nickname = randomNickname;
+
                                                 showDialog(
                                                   context: context,
                                                   builder: (context) => AlertPlatformDialog(
                                                     title: Text('신청하기'),
-                                                    content: Text('참가를 신청하시겠습니까?'),
+                                                    content: Text('$nickname(으)로 참가합니다.\n'
+                                                        '참가를 신청하시겠습니까?'),
                                                     children: [
                                                       AlertPlatformDialogButton(
                                                         child: Text('아니오'),
@@ -385,7 +386,7 @@ class ReadPostScreen extends StatelessWidget {
                                                               .collection('chatting')
                                                               .doc(chatting.id)
                                                               .update({
-                                                            'member.${kAuth.currentUser.uid}': randomNickname,
+                                                            'member.${kAuth.currentUser.uid}': nickname,
                                                           }).catchError((error) {
                                                             print(error);
                                                             Loading.showError('신청 오류');

@@ -9,6 +9,25 @@ import 'package:hoxy/view/grade_button.dart';
 import 'dart:io' show Platform;
 
 class ProfileScreen extends StatelessWidget {
+  static present(BuildContext context, Member member, Chatting chatting) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        opaque: false,
+        fullscreenDialog: true,
+        pageBuilder: (context, _, __) => ProfileScreen(member: member, chatting: chatting),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          var tween = Tween(begin: Offset(0.0, 1.0), end: Offset.zero).chain(CurveTween(curve: Curves.ease));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      ),
+    );
+  }
+
   ProfileScreen({required this.member, required this.chatting});
 
   final Member member;
@@ -21,52 +40,52 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         actions: [
-          if(member.uid != kAuth.currentUser.uid)
-          Platform.isIOS
-              ? IconButton(
-                  icon: Icon(Icons.more_vert),
-                  onPressed: () {
-                    showCupertinoModalPopup(
-                      context: context,
-                      builder: (context) => CupertinoActionSheet(
-                        actions: [
-                          CupertinoActionSheetAction(
-                            child: Text('차단하기'),
+          if (member.uid != kAuth.currentUser.uid)
+            Platform.isIOS
+                ? IconButton(
+                    icon: Icon(Icons.more_vert),
+                    onPressed: () {
+                      showCupertinoModalPopup(
+                        context: context,
+                        builder: (context) => CupertinoActionSheet(
+                          actions: [
+                            CupertinoActionSheetAction(
+                              child: Text('차단하기'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            CupertinoActionSheetAction(
+                              isDestructiveAction: true,
+                              child: Text('신고하기'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                          cancelButton: CupertinoActionSheetAction(
+                            child: Text('취소'),
                             onPressed: () {
                               Navigator.pop(context);
                             },
                           ),
-                          CupertinoActionSheetAction(
-                            isDestructiveAction: true,
-                            child: Text('신고하기'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                        cancelButton: CupertinoActionSheetAction(
-                          child: Text('취소'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
                         ),
-                      ),
-                    );
-                  },
-                )
-              : PopupMenuButton(
-                  onSelected: (value) {
-                    if (value == '차단하기') {
-                    } else if (value == '신고하기') {}
-                  },
-                  itemBuilder: (context) => [
-                    for (String item in ['차단하기', '신고하기'])
-                      PopupMenuItem(
-                        value: item,
-                        child: Text(item),
-                      ),
-                  ],
-                ),
+                      );
+                    },
+                  )
+                : PopupMenuButton(
+                    onSelected: (value) {
+                      if (value == '차단하기') {
+                      } else if (value == '신고하기') {}
+                    },
+                    itemBuilder: (context) => [
+                      for (String item in ['차단하기', '신고하기'])
+                        PopupMenuItem(
+                          value: item,
+                          child: Text(item),
+                        ),
+                    ],
+                  ),
         ],
       ),
       body: BackdropFilter(

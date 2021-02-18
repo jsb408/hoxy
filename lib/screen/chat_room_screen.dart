@@ -1,17 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/chat.dart';
 import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
+import 'package:hoxy/screen/profile_screen.dart';
 import 'package:hoxy/screen/read_post_screen.dart';
 import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/view/alert_platform_dialog.dart';
 import 'package:hoxy/view/grade_button.dart';
 import 'package:hoxy/view/item_member_list.dart';
+import 'package:hoxy/viewmodel/chat_view_model.dart';
 import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
 
@@ -27,10 +28,11 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
+  ChatViewModel _viewModel = ChatViewModel();
+
   @override
   Widget build(BuildContext context) {
     TextEditingController _chatController = TextEditingController();
-    ScrollController _chatListScrollController = ScrollController();
 
     return StreamBuilder<DocumentSnapshot>(
       stream: kFirestore.collection('chatting').doc(widget.chattingId).snapshots(),
@@ -38,7 +40,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         Chatting chatting = Chatting();
         if (snapshot.hasData) chatting = Chatting.from(snapshot.data!);
         return StreamBuilder<QuerySnapshot>(
-          stream: chatting.chat?.orderBy('date').snapshots(),
+          stream: chatting.chat?.orderBy('date', descending: true).snapshots(),
           builder: (context, snapshot) {
             List<Chat> chats = [];
             if (snapshot.hasData) chats = snapshot.data!.docs.map((e) => Chat.from(e)).toList();
@@ -51,7 +53,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 AppBar appBar = AppBar(
                   title: Text(post.title),
                   leading: IconButton(
-                    icon: Icon(Icons.arrow_back),
+                    icon: Icon(Platform.isIOS ? Icons.arrow_back_ios : Icons.arrow_back),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -63,10 +65,6 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                   builder: (context, snapshot) {
                     List<Member> members = [];
                     if (snapshot.hasData) members = snapshot.data!.docs.map((e) => Member.from(e)).toList();
-
-                    SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-                      _chatListScrollController.jumpTo(_chatListScrollController.position.maxScrollExtent);
-                    });
 
                     return Scaffold(
                       appBar: appBar,
@@ -80,13 +78,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         children: [
                           Expanded(
                             child: ListView(
-                              controller: _chatListScrollController,
+                              padding: EdgeInsets.zero,
+                              reverse: true,
                               children: [
                                 for (Chat chat in chats)
                                   MessageBubble(
                                     text: chat.content,
                                     sender: members.singleWhere((element) => chat.sender!.id == element.uid),
-                                    nickname: chatting.member[chat.sender!.id],
+                                    chatting: chatting,
                                   ),
                               ],
                             ),
@@ -114,28 +113,17 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                           borderRadius: BorderRadius.all(Radius.circular(10)),
                                         ),
                                       ),
+                                      onChanged: (value) {
+                                        _viewModel.chat.content = value;
+                                      },
                                     ),
                                   ),
                                 ),
                                 TextButton(
                                   child: Icon(Icons.send),
                                   onPressed: () async {
-                                    if (_chatController.text.isNotEmpty) {
-                                      await kFirestore
-                                          .collection('chatting')
-                                          .doc(widget.chattingId)
-                                          .collection('chat')
-                                          .add({
-                                        'content': _chatController.text,
-                                        'sender': kFirestore.collection('member').doc(kAuth.currentUser.uid),
-                                        'date': DateTime.now()
-                                      });
-                                      await kFirestore
-                                          .collection('chatting')
-                                          .doc(widget.chattingId)
-                                          .update({'date': DateTime.now()});
-                                      _chatController.clear();
-                                    }
+                                    _viewModel.sendChat(widget.chattingId);
+                                    _chatController.clear();
                                   },
                                 )
                               ],
@@ -286,12 +274,14 @@ class ChatRoomDrawer extends StatelessWidget {
                                 child: Text('예'),
                                 onPressed: () async {
                                   Loading.show();
+                                  Map<String, dynamic> member = chatting.member;
+                                  member.remove(kAuth.currentUser.uid);
                                   await kFirestore
                                       .collection('chatting')
                                       .doc(chatting.id)
-                                      .update({'member.${kAuth.currentUser.uid}': ''});
-                                  Navigator.pop(context);
+                                      .update({'member': member});
                                   Loading.dismiss();
+                                  Navigator.pop(context);
                                 },
                               ),
                             ],
@@ -345,11 +335,11 @@ class ChattingDrawerButton extends StatelessWidget {
 }
 
 class MessageBubble extends StatelessWidget {
-  MessageBubble({required this.text, required this.sender, required this.nickname});
+  MessageBubble({required this.text, required this.sender, required this.chatting});
 
   final String text;
   final Member sender;
-  final String nickname;
+  final Chatting chatting;
 
   bool get isMe => sender.uid == kAuth.currentUser.uid;
 
@@ -363,16 +353,21 @@ class MessageBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMe)
-            Padding(
-              padding: EdgeInsets.only(right: 5),
-              child: Text(sender.emoji, style: TextStyle(fontSize: 30)),
+            GestureDetector(
+              child: Padding(
+                padding: EdgeInsets.only(right: 5),
+                child: Text(sender.emoji, style: TextStyle(fontSize: 30)),
+              ),
+              onTap: () {
+                ProfileScreen.present(context, sender, chatting);
+              },
             ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               if (!isMe)
                 Text(
-                  nickname,
+                  chatting.member[sender.uid],
                   style: TextStyle(
                     fontSize: 12.0,
                     color: Colors.black,

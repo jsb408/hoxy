@@ -31,7 +31,7 @@ class Hoxy extends StatelessWidget {
           ),
           textTheme: TextTheme().copyWith(
             headline6: TextStyle(
-              fontSize: 24,
+              fontSize: 18,
               color: Colors.black,
             ),
           ),

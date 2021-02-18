@@ -56,22 +56,7 @@ class ItemMemberList extends StatelessWidget {
       ),
       onTap: () {
         Navigator.pop(context);
-        Navigator.push(
-          context,
-          PageRouteBuilder(
-            opaque: false,
-            fullscreenDialog: true,
-            pageBuilder: (context, _, __) => ProfileScreen(member: member, chatting: chatting),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              var tween = Tween(begin: Offset(0.0, 1.0), end: Offset.zero).chain(CurveTween(curve: Curves.ease));
-
-              return SlideTransition(
-                position: animation.drive(tween),
-                child: child,
-              );
-            },
-          ),
-        );
+        ProfileScreen.present(context, member, chatting);
       },
     );
   }
