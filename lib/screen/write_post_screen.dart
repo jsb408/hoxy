@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/member.dart';
-import 'package:hoxy/model/post.dart';
 import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/service/location_service.dart';
 import 'package:hoxy/view/alert_platform_dialog.dart';
@@ -16,13 +15,12 @@ import 'package:intl/intl.dart';
 enum Property { LOCATION, HEADCOUNT, COMMUNICATE, DURATION }
 
 class WritePostScreen extends StatefulWidget {
-  WritePostScreen({required this.user, this.selectedTown, this.locationList, this.originalPost, this.nickname = ''});
+  WritePostScreen({required this.user, this.selectedTown, this.locationList, this.viewModel});
 
   final Member user;
   final int? selectedTown;
   final List<String>? locationList;
-  final Post? originalPost;
-  final String nickname;
+  final PostViewModel? viewModel;
 
   @override
   _WritePostScreenState createState() => _WritePostScreenState(selectedTown);
@@ -32,7 +30,6 @@ class _WritePostScreenState extends State<WritePostScreen> {
   PostViewModel _viewModel = PostViewModel();
 
   late Member _user;
-  Post? _originalPost;
 
   List<String>? _locationList;
 
@@ -110,9 +107,8 @@ class _WritePostScreenState extends State<WritePostScreen> {
     super.initState();
 
     _user = widget.user;
-    _originalPost = widget.originalPost;
 
-    if (_originalPost == null) {
+    if (widget.viewModel == null) {
       _locationList = widget.locationList;
 
       _viewModel
@@ -120,17 +116,15 @@ class _WritePostScreenState extends State<WritePostScreen> {
         ..post.town = _locationList![widget.selectedTown!]
         ..geoPoint = widget.selectedTown == 0 ? LocationService.geoPoint : _user.location;
     } else {
-      _viewModel
-        ..post = _originalPost!
-        ..nickname = widget.nickname;
+      _viewModel = widget.viewModel!;
 
-      _titleController.text = _originalPost!.title;
-      _contentController.text = _originalPost!.content;
-      _tagController.text = _originalPost!.tag.sublist(1).join(" ");
+      _titleController.text = _viewModel.post.title;
+      _contentController.text = _viewModel.post.content;
+      _tagController.text = _viewModel.post.tag.sublist(1).join(" ");
 
-      _headCountController = FixedExtentScrollController(initialItem: _originalPost!.headcount - 2);
-      _communicationController = FixedExtentScrollController(initialItem: _originalPost!.communication);
-      _durationController = FixedExtentScrollController(initialItem: _originalPost!.duration ~/ 30 - 1);
+      _headCountController = FixedExtentScrollController(initialItem: _viewModel.post.headcount - 2);
+      _communicationController = FixedExtentScrollController(initialItem: _viewModel.post.communication);
+      _durationController = FixedExtentScrollController(initialItem: _viewModel.post.duration ~/ 30 - 1);
     }
   }
 
@@ -176,7 +170,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                             postPicker(_locationController, _locationList!, Property.LOCATION);
                           },
                           hasData: true,
-                          disabled: _originalPost != null,
+                          disabled: widget.viewModel != null,
                         ),
                       ),
                       Expanded(
@@ -375,7 +369,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                           Navigator.pop(context);
                           Loading.show();
 
-                          if (!(_originalPost == null
+                          if (!(widget.viewModel == null
                               ? await _viewModel.createPost()
                               : await _viewModel.updatePost())) {
                             Loading.showError('업로드 실패');

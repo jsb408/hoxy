@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/member.dart';
+import 'package:hoxy/view/alert_platform_dialog.dart';
 import 'package:hoxy/view/grade_button.dart';
 import 'dart:io' show Platform;
 
@@ -41,51 +42,28 @@ class ProfileScreen extends StatelessWidget {
         elevation: 0,
         actions: [
           if (member.uid != kAuth.currentUser.uid)
-            Platform.isIOS
-                ? IconButton(
-                    icon: Icon(Icons.more_vert),
-                    onPressed: () {
-                      showCupertinoModalPopup(
-                        context: context,
-                        builder: (context) => CupertinoActionSheet(
-                          actions: [
-                            CupertinoActionSheetAction(
-                              child: Text('차단하기'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                            CupertinoActionSheetAction(
-                              isDestructiveAction: true,
-                              child: Text('신고하기'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                          cancelButton: CupertinoActionSheetAction(
-                            child: Text('취소'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                : PopupMenuButton(
-                    onSelected: (value) {
-                      if (value == '차단하기') {
-                      } else if (value == '신고하기') {}
-                    },
-                    itemBuilder: (context) => [
-                      for (String item in ['차단하기', '신고하기'])
-                        PopupMenuItem(
-                          value: item,
-                          child: Text(item),
-                        ),
+            IconButton(
+              icon: Icon(CupertinoIcons.person_crop_circle_badge_xmark),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertPlatformDialog(
+                    title: Text('차단'),
+                    content: Text('해당 유저를 차단하시겠습니까?'),
+                    children: [
+                      AlertPlatformDialogButton(
+                        child: Text('아니오'),
+                        onPressed: () {},
+                      ),
+                      AlertPlatformDialogButton(
+                        child: Text('네'),
+                        onPressed: () {},
+                      ),
                     ],
                   ),
+                );
+              },
+            ),
         ],
       ),
       body: BackdropFilter(

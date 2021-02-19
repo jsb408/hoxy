@@ -13,6 +13,7 @@ import 'package:hoxy/view/alert_platform_dialog.dart';
 import 'package:hoxy/view/grade_button.dart';
 import 'package:hoxy/view/item_member_list.dart';
 import 'package:hoxy/viewmodel/chat_view_model.dart';
+import 'package:hoxy/viewmodel/chatting_view_model.dart';
 import 'package:intl/intl.dart';
 import 'dart:io' show Platform;
 
@@ -28,7 +29,8 @@ class ChatRoomScreen extends StatefulWidget {
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
-  ChatViewModel _viewModel = ChatViewModel();
+  ChattingViewModel _chattingViewModel = ChattingViewModel();
+  ChatViewModel _chatViewModel = ChatViewModel();
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +39,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
     return StreamBuilder<DocumentSnapshot>(
       stream: kFirestore.collection('chatting').doc(widget.chattingId).snapshots(),
       builder: (context, snapshot) {
-        Chatting chatting = Chatting();
-        if (snapshot.hasData) chatting = Chatting.from(snapshot.data!);
+        if (snapshot.hasData) _chattingViewModel.chatting = Chatting.from(snapshot.data!);
         return StreamBuilder<QuerySnapshot>(
-          stream: chatting.chat?.orderBy('date', descending: true).snapshots(),
+          stream: _chattingViewModel.chatting.chat?.orderBy('date', descending: true).snapshots(),
           builder: (context, snapshot) {
             List<Chat> chats = [];
             if (snapshot.hasData) chats = snapshot.data!.docs.map((e) => Chat.from(e)).toList();
             return StreamBuilder<DocumentSnapshot>(
-              stream: chatting.post?.snapshots(),
+              stream: _chattingViewModel.chatting.post?.snapshots(),
               builder: (context, snapshot) {
                 Post post = Post();
                 if (snapshot.hasData) post = Post.from(snapshot.data!);
@@ -69,7 +70,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     return Scaffold(
                       appBar: appBar,
                       endDrawer: ChatRoomDrawer(
-                        chatting: chatting,
+                        chattingViewModel: _chattingViewModel,
                         post: post,
                         members: members,
                         topPadding: appBar.preferredSize.height,
@@ -85,7 +86,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                   MessageBubble(
                                     text: chat.content,
                                     sender: members.singleWhere((element) => chat.sender!.id == element.uid),
-                                    chatting: chatting,
+                                    chatting: _chattingViewModel.chatting,
                                   ),
                               ],
                             ),
@@ -114,7 +115,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                         ),
                                       ),
                                       onChanged: (value) {
-                                        _viewModel.chat.content = value;
+                                        _chatViewModel.chat.content = value;
                                       },
                                     ),
                                   ),
@@ -122,7 +123,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                                 TextButton(
                                   child: Icon(Icons.send),
                                   onPressed: () async {
-                                    _viewModel.sendChat(widget.chattingId);
+                                    _chatViewModel.sendChat(widget.chattingId);
                                     _chatController.clear();
                                   },
                                 )
@@ -144,9 +145,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 }
 
 class ChatRoomDrawer extends StatelessWidget {
-  const ChatRoomDrawer({required this.chatting, required this.post, required this.members, this.topPadding = 0});
+  const ChatRoomDrawer({required this.chattingViewModel, required this.post, required this.members, this.topPadding = 0});
 
-  final Chatting chatting;
+  final ChattingViewModel chattingViewModel;
   final Post post;
   final List<Member> members;
   final double topPadding;
@@ -217,27 +218,27 @@ class ChatRoomDrawer extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '${chatting.member.length}/${post.headcount}',
+                            '${chattingViewModel.chatting.member.length}/${post.headcount}',
                             style: TextStyle(fontSize: 12, color: kTimeColor),
                           ),
                         ],
                       ),
                       ItemMemberList(
                         member: members.singleWhere((element) => element.uid == post.writer!.id),
-                        chatting: chatting,
+                        chatting: chattingViewModel.chatting,
                         isLeader: true,
                         isMe: post.writer!.id == kAuth.currentUser.uid,
                       ),
                       if (post.writer!.id != kAuth.currentUser.uid)
                         ItemMemberList(
                             member: members.singleWhere((element) => element.uid == kAuth.currentUser.uid),
-                            chatting: chatting,
+                            chatting: chattingViewModel.chatting,
                             isMe: true),
                       for (Member member in members.where((element) =>
-                          chatting.member.contains(element.uid) &&
+                      chattingViewModel.chatting.member.contains(element.uid) &&
                           element.uid != post.writer!.id &&
                           element.uid != kAuth.currentUser.uid))
-                        ItemMemberList(member: member, chatting: chatting),
+                        ItemMemberList(member: member, chatting: chattingViewModel.chatting),
                     ],
                   ),
                 ),
@@ -274,13 +275,7 @@ class ChatRoomDrawer extends StatelessWidget {
                                 child: Text('예'),
                                 onPressed: () async {
                                   Loading.show();
-                                  List<String> member = chatting.member;
-                                  member.remove(kAuth.currentUser.uid);
-                                  await kFirestore
-                                      .collection('chatting')
-                                      .doc(chatting.id)
-                                      .update({'member': member});
-                                  Loading.dismiss();
+                                  chattingViewModel.escapeChatRoom();
                                   Navigator.pop(context);
                                 },
                               ),
