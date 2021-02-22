@@ -13,6 +13,7 @@ import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/view/background_button.dart';
 import 'package:hoxy/view/grade_button.dart';
 import 'package:hoxy/view/item_relate_list.dart';
+import 'package:hoxy/view/platform_action_sheet.dart';
 import 'package:hoxy/viewmodel/chatting_view_model.dart';
 import 'package:hoxy/viewmodel/post_view_model.dart';
 import 'package:intl/intl.dart';
@@ -55,147 +56,99 @@ class ReadPostScreen extends StatelessWidget {
                     title: Text(_postViewModel.post.title),
                     actions: [
                       writer.uid == kAuth.currentUser.uid
-                          ? Platform.isIOS
-                              ? IconButton(
-                                  icon: Icon(Icons.more_vert),
+                          ? PlatformActionSheet(
+                              actions: [
+                                PlatformActionSheetAction(
+                                  value: 0,
+                                  child: Text('수정'),
                                   onPressed: () {
-                                    showCupertinoModalPopup(
+                                    _postViewModel.showUpdatePost(context, writer);
+                                  },
+                                ),
+                                PlatformActionSheetAction(
+                                value: 1,
+                                  isDestructiveAction: true,
+                                  child: Text('삭제'),
+                                  onPressed: () {
+                                    _postViewModel.showDeleteDialog(context);
+                                  },
+                                ),
+                              ],
+                              cancelButton: PlatformActionSheetAction(
+                                value: 2,
+                                child: Text('취소'),
+                                onPressed: () {},
+                              ),
+                            )
+                          : PlatformActionSheet(
+                              actions: [
+                                PlatformActionSheetAction(
+                                  value: 0,
+                                  child: Text('모임 신고하기'),
+                                  onPressed: () {
+                                    showDialog(
                                       context: context,
-                                      builder: (context) => CupertinoActionSheet(
-                                        actions: [
-                                          CupertinoActionSheetAction(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                              _postViewModel.showUpdatePost(context, writer);
-                                            },
-                                            child: Text('수정'),
+                                      builder: (context) {
+                                        String reportContent = '';
+                                        return AlertPlatformDialog(
+                                          title: Text('신고하기'),
+                                          content: Padding(
+                                            padding: const EdgeInsets.only(top: 5),
+                                            child: Container(
+                                              color: Colors.white,
+                                              height: 100,
+                                              child: TextField(
+                                                decoration: InputDecoration(
+                                                  border: InputBorder.none,
+                                                  hintText: '신고할 내용을 입력해주세요',
+                                                  contentPadding: EdgeInsets.only(left: 8),
+                                                  hintStyle: TextStyle(
+                                                    height: 0,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                onChanged: (value) {
+                                                  reportContent = value;
+                                                },
+                                              ),
+                                            ),
                                           ),
-                                          CupertinoActionSheetAction(
-                                              isDestructiveAction: true,
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                                _postViewModel.showDeleteDialog(context);
-                                              },
-                                              child: Text('삭제')),
-                                        ],
-                                        cancelButton: CupertinoActionSheetAction(
-                                          child: Text('취소'),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                )
-                              : PopupMenuButton(
-                                  onSelected: (value) {
-                                    if (value == '수정')
-                                      _postViewModel.showUpdatePost(context, writer);
-                                    else if (value == '삭제') _postViewModel.showDeleteDialog(context);
-                                  },
-                                  itemBuilder: (context) => [
-                                    for (String item in ['수정', '삭제'])
-                                      PopupMenuItem(
-                                        value: item,
-                                        child: Text(item),
-                                      ),
-                                  ],
-                                )
-                          : Platform.isIOS
-                              ? IconButton(
-                                  icon: Icon(Icons.more_vert),
-                                  onPressed: () {
-                                    showCupertinoModalPopup(
-                                      context: context,
-                                      builder: (context) => CupertinoActionSheet(
-                                        actions: [
-                                          CupertinoActionSheetAction(
-                                            child: Text('모임 신고하기'),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                              showCupertinoDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  String reportContent = '';
-                                                  return CupertinoAlertDialog(
-                                                    title: Text('신고하기'),
-                                                    content: Padding(
-                                                      padding: const EdgeInsets.only(top: 5),
-                                                      child: Container(
-                                                        color: Colors.white,
-                                                        height: 100,
-                                                        child: TextField(
-                                                          decoration: InputDecoration(
-                                                            border: InputBorder.none,
-                                                            hintText: '신고할 내용을 입력해주세요',
-                                                            contentPadding: EdgeInsets.only(left: 8),
-                                                            hintStyle: TextStyle(
-                                                              height: 0,
-                                                              fontWeight: FontWeight.w600,
-                                                            ),
-                                                          ),
-                                                          onChanged: (value) {
-                                                            reportContent = value;
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    actions: [
-                                                      CupertinoDialogAction(
-                                                        child: Text('취소'),
-                                                        onPressed: () {
-                                                          Navigator.pop(context);
-                                                        },
-                                                      ),
-                                                      CupertinoDialogAction(
-                                                        child: Text('신고하기'),
-                                                        onPressed: () async {
-                                                          Navigator.pop(context);
-                                                          Loading.show();
-                                                          if(await _postViewModel.reportPost(reportContent)) {
-                                                            Loading.showSuccess('신고가 접수되었습니다');
-                                                          } else {
-                                                            Loading.showError('신고 오류');
-                                                          }
-                                                        },
-                                                      ),
-                                                    ],
-                                                  );
+                                          children: [
+                                            AlertPlatformDialogButton(
+                                              child: Text('취소'),
+                                              onPressed: () { },
+                                            ),
+                                            AlertPlatformDialogButton(
+                                              child: Text('신고하기'),
+                                              onPressed: () async {
+                                                Loading.show();
+                                                if (await _postViewModel.reportPost(reportContent)) {
+                                                  Loading.showSuccess('신고가 접수되었습니다');
+                                                } else {
+                                                  Loading.showError('신고 오류');
                                                 }
-                                              );
-                                            },
-                                          ),
-                                          CupertinoActionSheetAction(
-                                            child: Text('이 주최자와 만나지 않기'),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                          ),
-                                        ],
-                                        cancelButton: CupertinoActionSheetAction(
-                                          child: Text('취소'),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                      ),
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     );
                                   },
-                                )
-                              : PopupMenuButton(
-                                  onSelected: (value) {
-                                    if (value == '모임 신고하기') {}
-                                    else if (value == '이 주최자와 만나지 않기') {}
-                                  },
-                                  itemBuilder: (context) => [
-                                    for (String item in ['모임 신고하기', '이 주최자와 만나지 않기'])
-                                      PopupMenuItem(
-                                        value: item,
-                                        child: Text(item),
-                                      ),
-                                  ],
-                                )
+                                ),
+                                PlatformActionSheetAction(
+                                  value: 1,
+                                  child: Text('이 주최자와 만나지 않기'),
+                                  onPressed: () {},
+                                ),
+                              ],
+                              cancelButton: PlatformActionSheetAction(
+                                value: 2,
+                                child: Text('취소'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
                     ],
                   ),
                   body: Column(
@@ -219,7 +172,8 @@ class ReadPostScreen extends StatelessWidget {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text('예정시간', style: TextStyle(color: Color.fromRGBO(55, 68, 78, 1.0))),
-                                            Text(_postViewModel.formattedTime,
+                                            Text(
+                                              _postViewModel.formattedTime,
                                               style: TextStyle(fontSize: 14, color: kTimeColor),
                                             ),
                                             SizedBox(height: 6),
@@ -253,9 +207,11 @@ class ReadPostScreen extends StatelessWidget {
                                         children: [
                                           CircularProgressIndicator(
                                             backgroundColor: kProgressBackgroundColor,
-                                            value: _chattingViewModel.chatting.member.length / _postViewModel.post.headcount,
+                                            value: _chattingViewModel.chatting.member.length /
+                                                _postViewModel.post.headcount,
                                           ),
-                                          Text('${_chattingViewModel.chatting.member.length}/${_postViewModel.post.headcount}'),
+                                          Text(
+                                              '${_chattingViewModel.chatting.member.length}/${_postViewModel.post.headcount}'),
                                         ],
                                       ),
                                     ],
@@ -307,7 +263,8 @@ class ReadPostScreen extends StatelessWidget {
                                                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                                 ),
                                                 SizedBox(width: 3),
-                                                Text(_postViewModel.post.town, style: TextStyle(fontSize: 12, color: kDisabledColor)),
+                                                Text(_postViewModel.post.town,
+                                                    style: TextStyle(fontSize: 12, color: kDisabledColor)),
                                               ],
                                             ),
                                             Row(
@@ -346,7 +303,8 @@ class ReadPostScreen extends StatelessWidget {
                                   child: Text('연관모임'),
                                 ),
                                 //TODO: 연관글이 없으면 안 뜨게 해야
-                                for (String tag in _postViewModel.relatedTag()) ItemRelateList(postId: _postViewModel.post.id, tag: tag)
+                                for (String tag in _postViewModel.relatedTag())
+                                  ItemRelateList(postId: _postViewModel.post.id, tag: tag)
                               ],
                             ),
                           ),

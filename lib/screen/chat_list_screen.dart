@@ -27,7 +27,7 @@ class ChatListScreen extends StatelessWidget {
             return Center(child: Text('채팅이 없습니다'));
           }
 
-          myChattingList.sort((a, b) => a['date'] > b['date'] ? 1 : 0);
+          myChattingList.sort((a, b) => (b['date'] as Timestamp).compareTo(a['date']));
           return ListView(
             children: [for (QueryDocumentSnapshot chatting in myChattingList) ItemChattingList(chatting: chatting)],
           );
