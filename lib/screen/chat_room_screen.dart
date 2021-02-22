@@ -84,7 +84,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                               children: [
                                 for (Chat chat in chats)
                                   MessageBubble(
-                                    text: chat.content,
+                                    chat: chat,
                                     sender: members.singleWhere((element) => chat.sender!.id == element.uid),
                                     chatting: _chattingViewModel.chatting,
                                   ),
@@ -145,7 +145,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
 }
 
 class ChatRoomDrawer extends StatelessWidget {
-  const ChatRoomDrawer({required this.chattingViewModel, required this.post, required this.members, this.topPadding = 0});
+  const ChatRoomDrawer(
+      {required this.chattingViewModel, required this.post, required this.members, this.topPadding = 0});
 
   final ChattingViewModel chattingViewModel;
   final Post post;
@@ -235,7 +236,7 @@ class ChatRoomDrawer extends StatelessWidget {
                             chatting: chattingViewModel.chatting,
                             isMe: true),
                       for (Member member in members.where((element) =>
-                      chattingViewModel.chatting.member.contains(element.uid) &&
+                          chattingViewModel.chatting.member.contains(element.uid) &&
                           element.uid != post.writer!.id &&
                           element.uid != kAuth.currentUser.uid))
                         ItemMemberList(member: member, chatting: chattingViewModel.chatting),
@@ -330,9 +331,9 @@ class ChattingDrawerButton extends StatelessWidget {
 }
 
 class MessageBubble extends StatelessWidget {
-  MessageBubble({required this.text, required this.sender, required this.chatting});
+  MessageBubble({required this.chat, required this.sender, required this.chatting});
 
-  final String text;
+  final Chat chat;
   final Member sender;
   final Chatting chatting;
 
@@ -368,29 +369,42 @@ class MessageBubble extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-              Material(
-                borderRadius: isMe
-                    ? BorderRadius.only(
-                        topLeft: Radius.circular(5.0),
-                        topRight: Radius.circular(5.0),
-                        bottomLeft: Radius.circular(5.0),
-                      )
-                    : BorderRadius.only(
-                        topLeft: Radius.circular(5.0),
-                        topRight: Radius.circular(5.0),
-                        bottomRight: Radius.circular(5.0),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Material(
+                    borderRadius: isMe
+                        ? BorderRadius.only(
+                            topLeft: Radius.circular(5.0),
+                            topRight: Radius.circular(5.0),
+                            bottomLeft: Radius.circular(5.0),
+                          )
+                        : BorderRadius.only(
+                            topLeft: Radius.circular(5.0),
+                            topRight: Radius.circular(5.0),
+                            bottomRight: Radius.circular(5.0),
+                          ),
+                    color: isMe ? kPrimaryColor : Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      child: Text(
+                        chat.content,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15.0,
+                        ),
                       ),
-                color: isMe ? kPrimaryColor : Colors.white,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                  child: Text(
-                    text,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15.0,
                     ),
                   ),
-                ),
+                  if (!isMe)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        DateFormat('MM.dd. HH:mm').format(chat.date),
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),
