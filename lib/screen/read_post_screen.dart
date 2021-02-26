@@ -66,7 +66,7 @@ class ReadPostScreen extends StatelessWidget {
                                   },
                                 ),
                                 PlatformActionSheetAction(
-                                value: 1,
+                                  value: 1,
                                   isDestructiveAction: true,
                                   child: Text('삭제'),
                                   onPressed: () {
@@ -116,7 +116,7 @@ class ReadPostScreen extends StatelessWidget {
                                           children: [
                                             AlertPlatformDialogButton(
                                               child: Text('취소'),
-                                              onPressed: () { },
+                                              onPressed: () {},
                                             ),
                                             AlertPlatformDialogButton(
                                               child: Text('신고하기'),
@@ -138,7 +138,57 @@ class ReadPostScreen extends StatelessWidget {
                                 PlatformActionSheetAction(
                                   value: 1,
                                   child: Text('이 주최자와 만나지 않기'),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertPlatformDialog(
+                                        title: Text('만나지 않기'),
+                                        content: Text('이 유저의 모임글을 숨기시겠습니까?'),
+                                        children: [
+                                          AlertPlatformDialogButton(
+                                            child: Text('아니오'),
+                                            onPressed: () {},
+                                          ),
+                                          AlertPlatformDialogButton(
+                                            child: Text('네'),
+                                            onPressed: () async {
+                                              Loading.show();
+                                              Navigator.pop(context);
+
+                                              DocumentReference banned = await kFirestore
+                                                  .collection('member')
+                                                  .doc(writer.uid)
+                                                  .collection('ban')
+                                                  .add({
+                                                'user': kFirestore.collection('member').doc(kAuth.currentUser.uid),
+                                                'date': DateTime.now(),
+                                                'chatting': kFirestore
+                                                    .collection('chatting')
+                                                    .doc(_chattingViewModel.chatting.id),
+                                                'active': false,
+                                              });
+
+                                              await kFirestore
+                                                  .collection('member')
+                                                  .doc(kAuth.currentUser.uid)
+                                                  .collection('ban')
+                                                  .add({
+                                                'user': kFirestore.collection('member').doc(writer.uid),
+                                                'date': DateTime.now(),
+                                                'chatting': kFirestore
+                                                    .collection('chatting')
+                                                    .doc(_chattingViewModel.chatting.id),
+                                                'active': true,
+                                                'pair': banned,
+                                              });
+
+                                              Loading.dismiss();
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                               cancelButton: PlatformActionSheetAction(

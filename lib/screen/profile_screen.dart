@@ -1,10 +1,12 @@
 import 'dart:ui';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/member.dart';
+import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/view/alert_platform_dialog.dart';
 import 'package:hoxy/view/grade_button.dart';
 import 'dart:io' show Platform;
@@ -48,8 +50,8 @@ class ProfileScreen extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (context) => AlertPlatformDialog(
-                    title: Text('차단'),
-                    content: Text('해당 유저를 차단하시겠습니까?'),
+                    title: Text('만나지 않기'),
+                    content: Text('이 유저의 모임글을 숨기시겠습니까?'),
                     children: [
                       AlertPlatformDialogButton(
                         child: Text('아니오'),
@@ -57,7 +59,26 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       AlertPlatformDialogButton(
                         child: Text('네'),
-                        onPressed: () {},
+                        onPressed: () async {
+                          Loading.show();
+
+                          DocumentReference banned = await kFirestore.collection('member').doc(member.uid).collection('ban').add({
+                            'user' : kFirestore.collection('member').doc(kAuth.currentUser.uid),
+                            'date' : DateTime.now(),
+                            'chatting' : kFirestore.collection('chatting').doc(chatting.id),
+                            'active' : false,
+                          });
+
+                          await kFirestore.collection('member').doc(kAuth.currentUser.uid).collection('ban').add({
+                            'user' : kFirestore.collection('member').doc(member.uid),
+                            'date' : DateTime.now(),
+                            'chatting' : kFirestore.collection('chatting').doc(chatting.id),
+                            'active' : true,
+                            'pair' : banned
+                          });
+
+                          Loading.dismiss();
+                        },
                       ),
                     ],
                   ),
@@ -135,20 +156,21 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  top: MediaQuery.of(context).size.height * 0.1,
+                  top: Platform.isIOS ? MediaQuery.of(context).size.height * 0.1 : MediaQuery.of(context).size.height * 0.15 ,
                   right: 35,
                   child: Text(
                     member.emoji,
-                    style: TextStyle(fontSize: 180),
+                    style: TextStyle(fontSize: Platform.isIOS ? 180 : 120),
                   ),
                 ),
               ],
             ),
-            Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.37,
-              color: kPrimaryColor,
-              child: Text('Hello'),
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                color: kPrimaryColor,
+                child: Text('Hello'),
+              ),
             ),
           ],
         ),

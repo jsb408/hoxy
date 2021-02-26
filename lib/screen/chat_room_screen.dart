@@ -82,12 +82,13 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                               padding: EdgeInsets.zero,
                               reverse: true,
                               children: [
-                                for (Chat chat in chats)
-                                  MessageBubble(
-                                    chat: chat,
-                                    sender: members.singleWhere((element) => chat.sender!.id == element.uid),
-                                    chatting: _chattingViewModel.chatting,
-                                  ),
+                                if (members.isNotEmpty)
+                                  for (Chat chat in chats)
+                                    MessageBubble(
+                                      chat: chat,
+                                      sender: members.singleWhere((element) => chat.sender!.id == element.uid),
+                                      chatting: _chattingViewModel.chatting,
+                                    ),
                               ],
                             ),
                           ),

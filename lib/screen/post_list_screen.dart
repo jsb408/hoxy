@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hoxy/model/ban.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/screen/write_post_screen.dart';
 import 'package:hoxy/service/loading.dart';
@@ -47,8 +48,7 @@ class _PostListScreenState extends State<PostListScreen> {
       builder: (context, snapshot) {
         Member user = snapshot.hasData ? Member.from(snapshot.data!) : Member();
         List<String> locationList = [LocationService.townName];
-        if (LocationService.cityName != user.city || LocationService.townName != user.town)
-          locationList.add(user.town);
+        if (LocationService.cityName != user.city || LocationService.townName != user.town) locationList.add(user.town);
 
         return Scaffold(
           appBar: AppBar(
@@ -70,28 +70,37 @@ class _PostListScreenState extends State<PostListScreen> {
           backgroundColor: kBackgroundColor,
           body: snapshot.hasData
               ? StreamBuilder<QuerySnapshot>(
-                  stream: kFirestore.collection('post').orderBy('date', descending: true).snapshots(),
+                  stream: kFirestore.collection('member').doc(kAuth.currentUser.uid).collection('ban').snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
                     }
 
-                    Loading.dismiss();
+                    List<DocumentReference> banList = snapshot.data!.docs.map((e) => Ban.from(e).user!).toList();
 
-                    Iterable<QueryDocumentSnapshot> posts = snapshot.data!.docs.where((element) =>
-                        LocationService.distanceBetween(
-                        _selectedLocality == 0 ? LocationService.geoPoint : user.location,
-                        element.get('location')) < 5000
-                    );
+                    return StreamBuilder<QuerySnapshot>(
+                      stream: kFirestore.collection('post').orderBy('date', descending: true).snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return Center(child: CircularProgressIndicator());
+                        }
 
-                    if (posts.isEmpty) {
-                      return Center(child: Text('등록된 글이 없습니다'));
-                    }
+                        Loading.dismiss();
 
-                    List<ItemPostList> postList = [for(var post in posts) ItemPostList(post: post)];
+                        Iterable<QueryDocumentSnapshot> posts = snapshot.data!.docs.where((element) =>
+                            LocationService.distanceBetween(
+                                    _selectedLocality == 0 ? LocationService.geoPoint : user.location,
+                                    element.get('location')) < 5000 &&
+                            !banList.contains(element['writer'] as DocumentReference));
 
-                    return ListView(
-                      children: postList,
+                        if (posts.isEmpty) {
+                          return Center(child: Text('등록된 글이 없습니다'));
+                        }
+
+                        List<ItemPostList> postList = [for (var post in posts) ItemPostList(post: post)];
+
+                        return ListView(children: postList);
+                      },
                     );
                   },
                 )

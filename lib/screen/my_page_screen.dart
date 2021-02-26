@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/model/member.dart';
+import 'package:hoxy/screen/ban_list_screen.dart';
 import 'package:hoxy/screen/login_screen.dart';
 import 'package:hoxy/service/emoji_service.dart';
 import 'package:hoxy/service/location_service.dart';
@@ -230,6 +231,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
                     MyPageButton(
                       icon: CupertinoIcons.person_crop_circle_badge_xmark,
                       title: '만남거부목록',
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => BanListScreen()));
+                      },
                     ),
                   ],
                 ),
