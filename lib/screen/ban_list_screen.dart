@@ -29,13 +29,13 @@ class BanListScreen extends StatelessWidget {
           StreamBuilder<QuerySnapshot>(
               stream: kFirestore.collection('member').doc(kAuth.currentUser.uid).collection('ban').where('active', isEqualTo: true).snapshots(),
               builder: (context, snapshot) {
-                return Expanded(
+                return snapshot.hasData ? Expanded(
                   child: ListView(
                     children: [
                       for (QueryDocumentSnapshot doc in snapshot.data!.docs) ItemBanList(banSnapshot: doc),
                     ],
                   ),
-                );
+                ) : Container();
               }),
         ],
       ),
