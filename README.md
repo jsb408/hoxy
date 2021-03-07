@@ -5,7 +5,7 @@
 
 ## 서비스 소개
 HOXY는 사람이 필요한 사람들을 위해 모임을 개설하고 주변 사람들을 쉽게 모을 수 있도록 도와주는 Flutter 기반의 플랫폼 앱 입니다.
-![Screenshot_20210307-132121](https://user-images.githubusercontent.com/55052074/110229012-65ab5700-7f49-11eb-85e1-0b1c7556c84f.jpg){: width="30%"}![Screenshot_20210307-132806](https://user-images.githubusercontent.com/55052074/110229022-752aa000-7f49-11eb-9d7f-bf4dca172900.jpg){: width="30%"}
+<img src="https://user-images.githubusercontent.com/55052074/110229012-65ab5700-7f49-11eb-85e1-0b1c7556c84f.jpg" width="30%"><img src="https://user-images.githubusercontent.com/55052074/110229022-752aa000-7f49-11eb-9d7f-bf4dca172900.jpg" width="30%">
 - 모임 모집 기능
 - 모임원 간 채팅 기능
 - 상호 간 리뷰 기능(예정)
