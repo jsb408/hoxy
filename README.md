@@ -2,7 +2,7 @@
 
 익명 만남 플랫폼
 - 진행기간 : 2021. 01. 18 ~ 2021. 02. 21
-
+- 사용기술 : Android Studio, Flutter, Firebase, Firestore, geolocator, geocoding, permission_handler
 
 <p align="center"><img src="https://user-images.githubusercontent.com/55052074/111107641-9703d280-859a-11eb-833d-28d9f419d17d.jpg" width="30%"/> <img src="https://user-images.githubusercontent.com/55052074/111107650-99fec300-859a-11eb-8d2c-c64634b383ac.jpg" width="30%"/></p>
 
