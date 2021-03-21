@@ -120,6 +120,7 @@
 
 ## 기타 사항
 
+- MVVM 패턴 적용
 - iOS / AOS 다이얼로그, 액션시트 구분
 
 <p align="center"><img src="https://user-images.githubusercontent.com/55052074/111111439-a76b7b80-85a1-11eb-99d5-09a55b1de05f.jpg" width="30%"/> <img src="https://user-images.githubusercontent.com/55052074/111111408-9884c900-85a1-11eb-890e-2f6ef1d101ab.png" width="30%"/></p>
