@@ -182,7 +182,7 @@ class ChatRoomDrawer extends StatelessWidget {
                               Text(
                                 '${DateFormat('MM.dd HH시 mm분').format(post.start ?? DateTime.now())}~${DateFormat('HH시 mm분').format(post.start?.add(Duration(minutes: post.duration)) ?? DateTime.now())} (${NumberFormat('0.#').format(post.duration / 60)}시간)',
                                 style: TextStyle(
-                                  fontSize: 11,
+                                  fontSize: 10,
                                   color: kTimeColor,
                                 ),
                               ),
@@ -279,6 +279,7 @@ class ChatRoomDrawer extends StatelessWidget {
                                   Loading.show();
                                   chattingViewModel.escapeChatRoom();
                                   Navigator.pop(context);
+                                  Loading.dismiss();
                                 },
                               ),
                             ],

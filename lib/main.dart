@@ -21,6 +21,7 @@ class Hoxy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: Theme.of(context).copyWith(
         floatingActionButtonTheme: Theme.of(context).floatingActionButtonTheme.copyWith(
           backgroundColor: kPrimaryColor

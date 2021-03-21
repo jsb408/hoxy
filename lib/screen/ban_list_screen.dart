@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hoxy/model/ban.dart';
 import 'package:hoxy/view/item_ban_list.dart';
 
 import '../constants.dart';
@@ -27,16 +26,24 @@ class BanListScreen extends StatelessWidget {
             ),
           ),
           StreamBuilder<QuerySnapshot>(
-              stream: kFirestore.collection('member').doc(kAuth.currentUser.uid).collection('ban').where('active', isEqualTo: true).snapshots(),
-              builder: (context, snapshot) {
-                return snapshot.hasData ? Expanded(
-                  child: ListView(
-                    children: [
-                      for (QueryDocumentSnapshot doc in snapshot.data!.docs) ItemBanList(banSnapshot: doc),
-                    ],
-                  ),
-                ) : Container();
-              }),
+            stream: kFirestore
+                .collection('member')
+                .doc(kAuth.currentUser.uid)
+                .collection('ban')
+                .where('active', isEqualTo: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              return snapshot.hasData
+                  ? Expanded(
+                      child: ListView(
+                        children: [
+                          for (QueryDocumentSnapshot doc in snapshot.data!.docs) ItemBanList(banSnapshot: doc),
+                        ],
+                      ),
+                    )
+                  : Container();
+            },
+          ),
         ],
       ),
     );
