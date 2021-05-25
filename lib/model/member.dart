@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Member {
-  String uid = '';
+  String uid = ''.obs;
   String email = '';
   String phone = '';
   String emoji = '😀';

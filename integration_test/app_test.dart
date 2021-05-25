@@ -12,6 +12,10 @@ import 'package:hoxy/main.dart' as app;
 
 void main() => run(_testMain);
 
+run(void Function() function) {
+  function();
+}
+
 void _testMain() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.

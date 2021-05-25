@@ -45,7 +45,8 @@ class Hoxy extends StatelessWidget {
           )
         )
       ),
-      home: kAuth.currentUser == null || kAuth.currentUser!.email!.isEmpty ? LoginScreen() : LocationScreen(),
+      //Login 되어있으면 ? LocationScreen : LoginScreen
+      home: kAuth.currentUser?.email?.isNotEmpty == true ? LocationScreen() : LoginScreen(),
       builder: EasyLoading.init(),
     );
   }

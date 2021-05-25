@@ -35,7 +35,7 @@ dependencies:
   emojis: ^0.9.3
   intl: ^0.17.0
   shimmer: ^2.0.0
-  provider: ^5.0.0
+  get: ^4.1.4
 
 dev_dependencies:
   flutter_test:
