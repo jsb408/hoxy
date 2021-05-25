@@ -12,8 +12,8 @@ class ItemPostSkeleton extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 16),
           color: Colors.white,
           child: Shimmer.fromColors(
-            baseColor: Colors.grey[300],
-            highlightColor: Colors.grey[100],
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
             child: Row(
               children: [
                 Padding(
@@ -85,8 +85,8 @@ class ItemChattingSkeleton extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           color: Colors.white,
           child: Shimmer.fromColors(
-            baseColor: Colors.grey[300],
-            highlightColor: Colors.grey[100],
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
             child: Row(
               children: [
                 SizedBox(width: 8),

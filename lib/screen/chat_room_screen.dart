@@ -229,17 +229,17 @@ class ChatRoomDrawer extends StatelessWidget {
                         member: members.singleWhere((element) => element.uid == post.writer!.id),
                         chatting: chattingViewModel.chatting,
                         isLeader: true,
-                        isMe: post.writer!.id == kAuth.currentUser.uid,
+                        isMe: post.writer!.id == kAuth.currentUser?.uid,
                       ),
-                      if (post.writer!.id != kAuth.currentUser.uid)
+                      if (post.writer!.id != kAuth.currentUser?.uid)
                         ItemMemberList(
-                            member: members.singleWhere((element) => element.uid == kAuth.currentUser.uid),
+                            member: members.singleWhere((element) => element.uid == kAuth.currentUser?.uid),
                             chatting: chattingViewModel.chatting,
                             isMe: true),
                       for (Member member in members.where((element) =>
                           chattingViewModel.chatting.member.contains(element.uid) &&
                           element.uid != post.writer!.id &&
-                          element.uid != kAuth.currentUser.uid))
+                          element.uid != kAuth.currentUser?.uid))
                         ItemMemberList(member: member, chatting: chattingViewModel.chatting),
                     ],
                   ),
@@ -255,7 +255,7 @@ class ChatRoomDrawer extends StatelessWidget {
                   );
                 },
               ),
-              post.writer!.id == kAuth.currentUser.uid
+              post.writer!.id == kAuth.currentUser?.uid
                   ? ChattingDrawerButton(
                       icon: CupertinoIcons.xmark_circle,
                       text: '모임 종료하기',
@@ -339,7 +339,7 @@ class MessageBubble extends StatelessWidget {
   final Member sender;
   final Chatting chatting;
 
-  bool get isMe => sender.uid == kAuth.currentUser.uid;
+  bool get isMe => sender.uid == kAuth.currentUser?.uid;
 
   @override
   Widget build(BuildContext context) {

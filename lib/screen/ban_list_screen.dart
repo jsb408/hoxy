@@ -28,7 +28,7 @@ class BanListScreen extends StatelessWidget {
           StreamBuilder<QuerySnapshot>(
             stream: kFirestore
                 .collection('member')
-                .doc(kAuth.currentUser.uid)
+                .doc(kAuth.currentUser?.uid)
                 .collection('ban')
                 .where('active', isEqualTo: true)
                 .snapshots(),

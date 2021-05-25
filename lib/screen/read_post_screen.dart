@@ -55,7 +55,7 @@ class ReadPostScreen extends StatelessWidget {
                   appBar: AppBar(
                     title: Text(_postViewModel.post.title),
                     actions: [
-                      writer.uid == kAuth.currentUser.uid
+                      writer.uid == kAuth.currentUser?.uid
                           ? PlatformActionSheet(
                               actions: [
                                 PlatformActionSheetAction(
@@ -160,7 +160,7 @@ class ReadPostScreen extends StatelessWidget {
                                                   .doc(writer.uid)
                                                   .collection('ban')
                                                   .add({
-                                                'user': kFirestore.collection('member').doc(kAuth.currentUser.uid),
+                                                'user': kFirestore.collection('member').doc(kAuth.currentUser?.uid),
                                                 'date': DateTime.now(),
                                                 'chatting': kFirestore
                                                     .collection('chatting')
@@ -170,7 +170,7 @@ class ReadPostScreen extends StatelessWidget {
 
                                               await kFirestore
                                                   .collection('member')
-                                                  .doc(kAuth.currentUser.uid)
+                                                  .doc(kAuth.currentUser?.uid)
                                                   .collection('ban')
                                                   .add({
                                                 'user': kFirestore.collection('member').doc(writer.uid),
@@ -432,7 +432,7 @@ class ReadPostScreen extends StatelessWidget {
                                             ),
                                           );
                                         },
-                                        disabled: _chattingViewModel.chatting.member.contains(kAuth.currentUser.uid),
+                                        disabled: _chattingViewModel.chatting.member.contains(kAuth.currentUser?.uid),
                                       ),
                                     ),
                                   ),

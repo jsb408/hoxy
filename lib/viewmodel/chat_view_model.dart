@@ -10,7 +10,7 @@ class ChatViewModel {
 
     await kFirestore.collection('chatting').doc(chattingId).collection('chat').add({
       'content': chat.content,
-      'sender': kFirestore.collection('member').doc(kAuth.currentUser.uid),
+      'sender': kFirestore.collection('member').doc(kAuth.currentUser?.uid),
       'date': DateTime.now()
     }).catchError((error) {
       print(error);

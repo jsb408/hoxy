@@ -71,14 +71,14 @@ class JoinViewModel extends Member {
 
   Future<bool> createUser() async {
     try {
-      await kAuth.currentUser.updateEmail(member.email);
-      await kAuth.currentUser.updatePassword(password);
+      await kAuth.currentUser?.updateEmail(member.email);
+      await kAuth.currentUser?.updatePassword(password);
 
       member
-        ..uid = kAuth.currentUser.uid
+        ..uid = kAuth.currentUser!.uid
         ..emoji = EmojiService.randomEmoji();
 
-      kFirestore.collection('member').doc(kAuth.currentUser.uid).set(member.toMap());
+      kFirestore.collection('member').doc(kAuth.currentUser?.uid).set(member.toMap());
 
       return true;
     } catch (e) {

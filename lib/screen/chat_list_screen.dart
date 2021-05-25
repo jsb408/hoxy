@@ -14,7 +14,7 @@ class ChatListScreen extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
         stream: kFirestore
             .collection('chatting')
-            .where('member', arrayContains: kAuth.currentUser.uid)
+            .where('member', arrayContains: kAuth.currentUser?.uid)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {

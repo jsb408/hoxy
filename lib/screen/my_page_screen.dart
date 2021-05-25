@@ -34,7 +34,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
             child: Text('적용'),
             onPressed: () async {
               Loading.show();
-              await kFirestore.collection('member').doc(kAuth.currentUser.uid).update({'emoji': emoji});
+              await kFirestore.collection('member').doc(kAuth.currentUser?.uid).update({'emoji': emoji});
               Loading.dismiss();
             },
           ),
@@ -85,7 +85,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
         ],
       ),
       body: StreamBuilder<DocumentSnapshot>(
-        stream: kFirestore.collection('member').doc(kAuth.currentUser.uid).snapshots(),
+        stream: kFirestore.collection('member').doc(kAuth.currentUser?.uid).snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
@@ -204,7 +204,7 @@ class _MyPageScreenState extends State<MyPageScreen> {
                                       child: Text('네'),
                                       onPressed: () async {
                                         Loading.show();
-                                        await kFirestore.collection('member').doc(kAuth.currentUser.uid).update({
+                                        await kFirestore.collection('member').doc(kAuth.currentUser?.uid).update({
                                           'city': LocationService.cityName,
                                           'town': LocationService.townName,
                                           'location': LocationService.geoPoint

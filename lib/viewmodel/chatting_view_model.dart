@@ -7,14 +7,14 @@ class ChattingViewModel {
   Chatting chatting = Chatting();
 
   Future<void> enterChatRoom(String nickname) async {
-    chatting.member.add(kAuth.currentUser.uid);
+    chatting.member.add(kAuth.currentUser!.uid);
 
     await kFirestore
         .collection('chatting')
         .doc(chatting.id)
         .update({
       'member': chatting.member,
-      'nickname.${kAuth.currentUser.uid}': nickname,
+      'nickname.${kAuth.currentUser?.uid}': nickname,
     }).catchError((error) {
       print(error);
       Loading.showError('신청 오류');
@@ -28,7 +28,7 @@ class ChattingViewModel {
   }
 
   Future<void> escapeChatRoom() async {
-    chatting.member.remove(kAuth.currentUser.uid);
+    chatting.member.remove(kAuth.currentUser?.uid);
     await kFirestore
         .collection('chatting')
         .doc(chatting.id)

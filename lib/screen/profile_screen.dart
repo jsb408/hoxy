@@ -43,7 +43,7 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         actions: [
-          if (member.uid != kAuth.currentUser.uid)
+          if (member.uid != kAuth.currentUser?.uid)
             IconButton(
               icon: Icon(CupertinoIcons.person_crop_circle_badge_xmark),
               onPressed: () {
@@ -63,13 +63,13 @@ class ProfileScreen extends StatelessWidget {
                           Loading.show();
 
                           DocumentReference banned = await kFirestore.collection('member').doc(member.uid).collection('ban').add({
-                            'user' : kFirestore.collection('member').doc(kAuth.currentUser.uid),
+                            'user' : kFirestore.collection('member').doc(kAuth.currentUser?.uid),
                             'date' : DateTime.now(),
                             'chatting' : kFirestore.collection('chatting').doc(chatting.id),
                             'active' : false,
                           });
 
-                          await kFirestore.collection('member').doc(kAuth.currentUser.uid).collection('ban').add({
+                          await kFirestore.collection('member').doc(kAuth.currentUser?.uid).collection('ban').add({
                             'user' : kFirestore.collection('member').doc(member.uid),
                             'date' : DateTime.now(),
                             'chatting' : kFirestore.collection('chatting').doc(chatting.id),

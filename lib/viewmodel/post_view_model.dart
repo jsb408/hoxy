@@ -120,7 +120,7 @@ class PostViewModel {
   Future<bool> reportPost(String content) async {
     try {
       await kFirestore.collection('report').add({
-        'writer': kFirestore.collection('member').doc(kAuth.currentUser.uid),
+        'writer': kFirestore.collection('member').doc(kAuth.currentUser?.uid),
         'post': kFirestore.collection('post').doc(post.id),
         'date': DateTime.now(),
         'content': content

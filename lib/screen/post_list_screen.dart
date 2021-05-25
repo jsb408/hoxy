@@ -44,7 +44,7 @@ class _PostListScreenState extends State<PostListScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot>(
-      future: kFirestore.collection('member').doc(kAuth.currentUser.uid).get(),
+      future: kFirestore.collection('member').doc(kAuth.currentUser?.uid).get(),
       builder: (context, snapshot) {
         Member user = snapshot.hasData ? Member.from(snapshot.data!) : Member();
         List<String> locationList = [LocationService.townName];
@@ -70,7 +70,7 @@ class _PostListScreenState extends State<PostListScreen> {
           backgroundColor: kBackgroundColor,
           body: snapshot.hasData
               ? StreamBuilder<QuerySnapshot>(
-                  stream: kFirestore.collection('member').doc(kAuth.currentUser.uid).collection('ban').snapshots(),
+                  stream: kFirestore.collection('member').doc(kAuth.currentUser?.uid).collection('ban').snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Center(child: CircularProgressIndicator());
