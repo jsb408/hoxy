@@ -1,23 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:hoxy/model/member.dart';
-import 'package:hoxy/service/emoji_service.dart';
-
+import 'package:hoxy/model/join.dart';
+import 'package:hoxy/screen/join_detail_screen.dart';
+import 'package:hoxy/service/loading.dart';
 import '../constants.dart';
 
 class JoinViewModel extends GetxController {
-  Rx<Member> member = Member().obs;
-  Rx<String> password = ''.obs;
-  Rx<String> certNumber = ''.obs;
+  final Join _join = Join();
 
-  set position(Position position) => member.value.location = GeoPoint(position.latitude, position.longitude);
+  String _certNumber = '';
+  set certNumber(String number) => _certNumber = number;
 
-  String get formattedPhone => '+82 ${member.value.phone.substring(1)}';
-  bool get isComplete => member.value.birth > 0 && member.value.city.isNotEmpty && member.value.town.isNotEmpty;
+  final Rx<bool> _isLoading = false.obs;
+  final Rx<bool> _isComplete = false.obs;
+  bool get isComplete => _isComplete.value;
+  final Rx<String> _verificationId = ''.obs;
+  String get verificationId => _verificationId.value;
+
+  final _formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> get formKey => _formKey;
+
+  String get formattedPhone => '+82 ${_join.phone.substring(1)}';
+
+  JoinViewModel() {
+    onInit();
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    ever(_isLoading, (value) => value as bool ? Loading.show() : Loading.dismiss());
+  }
 
   String? checkEmail(String email) {
-    member.value.email = email;
+    _join.email = email;
 
     if (email.isEmpty)
       return '이메일을 입력해주세요';
@@ -28,7 +46,7 @@ class JoinViewModel extends GetxController {
   }
 
   String? checkPassword(String password) {
-    this.password.value = password;
+    _join.password = password;
 
     if (password.isEmpty)
       return '비밀번호를 입력해주세요';
@@ -41,14 +59,14 @@ class JoinViewModel extends GetxController {
   String? checkConfirm(String confirm) {
     if (confirm.isEmpty)
       return '비밀번호를 입력해주세요';
-    else if (confirm != password.value)
+    else if (confirm != _join.password)
       return '입력된 값이 비밀번호와 다릅니다';
     else
       return null;
   }
 
   String? checkPhone(String phone) {
-    member.value.phone = phone;
+    _join.phone = phone;
 
     if (phone.isEmpty)
       return '휴대폰 번호를 입력해주세요';
@@ -59,8 +77,8 @@ class JoinViewModel extends GetxController {
   }
 
   Future<String?> checkDuplicate() async {
-    QuerySnapshot phone = await kFirestore.collection('member').where('phone', isEqualTo: member.value.phone).get();
-    QuerySnapshot email = await kFirestore.collection('member').where('email', isEqualTo: member.value.email).get();
+    QuerySnapshot phone = await kFirestore.collection('member').where('phone', isEqualTo: _join.phone).get();
+    QuerySnapshot email = await kFirestore.collection('member').where('email', isEqualTo: _join.email).get();
 
     if (phone.docs.isNotEmpty) {
       return '이미 가입된 번호입니다';
@@ -70,21 +88,75 @@ class JoinViewModel extends GetxController {
       return null;
   }
 
-  Future<bool> createUser() async {
+  Future createUser() async {
+    _isLoading.value = true;
+
     try {
-      await kAuth.currentUser?.updateEmail(member.value.email);
-      await kAuth.currentUser?.updatePassword(password.value);
+      await kAuth.currentUser?.updateEmail(_join.email);
+      await kAuth.currentUser?.updatePassword(_join.password);
+      _isLoading.value = false;
 
-      member.value
-        ..uid = kAuth.currentUser!.uid
-        ..emoji = EmojiService.randomEmoji();
-
-      kFirestore.collection('member').doc(kAuth.currentUser?.uid).set(member.value.toMap());
-
-      return true;
+      Get.off(() => JoinDetailScreen(uid: kAuth.currentUser!.uid));
     } catch (e) {
       print(e);
-      return false;
+      Loading.showError('가입에 실패했습니다');
     }
+  }
+
+  void checkValidate() async {
+    _isLoading.value = true;
+
+    if (!_formKey.currentState!.validate()) {
+      _isLoading.value = false;
+      return;
+    }
+
+    String? duplicate = await checkDuplicate();
+
+    if (duplicate != null) {
+      Loading.showError(duplicate);
+      return;
+    }
+
+    await kAuth.verifyPhoneNumber(
+      phoneNumber: formattedPhone,
+      verificationCompleted: (credential) {
+        _isComplete.value = true;
+        _isLoading.value = false;
+      },
+      verificationFailed: (e) {
+        print(e);
+        Loading.showError('인증 실패');
+      },
+      codeSent: (verificationId, resendToken) async {
+        Loading.showSuccess('번호가 전송되었습니다');
+        _verificationId.value = verificationId;
+        _isLoading.value = false;
+      },
+      codeAutoRetrievalTimeout: (verificationId) async {
+        print('codeAuthRetrievalTimeout');
+      },
+    );
+  }
+
+  void checkCertNum() async {
+    _isLoading.value = true;
+    if (_formKey.currentState!.validate()) {
+      try {
+        AuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
+            verificationId: verificationId, smsCode: _certNumber);
+        await kAuth.signInWithCredential(phoneAuthCredential);
+
+        if (kAuth.currentUser != null) {
+          Loading.showSuccess('인증 완료');
+          _verificationId.value = '';
+          _isComplete.value = true;
+        }
+      } catch (e) {
+        Loading.showError('인증 실패');
+        print(e);
+      }
+    }
+    _isLoading.value = false;
   }
 }

@@ -47,7 +47,7 @@ class LoginScreen extends StatelessWidget {
               LoginButton(
                 title: '이메일로 로그인',
                 color: kPrimaryColor,
-                onPressed: () {
+                onPressed: () async {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => LoginEmailScreen()));
                 },
               ),

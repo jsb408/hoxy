@@ -1,33 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:hoxy/screen/join_detail_screen.dart';
-import 'package:hoxy/service/loading.dart';
+import 'package:get/get.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/join_phone_number_text_field.dart';
 import 'package:hoxy/view/join_text_field.dart';
 import 'package:hoxy/viewmodel/join_view_model.dart';
-import '../constants.dart';
 
-class JoinScreen extends StatefulWidget {
-  @override
-  _JoinScreenState createState() => _JoinScreenState();
-}
-
-class _JoinScreenState extends State<JoinScreen> {
-  final _formKey = GlobalKey<FormState>();
-
-  JoinViewModel viewModel = JoinViewModel();
-
-  bool _isComplete = false;
-  String _verificationId = '';
-
+class JoinScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    JoinViewModel _viewModel = JoinViewModel();
+
     return WillPopScope(
-      onWillPop: () {
-        return Future(() => !EasyLoading.isShow);
-      },
+      onWillPop: () => Future(() => !EasyLoading.isShow),
       child: Scaffold(
         appBar: AppBar(
           title: Text('회원가입'),
@@ -53,36 +38,30 @@ class _JoinScreenState extends State<JoinScreen> {
                       ),
                     ),
                     Form(
-                      key: _formKey,
+                      key: _viewModel.formKey,
                       child: Column(
                         children: [
-                          JoinTextField(
-                            title: '이메일',
-                            readOnly: _isComplete,
-                            keyboardType: TextInputType.emailAddress,
-                            hintText: '양식에 맞게 입력해주세요',
-                            validator: (value) {
-                              return viewModel.checkEmail(value ?? '');
-                            },
-                          ),
-                          JoinTextField(
-                            title: '비밀번호',
-                            readOnly: _isComplete,
-                            hintText: '영문/숫자/기호를 모두 포함한 8자리 이상 입력',
-                            obscureText: true,
-                            validator: (value) {
-                              return viewModel.checkPassword(value ?? '');
-                            },
-                          ),
-                          JoinTextField(
-                            title: '비밀번호 확인',
-                            readOnly: _isComplete,
-                            hintText: '입력하신 비밀번호를 다시 한번 입력 해주세요.',
-                            obscureText: true,
-                            validator: (value) {
-                              return viewModel.checkConfirm(value ?? '');
-                            },
-                          ),
+                          Obx(() => JoinTextField(
+                                title: '이메일',
+                                readOnly: _viewModel.isComplete,
+                                keyboardType: TextInputType.emailAddress,
+                                hintText: '양식에 맞게 입력해주세요',
+                                validator: (value) => _viewModel.checkEmail(value ?? ''),
+                              )),
+                          Obx(() => JoinTextField(
+                                title: '비밀번호',
+                                readOnly: _viewModel.isComplete,
+                                hintText: '영문/숫자/기호를 모두 포함한 8자리 이상 입력',
+                                obscureText: true,
+                                validator: (value) => _viewModel.checkPassword(value ?? ''),
+                              )),
+                          Obx(() => JoinTextField(
+                                title: '비밀번호 확인',
+                                readOnly: _viewModel.isComplete,
+                                hintText: '입력하신 비밀번호를 다시 한번 입력 해주세요.',
+                                obscureText: true,
+                                validator: (value) => _viewModel.checkConfirm(value ?? ''),
+                              )),
                           Container(
                             padding: EdgeInsets.only(bottom: 20),
                             child: Column(
@@ -97,85 +76,29 @@ class _JoinScreenState extends State<JoinScreen> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      JoinPhoneNumberTextField(
-                                        hintText: ' - 기호 없이 숫자만 입력해주세요',
-                                        readOnly: _isComplete,
-                                        buttonText: '인증하기',
-                                        disabled: _verificationId.isNotEmpty || _isComplete,
-                                        validator: (value) {
-                                          return viewModel.checkPhone(value ?? '');
-                                        },
-                                        onPressed: () async {
-                                          Loading.show();
-
-                                          if (!_formKey.currentState!.validate()) {
-                                            Loading.dismiss();
-                                            return;
-                                          }
-
-                                          String? duplicate = await viewModel.checkDuplicate();
-
-                                          if (duplicate != null) {
-                                            Loading.showError(duplicate);
-                                            return;
-                                          }
-
-                                          await kAuth.verifyPhoneNumber(
-                                            phoneNumber: viewModel.formattedPhone,
-                                            verificationCompleted: (credential) {
-                                              setState(() {
-                                                _isComplete = true;
-                                              });
-                                              Loading.dismiss();
-                                            },
-                                            verificationFailed: (e) {
-                                              print(e);
-                                              Loading.showError('인증 실패');
-                                            },
-                                            codeSent: (verificationId, resendToken) async {
-                                              Loading.showSuccess('번호가 전송되었습니다');
-                                              setState(() {
-                                                _verificationId = verificationId;
-                                              });
-                                              Loading.dismiss();
-                                            },
-                                            codeAutoRetrievalTimeout: (verificationId) async {
-                                              print('codeAuthRetrievalTimeout');
-                                            },
-                                          );
-                                        },
+                                      Obx(
+                                        () => JoinPhoneNumberTextField(
+                                          hintText: ' - 기호 없이 숫자만 입력해주세요',
+                                          readOnly: _viewModel.isComplete,
+                                          buttonText: '인증하기',
+                                          disabled: _viewModel.verificationId.isNotEmpty ||
+                                              _viewModel.isComplete,
+                                          validator: (value) => _viewModel.checkPhone(value ?? ''),
+                                          onPressed: () async => _viewModel.checkValidate(),
+                                        ),
                                       ),
-                                      Visibility(
-                                        visible: _verificationId.isNotEmpty,
-                                        child: JoinPhoneNumberTextField(
-                                          hintText: '인증번호 입력',
-                                          buttonText: '확인',
-                                          validator: (value) {
-                                            viewModel.certNumber = value ?? '';
-                                            return null;
-                                          },
-                                          onPressed: () async {
-                                            Loading.show();
-                                            if (_formKey.currentState!.validate()) {
-                                              try {
-                                                AuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
-                                                    verificationId: _verificationId, smsCode: viewModel.certNumber);
-                                                await kAuth.signInWithCredential(phoneAuthCredential);
-
-                                                if (kAuth.currentUser != null) {
-                                                  setState(() {
-                                                    Loading.showSuccess('인증 완료');
-                                                    _verificationId = '';
-                                                    _isComplete = true;
-                                                  });
-                                                }
-                                              } catch (e) {
-                                                Loading.showError('인증 실패');
-                                                print(e);
-                                              }
-                                            }
-                                            Loading.dismiss();
-                                          },
+                                      Obx(
+                                        () => Visibility(
+                                          visible: _viewModel.verificationId.isNotEmpty,
+                                          child: JoinPhoneNumberTextField(
+                                            hintText: '인증번호 입력',
+                                            buttonText: '확인',
+                                            validator: (value) {
+                                              _viewModel.certNumber = value ?? '';
+                                              return null;
+                                            },
+                                            onPressed: () async => _viewModel.checkCertNum(),
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -183,7 +106,7 @@ class _JoinScreenState extends State<JoinScreen> {
                                 ),
                               ],
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -191,14 +114,13 @@ class _JoinScreenState extends State<JoinScreen> {
                 ),
               ),
             ),
-            BottomButton(
-              buttonTitle: '진행하기',
-              disabled: !_isComplete,
-              onTap: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => JoinDetailScreen(viewModel: viewModel)));
-              },
-            )
+            Obx(
+              () => BottomButton(
+                buttonTitle: '진행하기',
+                disabled: !_viewModel.isComplete,
+                onTap: () => _viewModel.createUser(),
+              ),
+            ),
           ],
         ),
       ),
