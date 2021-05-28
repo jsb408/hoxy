@@ -194,9 +194,7 @@ class ReadPostScreen extends StatelessWidget {
                               cancelButton: PlatformActionSheetAction(
                                 value: 2,
                                 child: Text('취소'),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
+                                onPressed: () {},
                               ),
                             ),
                     ],

@@ -47,9 +47,7 @@ class LoginScreen extends StatelessWidget {
               LoginButton(
                 title: '이메일로 로그인',
                 color: kPrimaryColor,
-                onPressed: () async {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginEmailScreen()));
-                },
+                onPressed: () async => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginEmailScreen())),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -60,9 +58,7 @@ class LoginScreen extends StatelessWidget {
                       '회원가입',
                       style: TextStyle(fontSize: 14, color: Colors.blueAccent.shade400),
                     ),
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => JoinScreen()));
-                    },
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => JoinScreen())),
                   ),
                 ],
               ),

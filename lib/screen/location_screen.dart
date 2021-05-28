@@ -12,6 +12,7 @@ class LocationScreen extends StatelessWidget {
     return FutureBuilder(
       future: LocationService.getCurrentLocation(),
       builder: (context, snapshot) {
+        print(snapshot.connectionState);
         if (snapshot.connectionState == ConnectionState.done) {
           if (LocationService.currentAddress == null) {
             return Center(

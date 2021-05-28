@@ -19,7 +19,7 @@ class LocationService {
 
       Platform.isIOS ? await checkIOSPermission() : await checkPermission();
 
-      position = await Geolocator.getCurrentPosition();
+      position = await Geolocator.getLastKnownPosition() ?? await Geolocator.getCurrentPosition();
       List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude, localeIdentifier: 'ko_KR');
 
       currentAddress = placemarks.first;
@@ -49,7 +49,5 @@ class LocationService {
     if (!permission) throw Exception('Location Permission is denied');
   }
 
-  static distanceBetween(GeoPoint start, GeoPoint end) {
-    return Geolocator.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude);
-  }
+  static distanceBetween(GeoPoint start, GeoPoint end) => Geolocator.distanceBetween(start.latitude, start.longitude, end.latitude, end.longitude);
 }

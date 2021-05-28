@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hoxy/model/post.dart';
 import 'package:hoxy/view/item_post_list.dart';
 
 import '../constants.dart';
@@ -42,7 +43,7 @@ class ItemRelateList extends StatelessWidget {
             ),
             Column(
               children: [
-                for (int dice in dices) ItemPostList(post: posts[dice]),
+                for (int dice in dices) ItemPostList(post: Post.from(posts[dice])),
               ],
             ),
           ],
