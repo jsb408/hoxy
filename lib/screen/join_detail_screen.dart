@@ -9,10 +9,6 @@ import 'package:hoxy/view/grade_button.dart';
 import 'package:hoxy/viewmodel/join_detail_view_model.dart';
 
 class JoinDetailScreen extends StatelessWidget {
-  JoinDetailScreen({required this.uid});
-
-  final String uid;
-
   @override
   Widget build(BuildContext context) {
     JoinDetailViewModel _viewModel = JoinDetailViewModel();

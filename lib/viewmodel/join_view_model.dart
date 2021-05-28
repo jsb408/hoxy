@@ -96,7 +96,7 @@ class JoinViewModel extends GetxController {
       await kAuth.currentUser?.updatePassword(_join.password);
       _isLoading.value = false;
 
-      Get.off(() => JoinDetailScreen(uid: kAuth.currentUser!.uid));
+      Get.off(() => JoinDetailScreen());
     } catch (e) {
       print(e);
       Loading.showError('가입에 실패했습니다');

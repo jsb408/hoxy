@@ -24,7 +24,7 @@ Future<StatelessWidget> autoLogin() async {
   if (kAuth.currentUser != null) { //로그인 되어있으면
     QuerySnapshot member = await kFirestore.collection('member').where('uid', isEqualTo: kAuth.currentUser!.uid).get();
     //detail이 입력되어 있으면 ? LocationScreen() : JoinDetailScreen()
-    return member.docs.isNotEmpty ? LocationScreen() : JoinDetailScreen(uid: kAuth.currentUser!.uid);
+    return member.docs.isNotEmpty ? LocationScreen() : JoinDetailScreen();
   } else return LoginScreen();
 }
 
