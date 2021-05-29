@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
+import 'package:hoxy/model/tag.dart';
 import 'package:hoxy/screen/write_post_screen.dart';
 import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/service/location_service.dart';
@@ -17,97 +18,92 @@ import '../nickname.dart';
 
 class WritePostViewModel extends GetxController {
   WritePostViewModel({this.selectedTown}) {
-    _isLoading.value = true;
-    onInit();
+    Loading.show();
     kFirestore.collection('member').doc(kAuth.currentUser!.uid).get().then((value) {
       _user.value = Member.from(value);
       _locationList.add(LocationService.townName);
       _locationList.add(_user.value.town);
-      _post.update((post) => post!
+      _post
         ..writer = kFirestore.collection('member').doc(user.uid)
-        ..town = _locationList[0]);
-      geoPoint = selectedTown == 0 ? LocationService.geoPoint : user.location;
+        ..town = _locationList[0]
+        ..location = selectedTown == 0 ? LocationService.geoPoint : user.location;
 
-      _locationController.value = FixedExtentScrollController(initialItem: selectedTown ?? 0);
-      _post.update((post) => post!.town = _locationList[selectedTown ?? 0]);
-      _isLoading.value = false;
+      _locationController = FixedExtentScrollController(initialItem: selectedTown ?? 0);
+      _post.town = _locationList[selectedTown ?? 0];
+      update();
+      Loading.dismiss();
     });
   }
 
-  Rx<Post> _post = Post().obs;
-  Post get post => _post.value;
+  Post _post = Post();
+  Post get post => _post;
   Rx<Member> _user = Member().obs;
   Member get user => _user.value;
   String nickname = randomNickname;
 
   int? selectedTown;
 
-  Rx<bool> _isLoading = false.obs;
-
   List<String> _locationList = [];
   List<String> get locationList => _locationList;
 
-  set geoPoint(GeoPoint geoPoint) => _post.update((post) => post!.location = geoPoint);
+  set title(String title) => _post.title = title;
+  set content(String content) => _post.content = content;
 
-  set title(String title) => _post.update((post) => post!.title = title);
-  set content(String content) => _post.update((post) => post!.content = content);
-  set tag(List<String> tag) => _post.update((post) => post!.tag = tag);
+  get communicationLevel => kCommunicateLevels[_post.communication];
 
-  get communicationLevel => kCommunicateLevels[_post.value.communication];
-
-  get formattedStartTime => DateFormat('MM월 dd일 HH:mm').format(_post.value.start ?? DateTime.now());
+  get formattedStartTime => DateFormat('MM월 dd일 HH:mm').format(_post.start ?? DateTime.now());
 
   get formattedTime =>
-      '$formattedStartTime~${DateFormat('HH시 mm분').format((_post.value.start ?? DateTime.now()).add(Duration(minutes: _post.value.duration)))} (${NumberFormat('0.#').format(_post.value.duration / 60)}시간)';
+      '$formattedStartTime~${DateFormat('HH시 mm분').format((_post.start ?? DateTime.now()).add(Duration(minutes: _post.duration)))} (${NumberFormat('0.#').format(_post.duration / 60)}시간)';
 
-  Rx<bool> _isComplete = false.obs;
-  get isComplete => _isComplete.value;
+  bool get isComplete =>
+      _post.title.isNotEmpty &&
+      _post.content.isNotEmpty &&
+      _post.headcount > 0 &&
+      _post.start != null &&
+      _post.duration > 0 &&
+      _post.communication != 9;
 
-  Rx<TextEditingController> _titleController = TextEditingController().obs;
-  TextEditingController get titleController => _titleController.value;
-  Rx<TextEditingController> _contentController = TextEditingController().obs;
-  TextEditingController get contentController => _contentController.value;
-  Rx<TextEditingController> _tagController = TextEditingController().obs;
-  TextEditingController get tagController => _tagController.value;
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController get titleController => _titleController;
+  TextEditingController _contentController = TextEditingController();
+  TextEditingController get contentController => _contentController;
+  TextEditingController _tagController = TextEditingController();
+  TextEditingController get tagController => _tagController;
 
-  Rx<FixedExtentScrollController> _locationController = FixedExtentScrollController().obs;
-  FixedExtentScrollController get locationController => _locationController.value;
-  Rx<FixedExtentScrollController> _headCountController = FixedExtentScrollController().obs;
-  FixedExtentScrollController get headCountController => _headCountController.value;
-  Rx<FixedExtentScrollController> _communicationController = FixedExtentScrollController().obs;
-  FixedExtentScrollController get communicationController => _communicationController.value;
-  Rx<FixedExtentScrollController> _durationController = FixedExtentScrollController().obs;
-  FixedExtentScrollController get durationController => _durationController.value;
-
-  @override
-  void onInit() {
-    super.onInit();
-    ever(_isLoading, (bool value) => value ? Loading.show() : Loading.dismiss());
-    ever(_post, (Post value) => _isComplete.value = value.title.isNotEmpty &&
-                                value.content.isNotEmpty &&
-                                value.headcount > 0 &&
-                                value.start != null &&
-                                value.duration > 0 &&
-                                value.communication != 9
-    );
-  }
+  FixedExtentScrollController _locationController = FixedExtentScrollController();
+  FixedExtentScrollController get locationController => _locationController;
+  FixedExtentScrollController _headCountController = FixedExtentScrollController();
+  FixedExtentScrollController get headCountController => _headCountController;
+  FixedExtentScrollController _communicationController = FixedExtentScrollController();
+  FixedExtentScrollController get communicationController => _communicationController;
+  FixedExtentScrollController _durationController = FixedExtentScrollController();
+  FixedExtentScrollController get durationController => _durationController;
 
   void showHeadcountPicker() {
-    if (_post.value.headcount < 2) _post.update((post) => post!.headcount = 2);
-    postPicker(_headCountController.value, ['2', '3', '4'], Property.HEADCOUNT);
+    if (_post.headcount < 2) {
+      _post.headcount = 2;
+      update();
+    }
+    postPicker(_headCountController, ['2', '3', '4'], Property.HEADCOUNT);
   }
 
   void showCommunicationLevelPicker() {
-    if (_post.value.communication == 9)
-      _post.update((post) => post!
+    if (_post.communication == 9) {
+      _post
         ..emoji = kCommunicateLevelIcons[0][Random().nextInt(3)]
-        ..communication = 0);
-    postPicker(_communicationController.value, kCommunicateLevels, Property.COMMUNICATE);
+        ..communication = 0;
+      update();
+    }
+    postPicker(_communicationController, kCommunicateLevels, Property.COMMUNICATE);
   }
 
   void showDurationPicker() {
-    if (_post.value.duration == 0) _post.update((post) => post!.duration = 30);
-    postPicker(_durationController.value,
+    if (_post.duration == 0) {
+      _post.duration = 30;
+      update();
+    }
+    postPicker(_durationController,
         ['30분', '1시간', '1시간 30분', '2시간', '2시간 30분', '3시간', '3시간 30분', '4시간'], Property.DURATION);
   }
 
@@ -128,15 +124,17 @@ class WritePostViewModel extends GetxController {
             ),
             Expanded(
               child: CupertinoDatePicker(
-                minuteInterval: 30,
-                minimumDate: DateTime.now(),
-                initialDateTime: _post.value.start ??
-                    DateTime.now().add(Duration(
-                        minutes: DateTime.now().minute >= 30
-                            ? 60 - DateTime.now().minute
-                            : 30 - DateTime.now().minute)),
-                onDateTimeChanged: (DateTime value) => _post.update((post) => post!.start = value),
-              ),
+                  minuteInterval: 30,
+                  minimumDate: DateTime.now(),
+                  initialDateTime: _post.start ??
+                      DateTime.now().add(Duration(
+                          minutes: DateTime.now().minute >= 30
+                              ? 60 - DateTime.now().minute
+                              : 30 - DateTime.now().minute)),
+                  onDateTimeChanged: (DateTime value) {
+                    _post.start = value;
+                    update();
+                  }),
             ),
           ],
         ),
@@ -165,26 +163,27 @@ class WritePostViewModel extends GetxController {
                 onSelectedItemChanged: (index) {
                   switch (target) {
                     case Property.LOCATION:
-                      _locationController.value = FixedExtentScrollController(initialItem: index);
-                      _post.update((post) => post!.town = _locationList[index]);
-                      geoPoint = index == 0 ? LocationService.geoPoint : _user.value.location;
+                      _locationController = FixedExtentScrollController(initialItem: index);
+                      _post
+                        ..town = _locationList[index]
+                        ..location = index == 0 ? LocationService.geoPoint : _user.value.location;
                       break;
                     case Property.HEADCOUNT:
-                      _headCountController.value = FixedExtentScrollController(initialItem: index);
-                      _post.update((post) => post!.headcount = index + 2);
+                      _headCountController = FixedExtentScrollController(initialItem: index);
+                      _post.headcount = index + 2;
                       break;
                     case Property.COMMUNICATE:
-                      _communicationController.value =
-                          FixedExtentScrollController(initialItem: index);
-                      _post.update((post) => post!
+                      _communicationController = FixedExtentScrollController(initialItem: index);
+                      _post
                         ..emoji = kCommunicateLevelIcons[index][Random().nextInt(3)]
-                        ..communication = index);
+                        ..communication = index;
                       break;
                     case Property.DURATION:
-                      _durationController.value = FixedExtentScrollController(initialItem: index);
-                      _post.update((post) => post!.duration = (index + 1) * 30);
+                      _durationController = FixedExtentScrollController(initialItem: index);
+                      _post.duration = (index + 1) * 30;
                       break;
                   }
+                  update();
                 },
                 children: [for (String child in children) Center(child: Text(child))],
               ),
@@ -195,10 +194,21 @@ class WritePostViewModel extends GetxController {
 
   Future createPost() async {
     Get.back();
-    _isLoading.value = true;
+    Loading.show();
 
     try {
-      _post.value
+      QuerySnapshot tags = await kFirestore.collection('tag').get();
+
+      _post.tag.forEach((tag) {
+        if (tags.docs.where((element) => element.id == tag).isNotEmpty) {
+          kFirestore.collection('tag').doc(tag).update(
+              {'count': tags.docs.firstWhere((element) => element.id == tag).get('count') + 1});
+        } else {
+          kFirestore.collection('tag').doc(tag).set(Tag(tag).toMap());
+        }
+      });
+
+      _post
         ..date = DateTime.now()
         ..tag.insert(0, kCommunicateLevels[this.post.communication]);
       DocumentReference post = await kFirestore.collection('post').add(this.post.toMap());
@@ -210,6 +220,7 @@ class WritePostViewModel extends GetxController {
       });
 
       await post.update({'chat': chatting});
+
       Loading.showSuccess('업로드 완료');
       Get.back();
     } catch (e) {
@@ -235,5 +246,10 @@ class WritePostViewModel extends GetxController {
         ],
       ),
     );
+  }
+
+  void inputTags(List<Tag>? tags) {
+    if (tags != null) _post.tag = tags.map((e) => e.name).toList();
+    update();
   }
 }

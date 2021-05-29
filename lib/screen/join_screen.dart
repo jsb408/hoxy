@@ -9,8 +9,6 @@ import 'package:hoxy/viewmodel/join_view_model.dart';
 class JoinScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    JoinViewModel _viewModel = JoinViewModel();
-
     return WillPopScope(
       onWillPop: () => Future(() => !EasyLoading.isShow),
       child: Scaffold(
@@ -18,66 +16,67 @@ class JoinScreen extends StatelessWidget {
           title: Text('회원가입'),
         ),
         backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 25),
-                child: Column(
-                  children: [
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Hero(
-                          tag: 'logo',
-                          child: Image.asset(
-                            'images/logo.png',
-                            width: 200,
+        body: GetBuilder<JoinViewModel>(
+          init: JoinViewModel(),
+          builder: (_viewModel) => Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 25),
+                  child: Column(
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Hero(
+                            tag: 'logo',
+                            child: Image.asset(
+                              'images/logo.png',
+                              width: 200,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Form(
-                      key: _viewModel.formKey,
-                      child: Column(
-                        children: [
-                          Obx(() => JoinTextField(
-                                title: '이메일',
-                                readOnly: _viewModel.isComplete,
-                                keyboardType: TextInputType.emailAddress,
-                                hintText: '양식에 맞게 입력해주세요',
-                                validator: (value) => _viewModel.checkEmail(value ?? ''),
-                              )),
-                          Obx(() => JoinTextField(
-                                title: '비밀번호',
-                                readOnly: _viewModel.isComplete,
-                                hintText: '영문/숫자/기호를 모두 포함한 8자리 이상 입력',
-                                obscureText: true,
-                                validator: (value) => _viewModel.checkPassword(value ?? ''),
-                              )),
-                          Obx(() => JoinTextField(
-                                title: '비밀번호 확인',
-                                readOnly: _viewModel.isComplete,
-                                hintText: '입력하신 비밀번호를 다시 한번 입력 해주세요.',
-                                obscureText: true,
-                                validator: (value) => _viewModel.checkConfirm(value ?? ''),
-                              )),
-                          Container(
-                            padding: EdgeInsets.only(bottom: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '휴대전화 번호',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Obx(
-                                        () => JoinPhoneNumberTextField(
+                      Form(
+                        key: _viewModel.formKey,
+                        child: Column(
+                          children: [
+                            JoinTextField(
+                              title: '이메일',
+                              readOnly: _viewModel.isComplete,
+                              keyboardType: TextInputType.emailAddress,
+                              hintText: '양식에 맞게 입력해주세요',
+                              validator: (value) => _viewModel.checkEmail(value ?? ''),
+                            ),
+                            JoinTextField(
+                              title: '비밀번호',
+                              readOnly: _viewModel.isComplete,
+                              hintText: '영문/숫자/기호를 모두 포함한 8자리 이상 입력',
+                              obscureText: true,
+                              validator: (value) => _viewModel.checkPassword(value ?? ''),
+                            ),
+                            JoinTextField(
+                              title: '비밀번호 확인',
+                              readOnly: _viewModel.isComplete,
+                              hintText: '입력하신 비밀번호를 다시 한번 입력 해주세요.',
+                              obscureText: true,
+                              validator: (value) => _viewModel.checkConfirm(value ?? ''),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(bottom: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '휴대전화 번호',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        JoinPhoneNumberTextField(
                                           hintText: ' - 기호 없이 숫자만 입력해주세요',
                                           readOnly: _viewModel.isComplete,
                                           buttonText: '인증하기',
@@ -86,9 +85,7 @@ class JoinScreen extends StatelessWidget {
                                           validator: (value) => _viewModel.checkPhone(value ?? ''),
                                           onPressed: () async => _viewModel.checkValidate(),
                                         ),
-                                      ),
-                                      Obx(
-                                        () => Visibility(
+                                        Visibility(
                                           visible: _viewModel.verificationId.isNotEmpty,
                                           child: JoinPhoneNumberTextField(
                                             hintText: '인증번호 입력',
@@ -100,28 +97,26 @@ class JoinScreen extends StatelessWidget {
                                             onPressed: () async => _viewModel.checkCertNum(),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Obx(
-              () => BottomButton(
+              BottomButton(
                 buttonTitle: '진행하기',
                 disabled: !_viewModel.isComplete,
                 onTap: () => _viewModel.createUser(),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

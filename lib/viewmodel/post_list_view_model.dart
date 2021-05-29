@@ -11,43 +11,38 @@ import 'package:hoxy/service/location_service.dart';
 import '../constants.dart';
 
 class PostListViewModel extends GetxController {
-  Rx<Member> _user = Member().obs;
-  Member get user => _user.value;
+  Member _user = Member();
+  Member get user => _user;
 
   RxList<DocumentReference> _banned = [].cast<DocumentReference>().obs;
-  RxList<Post> _posts = [].cast<Post>().obs;
+  List<Post> _posts = [];
   List<Post> get posts => _posts;
 
-  Rx<bool> _isLoading = false.obs;
-  bool get isLoading => _isLoading.value;
-
-  Rx<int> _selectedLocality = 0.obs;
-  int get selectedLocality => _selectedLocality.value;
+  int _selectedLocality = 0;
+  int get selectedLocality => _selectedLocality;
 
   List<String> _locationList = [];
-
-  PostListViewModel() {
-    onInit();
-
-    Future<DocumentSnapshot> snapshot = kFirestore.collection('member').doc(kAuth.currentUser?.uid).get();
-    Stream<QuerySnapshot> bannedSnapshot = kFirestore.collection('member').doc(kAuth.currentUser?.uid).collection('ban').snapshots();
-
-    snapshot.then((value) {
-      _user.value = Member.from(value);
-      _locationList.add(LocationService.townName);
-      if (LocationService.cityName != _user.value.city || LocationService.townName != _user.value.town)
-        _locationList.add(_user.value.town);
-    });
-
-    bannedSnapshot.listen((event) => _banned.value = event.docs.map((e) => Ban.from(e).user!).toList());
-  }
 
   @override
   void onInit() {
     super.onInit();
-    ever(_isLoading, (bool value) => value ? Loading.show() : Loading.dismiss());
+
+    Future<DocumentSnapshot> snapshot =
+        kFirestore.collection('member').doc(kAuth.currentUser?.uid).get();
+    Stream<QuerySnapshot> bannedSnapshot =
+        kFirestore.collection('member').doc(kAuth.currentUser?.uid).collection('ban').snapshots();
+
+    snapshot.then((value) {
+      _user = Member.from(value);
+      _locationList.add(LocationService.townName);
+      if (LocationService.cityName != _user.city ||
+          LocationService.townName != _user.town) _locationList.add(_user.town);
+    });
+
+    bannedSnapshot
+        .listen((event) => _banned.value = event.docs.map((e) => Ban.from(e).user!).toList());
+
     ever(_banned, (List<DocumentReference> value) => refreshPosts());
-    ever(_selectedLocality, (int value) => refreshPosts());
   }
 
   DropdownButtonHideUnderline localityDropdown(String city, String town) {
@@ -62,28 +57,33 @@ class PostListViewModel extends GetxController {
 
     return DropdownButtonHideUnderline(
       child: DropdownButton<int>(
-          value: _selectedLocality.value,
-          items: items,
-          onChanged: (value) {
-            _isLoading.value = true;
-            _selectedLocality.value = value ?? 0;
-          },
+        value: _selectedLocality,
+        items: items,
+        onChanged: (value) {
+          Loading.show();
+          _selectedLocality = value ?? 0;
+          refreshPosts();
+        },
       ),
     );
   }
 
-  void moveToWritePage() => Get.to(() => WritePostScreen(selectedTown: _selectedLocality.value));
+  void moveToWritePage() => Get.to(() => WritePostScreen(selectedTown: _selectedLocality));
 
-  void refreshPosts() {
-    kFirestore.collection('post').orderBy('date', descending: true).snapshots()
-        .listen((event) =>
-    _posts.value = event.docs.where((element) =>
-    LocationService.distanceBetween(
-        _selectedLocality.value == 0 ? LocationService.geoPoint : user.location,
-        element.get('location')) < 5000
-        && !_banned.contains(element['writer'] as DocumentReference))
+  void refreshPosts() async {
+    var post = await kFirestore.collection('post').orderBy('date', descending: true).get();
+
+    _posts = post.docs
+        .where((element) =>
+            LocationService.distanceBetween(
+                    _selectedLocality == 0 ? LocationService.geoPoint : user.location,
+                    element.get('location')) <
+                5000 &&
+            !_banned.contains(element['writer'] as DocumentReference))
         .map((e) => Post.from(e))
-        .toList());
-    _isLoading.value = false;
+        .toList();
+
+    update();
+    Loading.dismiss();
   }
 }

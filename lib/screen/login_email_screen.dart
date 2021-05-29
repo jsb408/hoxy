@@ -10,9 +10,7 @@ class LoginEmailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
-        return Future(() => !EasyLoading.isShow);
-      },
+      onWillPop: () => Future(() => !EasyLoading.isShow),
       child: Scaffold(
         appBar: AppBar(
           title: Text('로그인'),

@@ -13,25 +13,19 @@ class JoinViewModel extends GetxController {
   String _certNumber = '';
   set certNumber(String number) => _certNumber = number;
 
-  final Rx<bool> _isLoading = false.obs;
-  final Rx<bool> _isComplete = false.obs;
-  bool get isComplete => _isComplete.value;
-  final Rx<String> _verificationId = ''.obs;
-  String get verificationId => _verificationId.value;
+  bool _isComplete = false;
+  bool get isComplete => _isComplete;
+  String _verificationId = '';
+  String get verificationId => _verificationId;
 
   final _formKey = GlobalKey<FormState>();
   GlobalKey<FormState> get formKey => _formKey;
 
   String get formattedPhone => '+82 ${_join.phone.substring(1)}';
 
-  JoinViewModel() {
-    onInit();
-  }
-
   @override
   void onInit() {
     super.onInit();
-    ever(_isLoading, (value) => value as bool ? Loading.show() : Loading.dismiss());
   }
 
   String? checkEmail(String email) {
@@ -50,7 +44,8 @@ class JoinViewModel extends GetxController {
 
     if (password.isEmpty)
       return '비밀번호를 입력해주세요';
-    else if (!RegExp('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])(?=.*[!@#\$%^&*()?]).{8,16}\$').hasMatch(password))
+    else if (!RegExp('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])(?=.*[!@#\$%^&*()?]).{8,16}\$')
+        .hasMatch(password))
       return '올바른 형식이 아닙니다';
     else
       return null;
@@ -77,8 +72,10 @@ class JoinViewModel extends GetxController {
   }
 
   Future<String?> checkDuplicate() async {
-    QuerySnapshot phone = await kFirestore.collection('member').where('phone', isEqualTo: _join.phone).get();
-    QuerySnapshot email = await kFirestore.collection('member').where('email', isEqualTo: _join.email).get();
+    QuerySnapshot phone =
+        await kFirestore.collection('member').where('phone', isEqualTo: _join.phone).get();
+    QuerySnapshot email =
+        await kFirestore.collection('member').where('email', isEqualTo: _join.email).get();
 
     if (phone.docs.isNotEmpty) {
       return '이미 가입된 번호입니다';
@@ -89,12 +86,12 @@ class JoinViewModel extends GetxController {
   }
 
   Future createUser() async {
-    _isLoading.value = true;
+    Loading.show();
 
     try {
       await kAuth.currentUser?.updateEmail(_join.email);
       await kAuth.currentUser?.updatePassword(_join.password);
-      _isLoading.value = false;
+      Loading.dismiss();
 
       Get.off(() => JoinDetailScreen());
     } catch (e) {
@@ -104,10 +101,10 @@ class JoinViewModel extends GetxController {
   }
 
   void checkValidate() async {
-    _isLoading.value = true;
+    Loading.show();
 
     if (!_formKey.currentState!.validate()) {
-      _isLoading.value = false;
+      Loading.dismiss();
       return;
     }
 
@@ -121,8 +118,8 @@ class JoinViewModel extends GetxController {
     await kAuth.verifyPhoneNumber(
       phoneNumber: formattedPhone,
       verificationCompleted: (credential) {
-        _isComplete.value = true;
-        _isLoading.value = false;
+        _isComplete = true;
+        Loading.dismiss();
       },
       verificationFailed: (e) {
         print(e);
@@ -130,8 +127,9 @@ class JoinViewModel extends GetxController {
       },
       codeSent: (verificationId, resendToken) async {
         Loading.showSuccess('번호가 전송되었습니다');
-        _verificationId.value = verificationId;
-        _isLoading.value = false;
+        _verificationId = verificationId;
+        Loading.dismiss();
+        update();
       },
       codeAutoRetrievalTimeout: (verificationId) async {
         print('codeAuthRetrievalTimeout');
@@ -140,23 +138,24 @@ class JoinViewModel extends GetxController {
   }
 
   void checkCertNum() async {
-    _isLoading.value = true;
+    Loading.show();
     if (_formKey.currentState!.validate()) {
       try {
-        AuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
-            verificationId: verificationId, smsCode: _certNumber);
+        AuthCredential phoneAuthCredential =
+            PhoneAuthProvider.credential(verificationId: verificationId, smsCode: _certNumber);
         await kAuth.signInWithCredential(phoneAuthCredential);
 
         if (kAuth.currentUser != null) {
           Loading.showSuccess('인증 완료');
-          _verificationId.value = '';
-          _isComplete.value = true;
+          _verificationId = '';
+          _isComplete = true;
+          update();
         }
       } catch (e) {
         Loading.showError('인증 실패');
         print(e);
       }
     }
-    _isLoading.value = false;
+    Loading.dismiss();
   }
 }

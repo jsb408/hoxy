@@ -11,20 +11,6 @@ import 'package:hoxy/viewmodel/join_detail_view_model.dart';
 class JoinDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    JoinDetailViewModel _viewModel = JoinDetailViewModel();
-
-    Obx birthPicker() => Obx(
-          () => CupertinoPicker(
-            scrollController: _viewModel.birthPickerController,
-            itemExtent: 50,
-            onSelectedItemChanged: (index) => _viewModel.changeBirthPicker(index),
-            children: [
-              for (int i = DateTime.now().year - 19; i > DateTime.now().year - 49; i--)
-                Center(child: Text(i.toString()))
-            ],
-          ),
-        );
-
     return WillPopScope(
       onWillPop: () => Future(() => !EasyLoading.isShow),
       child: Scaffold(
@@ -32,111 +18,111 @@ class JoinDetailScreen extends StatelessWidget {
           title: Text('정보설정'),
         ),
         backgroundColor: Colors.white,
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 25),
-                child: Column(
-                  children: [
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Image.asset(
-                          'images/logo.png',
-                          width: 200,
+        body: GetBuilder<JoinDetailViewModel>(
+          init: JoinDetailViewModel(),
+          builder: (_viewModel) => Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 25),
+                  child: Column(
+                    children: [
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Image.asset(
+                            'images/logo.png',
+                            width: 200,
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 40, bottom: 80),
-                      child: Table(
-                        columnWidths: {0: FractionColumnWidth(0.35), 1: FixedColumnWidth(27)},
-                        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                        children: [
-                          TableRow(
-                            children: [
-                              Text(
-                                '위치 설정',
-                                textAlign: TextAlign.right,
-                                style: kJoinTextStyle,
-                              ),
-                              SizedBox(),
-                              Row(
-                                children: [
-                                  Obx(() => Text(
-                                        _viewModel.member.town.isNotEmpty
-                                            ? _viewModel.member.town
-                                            : '동네 이름',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          color: _viewModel.member.town.isNotEmpty
-                                              ? Colors.black
-                                              : Colors.grey,
-                                          fontWeight: FontWeight.w100,
-                                        ),
-                                      )),
-                                  SizedBox(width: 12),
-                                  BackgroundButton(
-                                      title: '설정하기', onPressed: () => _viewModel.getLocation()),
-                                ],
-                              ),
-                            ],
-                          ),
-                          TableRow(children: [
-                            SizedBox(height: 30),
-                            SizedBox(height: 30),
-                            SizedBox(height: 30)
-                          ]),
-                          TableRow(
-                            children: [
-                              Text(
-                                '사용 연령 설정',
-                                textAlign: TextAlign.right,
-                                style: kJoinTextStyle,
-                              ),
-                              SizedBox(),
-                              TextField(
-                                readOnly: true,
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  hintText: '출생년도 입력',
+                      Padding(
+                        padding: EdgeInsets.only(top: 40, bottom: 80),
+                        child: Table(
+                          columnWidths: {0: FractionColumnWidth(0.35), 1: FixedColumnWidth(27)},
+                          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                          children: [
+                            TableRow(
+                              children: [
+                                Text(
+                                  '위치 설정',
+                                  textAlign: TextAlign.right,
+                                  style: kJoinTextStyle,
                                 ),
-                                controller: _viewModel.birthTextEditingController,
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    builder: (context) => Container(
-                                      height: 280,
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              CupertinoButton(
-                                                  child: Text('확인'),
-                                                  onPressed: () => Navigator.pop(context)),
-                                            ],
-                                          ),
-                                          Expanded(child: birthPicker()),
-                                        ],
+                                SizedBox(),
+                                Row(
+                                  children: [
+                                    Text(
+                                      _viewModel.member.town.isNotEmpty
+                                          ? _viewModel.member.town
+                                          : '동네 이름',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        color: _viewModel.member.town.isNotEmpty
+                                            ? Colors.black
+                                            : Colors.grey,
+                                        fontWeight: FontWeight.w100,
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+                                    SizedBox(width: 12),
+                                    BackgroundButton(title: '설정하기', onPressed: () => _viewModel.getLocation()),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            TableRow(children: [
+                              SizedBox(height: 30),
+                              SizedBox(height: 30),
+                              SizedBox(height: 30)
+                            ]),
+                            TableRow(
+                              children: [
+                                Text(
+                                  '사용 연령 설정',
+                                  textAlign: TextAlign.right,
+                                  style: kJoinTextStyle,
+                                ),
+                                SizedBox(),
+                                TextField(
+                                  readOnly: true,
+                                  keyboardType: TextInputType.number,
+                                  decoration: InputDecoration(
+                                    hintText: '출생년도 입력',
+                                  ),
+                                  controller: _viewModel.birthTextEditingController,
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) => Container(
+                                        height: 280,
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                CupertinoButton(
+                                                    child: Text('확인'),
+                                                    onPressed: () => Navigator.pop(context)),
+                                              ],
+                                            ),
+                                            Expanded(child: _viewModel.birthPicker()),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Obx(
-                      () => Visibility(
+                      Visibility(
                         visible: _viewModel.member.birth > 0,
                         child: Column(
                           children: [
                             Text('${_viewModel.member.email}님은', style: kJoinTextStyle),
                             SizedBox(height: 18),
-                            Obx(() => GradeButton(birth: _viewModel.member.birth, fontSize: 14)),
+                            GradeButton(birth: _viewModel.member.birth, fontSize: 14),
                             SizedBox(height: 18),
                             Text('입니다.', style: kJoinTextStyle),
                             SizedBox(height: 50),
@@ -149,19 +135,17 @@ class JoinDetailScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Obx(
-              () => BottomButton(
+              BottomButton(
                 buttonTitle: '가입하기',
                 disabled: !_viewModel.isComplete,
                 onTap: () async => _viewModel.inputDetail(),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
