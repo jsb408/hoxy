@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
+import 'package:hoxy/model/tag.dart';
 import 'package:hoxy/screen/write_post_screen.dart';
 import 'package:hoxy/service/loading.dart';
 import 'package:hoxy/service/location_service.dart';
@@ -198,6 +199,18 @@ class WritePostViewModel extends GetxController {
     _isLoading.value = true;
 
     try {
+      QuerySnapshot tags = await kFirestore.collection('tag').get();
+
+      _post.value.tag.forEach((tag) {
+        if (tags.docs.where((element) => element.id == tag).isNotEmpty) {
+          kFirestore.collection('tag').doc(tag).update({
+            'count' : tags.docs.firstWhere((element) => element.id == tag).get('count') + 1
+          });
+        } else {
+          kFirestore.collection('tag').doc(tag).set(Tag(tag).toMap());
+        }
+      });
+
       _post.value
         ..date = DateTime.now()
         ..tag.insert(0, kCommunicateLevels[this.post.communication]);
@@ -210,6 +223,7 @@ class WritePostViewModel extends GetxController {
       });
 
       await post.update({'chat': chatting});
+
       Loading.showSuccess('업로드 완료');
       Get.back();
     } catch (e) {
@@ -235,5 +249,9 @@ class WritePostViewModel extends GetxController {
         ],
       ),
     );
+  }
+
+  void inputTags(RxList<Tag>? tags) {
+    if (tags != null) _post.update((post) => post!.tag = tags.map((e) => e.name).toList());
   }
 }

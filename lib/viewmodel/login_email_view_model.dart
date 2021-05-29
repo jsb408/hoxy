@@ -9,7 +9,6 @@ import '../constants.dart';
 
 class LoginEmailViewModel extends GetxController {
   Rx<bool> _isLoading = false.obs;
-
   bool get isLoading => _isLoading.value;
 
   String email = '';

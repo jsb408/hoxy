@@ -105,6 +105,7 @@ class PostViewModel extends GetxController {
             child: Text('예'),
             onPressed: () {
               deletePost();
+              Navigator.pop(context);
             },
           ),
         ],

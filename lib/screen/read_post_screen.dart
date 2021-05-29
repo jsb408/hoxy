@@ -24,12 +24,7 @@ class ReadPostScreen extends StatelessWidget {
 
   final String postId;
 
-  Divider divider() {
-    return Divider(
-      height: 0,
-      thickness: 1,
-    );
-  }
+  Divider divider() => Divider(height: 0, thickness: 1);
 
   @override
   Widget build(BuildContext context) {
