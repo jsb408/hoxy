@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
@@ -12,15 +13,16 @@ import 'package:intl/intl.dart';
 
 import '../nickname.dart';
 
-class PostViewModel {
+class PostViewModel extends GetxController {
   Post post = Post();
   String nickname = randomNickname;
 
-  set geoPoint(GeoPoint geoPoint) => post.location = geoPoint;
+  get formattedTime => '$formattedStartTime~${DateFormat('HH시 mm분').format((post.start ?? DateTime.now()).add(Duration(minutes: post.duration)))} (${NumberFormat('0.#').format(post.duration / 60)}시간)';
 
   get communicationLevel => kCommunicateLevels[post.communication];
+
   get formattedStartTime => DateFormat('MM월 dd일 HH:mm').format(post.start ?? DateTime.now());
-  get formattedTime => '$formattedStartTime~${DateFormat('HH시 mm분').format((post.start ?? DateTime.now()).add(Duration(minutes: post.duration)))} (${NumberFormat('0.#').format(post.duration / 60)}시간)';
+
   get isIncomplete => post.title.isNotEmpty && post.content.isNotEmpty && post.headcount > 0 && post.start != null;
 
   Future<bool> createPost() async {
@@ -113,7 +115,7 @@ class PostViewModel {
   void showUpdatePost(BuildContext context, Member user) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => WritePostScreen(user: user, viewModel: this)),
+      MaterialPageRoute(builder: (context) => WritePostScreen()),
     );
   }
 

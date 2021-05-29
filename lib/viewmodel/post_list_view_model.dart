@@ -16,7 +16,7 @@ class PostListViewModel extends GetxController {
 
   RxList<DocumentReference> _banned = [].cast<DocumentReference>().obs;
   RxList<Post> _posts = [].cast<Post>().obs;
-  List<Post> get posts => _posts.value;
+  List<Post> get posts => _posts;
 
   Rx<bool> _isLoading = false.obs;
   bool get isLoading => _isLoading.value;
@@ -72,7 +72,7 @@ class PostListViewModel extends GetxController {
     );
   }
 
-  void moveToWritePage() => Get.to(WritePostScreen(user: user, selectedTown: _selectedLocality.value, locationList: _locationList));
+  void moveToWritePage() => Get.to(() => WritePostScreen(selectedTown: _selectedLocality.value));
 
   void refreshPosts() {
     kFirestore.collection('post').orderBy('date', descending: true).snapshots()

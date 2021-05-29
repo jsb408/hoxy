@@ -1,120 +1,32 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/member.dart';
-import 'package:hoxy/service/loading.dart';
-import 'package:hoxy/service/location_service.dart';
 import 'package:hoxy/view/alert_platform_dialog.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/write_property_button.dart';
-import 'package:hoxy/viewmodel/post_view_model.dart';
+import 'package:hoxy/viewmodel/write_post_view_model.dart';
 import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 
 enum Property { LOCATION, HEADCOUNT, COMMUNICATE, DURATION }
 
-class WritePostScreen extends StatefulWidget {
-  WritePostScreen({required this.user, this.selectedTown, this.locationList, this.viewModel});
+class WritePostScreen extends StatelessWidget {
+  WritePostScreen({this.selectedTown});
 
-  final Member user;
   final int? selectedTown;
-  final List<String>? locationList;
-  final PostViewModel? viewModel;
 
-  @override
-  _WritePostScreenState createState() => _WritePostScreenState(selectedTown);
-}
-
-class _WritePostScreenState extends State<WritePostScreen> {
-  PostViewModel _viewModel = PostViewModel();
-
-  late Member _user;
-
-  List<String>? _locationList;
-
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _contentController = TextEditingController();
-  TextEditingController _tagController = TextEditingController();
-
-  late FixedExtentScrollController _locationController;
-  FixedExtentScrollController _headCountController = FixedExtentScrollController();
-  FixedExtentScrollController _communicationController = FixedExtentScrollController();
-  FixedExtentScrollController _durationController = FixedExtentScrollController();
-
-  _WritePostScreenState(int? initialLocation) {
-    _locationController = FixedExtentScrollController(initialItem: initialLocation ?? 0);
-  }
-
-  postPicker(FixedExtentScrollController controller, List<String> children, Property target) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        height: 280,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                CupertinoButton(
-                    child: Text('확인'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
-              ],
-            ),
-            Expanded(
-              child: CupertinoPicker(
-                scrollController: controller,
-                itemExtent: 50,
-                onSelectedItemChanged: (index) {
-                  setState(() {
-                    switch (target) {
-                      case Property.LOCATION:
-                        _locationController = FixedExtentScrollController(initialItem: index);
-                        _viewModel
-                          ..post.town = _locationList![index]
-                          ..geoPoint = index == 0 ? LocationService.geoPoint : _user.location;
-
-                        break;
-                      case Property.HEADCOUNT:
-                        _headCountController = FixedExtentScrollController(initialItem: index);
-                        _viewModel.post.headcount = index + 2;
-                        break;
-                      case Property.COMMUNICATE:
-                        _communicationController = FixedExtentScrollController(initialItem: index);
-                        _viewModel.post
-                          ..emoji = kCommunicateLevelIcons[index][Random().nextInt(3)]
-                          ..communication = index;
-                        break;
-                      case Property.DURATION:
-                        _durationController = FixedExtentScrollController(initialItem: index);
-                        _viewModel.post.duration = (index + 1) * 30;
-                        break;
-                    }
-                  });
-                },
-                children: [for (String child in children) Center(child: Text(child))],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
+  /*@override
   void initState() {
     super.initState();
-
-    _user = widget.user;
 
     if (widget.viewModel == null) {
       _locationList = widget.locationList;
 
       _viewModel
-        ..post.writer = kFirestore.collection('member').doc(_user.uid)
+        ..post.writer = kFirestore.collection('member').doc(user.uid)
         ..post.town = _locationList![widget.selectedTown!]
-        ..geoPoint = widget.selectedTown == 0 ? LocationService.geoPoint : _user.location;
+        ..geoPoint = widget.selectedTown == 0 ? LocationService.geoPoint : user.location;
     } else {
       _viewModel = widget.viewModel!;
 
@@ -126,10 +38,12 @@ class _WritePostScreenState extends State<WritePostScreen> {
       _communicationController = FixedExtentScrollController(initialItem: _viewModel.post.communication);
       _durationController = FixedExtentScrollController(initialItem: _viewModel.post.duration ~/ 30 - 1);
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
+    final WritePostViewModel _viewModel = WritePostViewModel(selectedTown: selectedTown);
+
     return Scaffold(
       appBar: AppBar(title: Text('모임글 작성')),
       backgroundColor: Colors.white,
@@ -143,7 +57,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                   Container(
                     decoration: BoxDecoration(border: Border.all(color: kBackgroundColor, width: 0.5)),
                     child: TextField(
-                      controller: _titleController,
+                      controller: _viewModel.titleController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: '글 제목',
@@ -154,115 +68,51 @@ class _WritePostScreenState extends State<WritePostScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          _viewModel.post.title = value;
-                        });
-                      },
+                      onChanged: (value) => _viewModel.title = value,
                     ),
                   ),
                   Row(
                     children: [
                       Expanded(
-                        child: WritePropertyButton(
+                        child: Obx(() => WritePropertyButton(
                           title: _viewModel.post.town,
-                          onTap: () {
-                            postPicker(_locationController, _locationList!, Property.LOCATION);
-                          },
+                          onTap: () => _viewModel.postPicker(_viewModel.locationController, _viewModel.locationList, Property.LOCATION),
                           hasData: true,
-                          disabled: widget.viewModel != null,
-                        ),
+                          //TODO : disabled
+                          //disabled: widget.viewModel != null,
+                        )),
                       ),
                       Expanded(
-                        child: WritePropertyButton(
+                        child: Obx(() => WritePropertyButton(
                           title: _viewModel.post.headcount < 2 ? '모집인원' : _viewModel.post.headcount.toString(),
-                          onTap: () {
-                            if (_viewModel.post.headcount < 2)
-                              setState(() {
-                                _viewModel.post.headcount = 2;
-                              });
-                            postPicker(_headCountController, ['2', '3', '4'], Property.HEADCOUNT);
-                          },
+                          onTap: () => _viewModel.showHeadcountPicker(),
                           hasData: _viewModel.post.headcount >= 2,
-                        ),
+                        )),
                       ),
                     ],
                   ),
-                  WritePropertyButton(
+                  Obx(() => WritePropertyButton(
                     title: _viewModel.post.communication == 9 ? '소통레벨' : _viewModel.communicationLevel,
-                    onTap: () {
-                      if (_viewModel.post.communication == 9)
-                        setState(() {
-                          _viewModel.post
-                            ..emoji = kCommunicateLevelIcons[0][Random().nextInt(3)]
-                            ..communication = 0;
-                        });
-                      postPicker(_communicationController, kCommunicateLevels, Property.COMMUNICATE);
-                    },
+                    onTap: () => _viewModel.showCommunicationLevelPicker(),
                     hasData: _viewModel.post.communication != 9,
-                  ),
+                  )),
                   Row(
                     children: [
                       Expanded(
-                        child: WritePropertyButton(
+                        child: Obx(() => WritePropertyButton(
                           title: _viewModel.post.start == null ? '시작시간' : _viewModel.formattedStartTime,
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (context) => Container(
-                                height: 280,
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        CupertinoButton(
-                                            child: Text('확인'),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            }),
-                                      ],
-                                    ),
-                                    Expanded(
-                                      child: CupertinoDatePicker(
-                                        minuteInterval: 30,
-                                        minimumDate: DateTime.now(),
-                                        initialDateTime: DateTime.now().add(Duration(
-                                            minutes: DateTime.now().minute >= 30
-                                                ? 60 - DateTime.now().minute
-                                                : 30 - DateTime.now().minute)),
-                                        onDateTimeChanged: (DateTime value) {
-                                          setState(() {
-                                            _viewModel.post.start = value;
-                                          });
-                                          print(value);
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
+                          onTap: () => _viewModel.showStartTimePicker(),
                           hasData: _viewModel.post.start != null,
-                        ),
+                        )),
                       ),
                       Expanded(
-                        child: WritePropertyButton(
+                        child: Obx(() => WritePropertyButton(
                           title: _viewModel.post.duration == 0
                               ? '모임시간'
                               : '${NumberFormat('0.#').format(_viewModel.post.duration / 60)}시간',
-                          onTap: () {
-                            if (_viewModel.post.duration == 0)
-                              setState(() {
-                                _viewModel.post.duration = 30;
-                              });
-                            postPicker(
-                                _durationController,
-                                ['30분', '1시간', '1시간 30분', '2시간', '2시간 30분', '3시간', '3시간 30분', '4시간'],
-                                Property.DURATION);
-                          },
+                          onTap: () => _viewModel.showDurationPicker(),
                           hasData: _viewModel.post.duration > 0,
-                        ),
+                        )),
                       ),
                     ],
                   ),
@@ -270,7 +120,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                     height: 220,
                     decoration: BoxDecoration(border: Border.all(color: kBackgroundColor, width: 0.5)),
                     child: TextField(
-                      controller: _contentController,
+                      controller: _viewModel.contentController,
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
                       decoration: InputDecoration(
@@ -283,11 +133,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      onChanged: (value) {
-                        setState(() {
-                          _viewModel.post.content = value;
-                        });
-                      },
+                      onChanged: (value) => _viewModel.content = value
                     ),
                   ),
                   Container(
@@ -298,7 +144,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                         Icon(CupertinoIcons.tag),
                         Flexible(
                           child: TextField(
-                            controller: _tagController,
+                            controller: _viewModel.tagController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: '태그를 작성하시면 다양한 사람들이 볼 수 있어요',
@@ -309,9 +155,7 @@ class _WritePostScreenState extends State<WritePostScreen> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            onChanged: (value) {
-                              _viewModel.post.tag = value.split(' ');
-                            },
+                            onChanged: (value) => _viewModel.tag = value.split(' '),
                           ),
                         ),
                       ],
@@ -324,17 +168,17 @@ class _WritePostScreenState extends State<WritePostScreen> {
                         children: [
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 10),
-                            child: RichText(
+                            child: Obx(() => RichText(
                               textAlign: TextAlign.center,
                               text: TextSpan(style: TextStyle(fontSize: 13, color: Colors.black), children: [
-                                TextSpan(text: '${_user.email}님은\n이번 모임에서 '),
+                                TextSpan(text: '${_viewModel.user.email}님은\n이번 모임에서 '),
                                 TextSpan(
                                   text: _viewModel.nickname,
                                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                                 ),
                                 TextSpan(text: ' (으)로 활동합니다.')
                               ]),
-                            ),
+                            )),
                           ),
                           Text('글 작성 시 모임 대화방이 생성되며,\n신청자는 대화방에 참여됩니다.',
                               textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: kAccentColor))
@@ -346,47 +190,11 @@ class _WritePostScreenState extends State<WritePostScreen> {
               ),
             ),
           ),
-          BottomButton(
+          Obx(() => BottomButton(
             buttonTitle: '등록하기',
-            disabled: !_viewModel.isIncomplete,
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertPlatformDialog(
-                    title: Text('글 작성하기'),
-                    content: Text('글을 게시하시겠습니까?'),
-                    children: [
-                      AlertPlatformDialogButton(
-                        child: Text('아니오'),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      AlertPlatformDialogButton(
-                        child: Text('예'),
-                        onPressed: () async {
-                          Navigator.pop(context);
-                          Loading.show();
-
-                          if (!(widget.viewModel == null
-                              ? await _viewModel.createPost()
-                              : await _viewModel.updatePost())) {
-                            Loading.showError('업로드 실패');
-                            return;
-                          }
-
-                          Loading.showSuccess('업로드 완료');
-
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          )
+            disabled: !_viewModel.isComplete,
+            onTap: () => _viewModel.showWriteDialog(),
+          )),
         ],
       ),
     );
