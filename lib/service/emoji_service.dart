@@ -1,5 +1,6 @@
 import 'dart:math';
 
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:emojis/emoji.dart';
 
 class EmojiService {

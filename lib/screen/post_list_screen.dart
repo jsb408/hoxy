@@ -13,19 +13,19 @@ class PostListScreen extends StatelessWidget {
     return GetBuilder<PostListViewModel>(
       init: PostListViewModel(),
       builder: (_viewModel) => Scaffold(
-          appBar: AppBar(
-            title: _viewModel.localityDropdown(_viewModel.user.city, _viewModel.user.town),
-            automaticallyImplyLeading: false,
-          ),
-          floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () => _viewModel.moveToWritePage(),
-          ),
-          backgroundColor: kBackgroundColor,
-          body: _viewModel.posts.isEmpty
-              ? Center(child: Text('등록된 글이 없습니다'))
-              : ListView(children: [for (Post post in _viewModel.posts) ItemPostList(post: post)]),
-          ),
+        appBar: AppBar(
+          title: _viewModel.localityDropdown(_viewModel.user.city, _viewModel.user.town),
+          automaticallyImplyLeading: false,
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () => _viewModel.moveToWritePage(),
+        ),
+        backgroundColor: kBackgroundColor,
+        body: Obx(() => _viewModel.posts.isEmpty
+            ? Center(child: Text('등록된 글이 없습니다'))
+            : ListView(children: [for (Post post in _viewModel.posts) ItemPostList(post: post)])),
+      ),
     );
   }
 }

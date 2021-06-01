@@ -5,7 +5,7 @@ class Member {
   String email = '';
   String phone = '';
   String emoji = '😀';
-  int birth = 0;
+  int birth = DateTime.now().year;
   String city = '';
   String town = '';
   GeoPoint? location;

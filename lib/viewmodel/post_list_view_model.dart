@@ -15,7 +15,7 @@ class PostListViewModel extends GetxController {
   Member get user => _user;
 
   RxList<DocumentReference> _banned = [].cast<DocumentReference>().obs;
-  List<Post> _posts = [];
+  RxList<Post> _posts = [].cast<Post>().obs;
   List<Post> get posts => _posts;
 
   int _selectedLocality = 0;
@@ -29,20 +29,19 @@ class PostListViewModel extends GetxController {
 
     Future<DocumentSnapshot> snapshot =
         kFirestore.collection('member').doc(kAuth.currentUser?.uid).get();
-    Stream<QuerySnapshot> bannedSnapshot =
-        kFirestore.collection('member').doc(kAuth.currentUser?.uid).collection('ban').snapshots();
 
     snapshot.then((value) {
       _user = Member.from(value);
       _locationList.add(LocationService.townName);
       if (LocationService.cityName != _user.city ||
           LocationService.townName != _user.town) _locationList.add(_user.town);
+      update();
     });
 
-    bannedSnapshot
+    kFirestore.collection('member').doc(kAuth.currentUser?.uid).collection('ban').snapshots()
         .listen((event) => _banned.value = event.docs.map((e) => Ban.from(e).user!).toList());
 
-    ever(_banned, (List<DocumentReference> value) => refreshPosts());
+    refreshPosts();
   }
 
   DropdownButtonHideUnderline localityDropdown(String city, String town) {
@@ -63,6 +62,7 @@ class PostListViewModel extends GetxController {
           Loading.show();
           _selectedLocality = value ?? 0;
           refreshPosts();
+          update();
         },
       ),
     );
@@ -70,20 +70,18 @@ class PostListViewModel extends GetxController {
 
   void moveToWritePage() => Get.to(() => WritePostScreen(selectedTown: _selectedLocality));
 
-  void refreshPosts() async {
-    var post = await kFirestore.collection('post').orderBy('date', descending: true).get();
-
-    _posts = post.docs
-        .where((element) =>
-            LocationService.distanceBetween(
-                    _selectedLocality == 0 ? LocationService.geoPoint : user.location,
-                    element.get('location')) <
-                5000 &&
-            !_banned.contains(element['writer'] as DocumentReference))
-        .map((e) => Post.from(e))
-        .toList();
-
-    update();
-    Loading.dismiss();
+  void refreshPosts() {
+    kFirestore.collection('post').orderBy('date', descending: true).snapshots().listen((event) {
+      _posts.value = event.docs
+          .where((element) =>
+      LocationService.distanceBetween(
+          _selectedLocality == 0 ? LocationService.geoPoint : user.location,
+          element.get('location')) <
+          5000 &&
+          !_banned.contains(element['writer'] as DocumentReference))
+          .map((e) => Post.from(e))
+          .toList();
+      Loading.dismiss();
+    });
   }
 }
