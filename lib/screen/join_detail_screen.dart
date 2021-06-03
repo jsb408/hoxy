@@ -15,7 +15,7 @@ class JoinDetailScreen extends StatelessWidget {
       onWillPop: () => Future(() => !EasyLoading.isShow),
       child: Scaffold(
         appBar: AppBar(
-          title: Text('정보설정'),
+          title: Text('정보설정'),  
         ),
         backgroundColor: Colors.white,
         body: GetBuilder<JoinDetailViewModel>(

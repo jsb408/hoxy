@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
+import 'package:hoxy/model/post.dart';
 import 'package:hoxy/screen/write_post_tags_screen.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/write_property_button.dart';
@@ -11,33 +12,10 @@ import 'package:get/get.dart';
 enum Property { LOCATION, HEADCOUNT, COMMUNICATE, DURATION }
 
 class WritePostScreen extends StatelessWidget {
-  WritePostScreen({this.selectedTown});
+  WritePostScreen({this.selectedTown, this.post});
 
   final int? selectedTown;
-
-  /*@override
-  void initState() {
-    super.initState();
-
-    if (widget.viewModel == null) {
-      _locationList = widget.locationList;
-
-      _viewModel
-        ..post.writer = kFirestore.collection('member').doc(user.uid)
-        ..post.town = _locationList![widget.selectedTown!]
-        ..geoPoint = widget.selectedTown == 0 ? LocationService.geoPoint : user.location;
-    } else {
-      _viewModel = widget.viewModel!;
-
-      _titleController.text = _viewModel.post.title;
-      _contentController.text = _viewModel.post.content;
-      _tagController.text = _viewModel.post.tag.sublist(1).join(" ");
-
-      _headCountController = FixedExtentScrollController(initialItem: _viewModel.post.headcount - 2);
-      _communicationController = FixedExtentScrollController(initialItem: _viewModel.post.communication);
-      _durationController = FixedExtentScrollController(initialItem: _viewModel.post.duration ~/ 30 - 1);
-    }
-  }*/
+  final String? post;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +23,7 @@ class WritePostScreen extends StatelessWidget {
       appBar: AppBar(title: Text('모임글 작성')),
       backgroundColor: Colors.white,
       body: GetBuilder<WritePostViewModel>(
-        init: WritePostViewModel(selectedTown: selectedTown),
+        init: WritePostViewModel(selectedTown: selectedTown, post: post),
         builder: (_viewModel) => Column(
           children: [
             Expanded(

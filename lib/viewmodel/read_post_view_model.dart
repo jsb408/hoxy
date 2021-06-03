@@ -55,7 +55,7 @@ class ReadPostViewModel extends GetxController {
     }));
   }
 
-  void goToUpdatePost() => Get.to(() => WritePostScreen());
+  void goToUpdatePost() => Get.to(() => WritePostScreen(post: _post.value.id));
 
   void showDeleteDialog() {
     Get.dialog(AlertPlatformDialog(
