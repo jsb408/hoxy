@@ -20,21 +20,24 @@ class WritePostViewModel extends GetxController {
   WritePostViewModel({this.selectedTown, String? post}) {
     Loading.show();
 
-    if (post == null) {
-      kFirestore.collection('member').doc(kAuth.currentUser!.uid).get().then((value) {
-        _user.value = Member.from(value);
-        _locationList.add(LocationService.townName);
-        _locationList.add(_user.value.town);
-        _post
-          ..writer = kFirestore.collection('member').doc(user.uid)
-          ..town = _locationList[selectedTown ?? 0]
-          ..location = selectedTown == 0 ? LocationService.geoPoint : user.location;
+    kFirestore.collection('member').doc(kAuth.currentUser!.uid).get().then((value) {
+      _user.value = Member.from(value);
+      _locationList.add(LocationService.townName);
+      _locationList.add(_user.value.town);
+      _post
+        ..writer = kFirestore.collection('member').doc(user.uid)
+        ..town = _locationList[selectedTown ?? 0]
+        ..location = selectedTown == 0 ? LocationService.geoPoint : user.location;
 
-        _locationController = FixedExtentScrollController(initialItem: selectedTown ?? 0);
+      _locationController = FixedExtentScrollController(initialItem: selectedTown ?? 0);
+
+      if(post ==  null) {
         update();
         Loading.dismiss();
-      });
-    } else {
+      }
+    });
+
+    if (post != null) {
       updateMode = true;
 
       kFirestore.collection('post').doc(post).snapshots().listen((event) {
