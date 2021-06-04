@@ -11,12 +11,10 @@ import 'package:intl/intl.dart';
 class ItemChattingList extends StatelessWidget {
   ItemChattingList({required this.chatting});
 
-  final QueryDocumentSnapshot chatting;
+  final Chatting chatting;
 
   @override
   Widget build(BuildContext context) {
-    Chatting chatting = Chatting.from(this.chatting);
-
     return StreamBuilder<DocumentSnapshot>(
       stream: chatting.post!.snapshots(),
       builder: (context, snapshot) {
