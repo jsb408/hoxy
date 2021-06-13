@@ -36,7 +36,10 @@ class ReadPostViewModel extends GetxController {
 
   void loadPost(String postId) {
     Loading.show();
-    kFirestore.collection('post').doc(postId).snapshots().listen((event) => _post.value = Post.from(event));
+    kFirestore.collection('post').doc(postId).snapshots().listen((event) {
+      _post.value = Post.from(event);
+      update();
+    });
   }
 
   @override
