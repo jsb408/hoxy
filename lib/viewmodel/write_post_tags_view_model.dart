@@ -27,12 +27,11 @@ class WritePostTagsViewModel extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    search('');
 
     kFirestore.collection('tag').get().then((value) {
       _samples = value.docs.map((e) => Tag.from(e)).toList();
       _samples.sort((a, b) => a.count < b.count ? 1 : 0);
-      _filteredSamples = _samples;
+      search('');
       update();
     });
 
