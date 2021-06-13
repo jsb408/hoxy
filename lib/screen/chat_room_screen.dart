@@ -374,6 +374,14 @@ class MessageBubble extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
+                  if (isMe)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Text(
+                        DateFormat('MM.dd. HH:mm').format(chat.date),
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ),
                   Material(
                     borderRadius: isMe
                         ? BorderRadius.only(
