@@ -30,6 +30,7 @@ class WritePostTagsScreen extends StatelessWidget {
               color: Color(0xFFCFCFCF),
               height: 50,
               child: ListView(
+                controller: _viewModel.tagsScrollController,
                 scrollDirection: Axis.horizontal,
                 children: [
                   for (String tag in _viewModel.tags)

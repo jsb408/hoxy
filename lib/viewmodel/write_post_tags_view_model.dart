@@ -24,6 +24,9 @@ class WritePostTagsViewModel extends GetxController {
   TextEditingController _tagsTextFieldController = TextEditingController();
   TextEditingController get tagsTextFieldController => _tagsTextFieldController;
 
+  ScrollController _tagsScrollController = ScrollController();
+  ScrollController get tagsScrollController => _tagsScrollController;
+  
   @override
   void onInit() {
     super.onInit();
@@ -43,6 +46,7 @@ class WritePostTagsViewModel extends GetxController {
       _tagsTextFieldController.text = '';
       _searchKeyword = '';
       _tags.add(tag);
+      _tagsScrollController.animateTo(_tagsScrollController.position.maxScrollExtent + 250, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     }
   }
 
