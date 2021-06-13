@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/tag.dart';
 import 'package:hoxy/viewmodel/write_post_tags_view_model.dart';
 
@@ -22,50 +24,67 @@ class WritePostTagsScreen extends StatelessWidget {
             )
           ],
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          child: Column(
-            children: [
-              Container(
-                height: 50,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children:
-                    [
-                      for (Tag tag in _viewModel.tags)
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 2),
-                          child: InputChip(
-                            label: Text(tag.name),
-                            onPressed: () => _viewModel.removeTag(tag),
-                            onDeleted: () => _viewModel.removeTag(tag),
-                          ),
-                        ),
-                    ],
-                ),
+        body: Column(
+          children: [
+            Container(
+              color: Color(0xFFCFCFCF),
+              height: 50,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  for (String tag in _viewModel.tags)
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      child: InputChip(
+                        label: Text(tag, style: TextStyle(color: Colors.white)),
+                        backgroundColor: kTagChipColor,
+                        deleteIcon: Icon(CupertinoIcons.multiply, size: 14),
+                        deleteIconColor: Colors.white,
+                        onDeleted: () => _viewModel.removeTag(tag),
+                      ),
+                    ),
+                ],
               ),
-              TextField(
-                controller: _viewModel.tagsTextFieldController,
-                onChanged: (value) => _viewModel.search(value),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _viewModel.tagsTextFieldController,
+                      onChanged: (value) => _viewModel.search(value),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.only(left: 20, top: 20),
+                      child: Text('추천 태그',
+                          style: TextStyle(
+                            color: Color(0xFF676767),
+                          )),
+                    ),
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          if (_viewModel.searchKeyword.isNotEmpty &&
+                              !_viewModel.tags.contains(_viewModel.searchKeyword))
+                            ListTile(
+                                title: Text('\'${_viewModel.searchKeyword}\' 등록'),
+                                onTap: () => _viewModel.addTag(_viewModel.searchKeyword)),
+                          for (Tag tag in _viewModel.filteredSamples)
+                            ListTile(
+                              title: Text(tag.name),
+                              trailing: Text(tag.count.toString()),
+                              onTap: () => _viewModel.addTag(tag.name),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
               ),
-              Expanded(
-                child: ListView(
-                    children: [
-                      if (_viewModel.searchKeyword.isNotEmpty
-                          && _viewModel.tags.where((element) => element.name == _viewModel.searchKeyword).isEmpty)
-                        ListTile(
-                            title: Text('\'${_viewModel.searchKeyword}\' 등록'),
-                            onTap: () => _viewModel.addTag(Tag(_viewModel.searchKeyword))),
-                      for (Tag tag in _viewModel.samples)
-                        ListTile(
-                          title: Text(tag.name),
-                          onTap: () => _viewModel.addTag(tag),
-                        ),
-                    ],
-                ),
-              ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );

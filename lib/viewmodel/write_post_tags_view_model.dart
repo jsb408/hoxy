@@ -5,51 +5,61 @@ import 'package:hoxy/model/tag.dart';
 
 class WritePostTagsViewModel extends GetxController {
   WritePostTagsViewModel({required this.initialTags}) {
-    _tags = initialTags.map((e) => Tag(e)).toList();
+    _tags.value = initialTags;
   }
 
   final List<String> initialTags;
 
-  List<Tag> _tags = [];
-  List<Tag> get tags => _tags;
+  RxList<String> _tags = [].cast<String>().obs;
+  List<String> get tags => _tags;
 
   List<Tag> _samples = [];
-  List<Tag> get samples => _samples;
+
+  List<Tag> _filteredSamples = [];
+  List<Tag> get filteredSamples => _filteredSamples;
 
   String _searchKeyword = '';
   String get searchKeyword => _searchKeyword;
 
-  Rx<TextEditingController> _tagsTextFieldController = TextEditingController().obs;
-  TextEditingController get tagsTextFieldController => _tagsTextFieldController.value;
+  TextEditingController _tagsTextFieldController = TextEditingController();
+  TextEditingController get tagsTextFieldController => _tagsTextFieldController;
 
   @override
   void onInit() {
     super.onInit();
     search('');
 
-    ever(_tagsTextFieldController, (TextEditingController value) => search(value.text));
+    kFirestore.collection('tag').get().then((value) {
+      _samples = value.docs.map((e) => Tag.from(e)).toList();
+      _samples.sort((a, b) => a.count < b.count ? 1 : 0);
+      _filteredSamples = _samples;
+      update();
+    });
+
+    ever(_tags, (value) => search(_searchKeyword));
   }
 
-  void addTag(Tag tag) {
-    if(_tags.length < 5 && _tags.where((element) => element.name == tag.name).isEmpty)
+  void addTag(String tag) {
+    if(_tags.length < 5 && !_tags.contains(tag)) {
+      _tagsTextFieldController.text = '';
+      _searchKeyword = '';
       _tags.add(tag);
-    _tagsTextFieldController.update((val) => val!.text = '' );
-    update();
+    }
   }
 
-  void removeTag(Tag tag) {
+  void removeTag(String tag) {
     _tags.remove(tag);
-    update();
   }
 
   void search(String keyword) {
-    _searchKeyword = keyword;
-    kFirestore.collection('tag').get().then((value) {
-      _samples = value.docs.map((e) => Tag.from(e))
-          .where((element) => element.name.startsWith(keyword))
-          .where((element) => _tags.where((tag) => tag.name == element.name).isEmpty).toList();
-      _samples.sort((a, b) => a.count < b.count ? 1 : 0);
-      update();
-    });
+    if(keyword.length > 10) {
+      _tagsTextFieldController.text = keyword.substring(0, 9);
+    }
+
+    _searchKeyword = _tagsTextFieldController.text;
+    _filteredSamples = _samples
+        .where((element) => element.name.startsWith(keyword))
+        .where((element) => !_tags.contains(element.name)).toList();
+    update();
   }
 }

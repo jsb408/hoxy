@@ -297,8 +297,8 @@ class WritePostViewModel extends GetxController {
     );
   }
 
-  void inputTags(List<Tag>? tags) {
-    if (tags != null) _post.tag = tags.map((e) => e.name).toList();
+  void inputTags(List<String>? tags) {
+    if (tags != null) _post.tag = tags;
     update();
   }
 }

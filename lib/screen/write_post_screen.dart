@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
-import 'package:hoxy/model/post.dart';
 import 'package:hoxy/screen/write_post_tags_screen.dart';
 import 'package:hoxy/view/bottom_button.dart';
 import 'package:hoxy/view/write_property_button.dart';

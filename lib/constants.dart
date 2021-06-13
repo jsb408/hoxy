@@ -13,6 +13,7 @@ const kTagColor = Color(0xFF0B8CFF);
 const kProgressBackgroundColor = Color.fromRGBO(234, 234, 234, 1.0);
 const kExpBackgroundColor = Color(0xAC939597);
 const kExpValueColor = Color.fromRGBO(77, 244, 96, 1.0);
+const kTagChipColor = Color(0xFF3F87E4);
 
 const kGradeColors = [
   Colors.black, Colors.black, Colors.blue, Color(0xFF55CC91), kPrimaryColor, Colors.deepPurple
