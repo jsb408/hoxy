@@ -14,8 +14,6 @@ class ItemChattingListViewModel extends GetxController {
   void onInit() {
     super.onInit();
 
-    print('init');
-
     chatting.post!.snapshots().listen((event) {
       post = Post.from(event);
       update();
