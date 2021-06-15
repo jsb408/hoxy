@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hoxy/model/chatting.dart';
 import 'package:hoxy/model/member.dart';
 import 'package:hoxy/model/post.dart';
-import 'package:hoxy/screen/chat_room_screen.dart';
 import 'package:hoxy/screen/read_post_screen.dart';
 import 'package:hoxy/service/loading.dart';
-import 'package:hoxy/viewmodel/chatting_view_model.dart';
 import 'package:intl/intl.dart';
 
 import '../constants.dart';

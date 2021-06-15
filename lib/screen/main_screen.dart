@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/screen/chat_list_screen.dart';
@@ -40,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
           },
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: '우리동네'),
-            BottomNavigationBarItem(icon: Icon(Icons.whatshot_outlined), label: '이름없는기능'),
+            BottomNavigationBarItem(icon: Icon(CupertinoIcons.bell), label: '알림'),
             BottomNavigationBarItem(icon: Icon(Icons.chat_bubble_outline), label: '채팅'),
             BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: '마이페이지'),
           ],
