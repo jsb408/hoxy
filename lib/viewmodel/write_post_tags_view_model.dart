@@ -24,15 +24,17 @@ class WritePostTagsViewModel extends GetxController {
   TextEditingController _tagsTextFieldController = TextEditingController();
   TextEditingController get tagsTextFieldController => _tagsTextFieldController;
 
+  ScrollController _tagsScrollController = ScrollController();
+  ScrollController get tagsScrollController => _tagsScrollController;
+  
   @override
   void onInit() {
     super.onInit();
-    search('');
 
     kFirestore.collection('tag').get().then((value) {
       _samples = value.docs.map((e) => Tag.from(e)).toList();
       _samples.sort((a, b) => a.count < b.count ? 1 : 0);
-      _filteredSamples = _samples;
+      search('');
       update();
     });
 
@@ -44,6 +46,7 @@ class WritePostTagsViewModel extends GetxController {
       _tagsTextFieldController.text = '';
       _searchKeyword = '';
       _tags.add(tag);
+      _tagsScrollController.animateTo(_tagsScrollController.position.maxScrollExtent + 250, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     }
   }
 
