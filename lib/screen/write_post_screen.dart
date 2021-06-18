@@ -128,7 +128,52 @@ class WritePostScreen extends StatelessWidget {
                         children: [
                           Icon(CupertinoIcons.tag),
                           Flexible(
-                            child: WritePropertyButton(
+theme:                             child: GestureDetector(
+                              child: Container(
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: kBackgroundColor, width: 0.5)
+                                ),
+                                width: double.infinity,
+                                child: _viewModel.post.tag.isEmpty ? Padding(
+                                  padding: EdgeInsets.only(left: 30, top: 16, bottom: 16),
+                                  child: Text(
+                                    '태그를 입력하시려면 터치해주세요',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      height: 1.25,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ) : ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: [
+                                    for (String tag in _viewModel.post.tag)
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 2),
+                                        child: InputChip(
+                                          label: Text(tag, style: TextStyle(color: Colors.white)),
+                                          backgroundColor: kTagChipColor,
+                                          onPressed: () async => _viewModel.inputTags(
+                                            await Get.to(
+                                                  () => WritePostTagsScreen(tags: _viewModel.post.tag),
+                                              fullscreenDialog: true,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              onTap: () async => _viewModel.inputTags(
+                                await Get.to(
+                                      () => WritePostTagsScreen(tags: _viewModel.post.tag),
+                                  fullscreenDialog: true,
+                                ),
+                              ),
+                            )
+                            /*child: WritePropertyButton(
                               title: _viewModel.post.tag.isEmpty
                                   ? '태그'
                                   : '#' + _viewModel.post.tag.join(' #'),
@@ -139,7 +184,7 @@ class WritePostScreen extends StatelessWidget {
                                 ),
                               ),
                               hasData: _viewModel.post.tag.isNotEmpty,
-                            ),
+                            ),*/
                           ),
                         ],
                       ),
