@@ -19,7 +19,7 @@ class WritePostTagsScreen extends StatelessWidget {
           title: Text('태그추가'),
           actions: [
             TextButton(
-              child: Text('적용'),
+              child: Text('적용', style: TextStyle(color: Colors.black)),
               onPressed: () => Get.back(result: _viewModel.tags),
             )
           ],
@@ -49,41 +49,41 @@ class WritePostTagsScreen extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _viewModel.tagsTextFieldController,
-                      onChanged: (value) => _viewModel.search(value),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.only(left: 20, top: 20),
-                      child: Text('추천 태그',
-                          style: TextStyle(
-                            color: Color(0xFF676767),
-                          )),
-                    ),
-                    Expanded(
-                      child: ListView(
-                        children: [
-                          if (_viewModel.searchKeyword.isNotEmpty &&
-                              !_viewModel.tags.contains(_viewModel.searchKeyword))
-                            ListTile(
-                                title: Text('\'${_viewModel.searchKeyword}\' 등록'),
-                                onTap: () => _viewModel.addTag(_viewModel.searchKeyword)),
-                          for (Tag tag in _viewModel.filteredSamples)
-                            ListTile(
-                              title: Text(tag.name),
-                              trailing: Text(tag.count.toString()),
-                              onTap: () => _viewModel.addTag(tag.name),
-                            ),
-                        ],
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _viewModel.tagsTextFieldController,
+                        onChanged: (value) => _viewModel.search(value),
                       ),
-                    ),
-                  ],
-                )
-              ),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.only(left: 20, top: 20),
+                        child: Text('추천 태그',
+                            style: TextStyle(
+                              color: Color(0xFF676767),
+                            )),
+                      ),
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            if (_viewModel.searchKeyword.isNotEmpty &&
+                                !_viewModel.tags.contains(_viewModel.searchKeyword))
+                              ListTile(
+                                  title: Text('\'${_viewModel.searchKeyword}\' 등록하기'),
+                                  onTap: () => _viewModel
+                                      .addTag(_viewModel.searchKeyword.removeAllWhitespace)),
+                            for (Tag tag in _viewModel.filteredSamples)
+                              ListTile(
+                                title: Text(tag.name),
+                                //trailing: Text(tag.count.toString()),
+                                onTap: () => _viewModel.addTag(tag.name),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  )),
             )
           ],
         ),

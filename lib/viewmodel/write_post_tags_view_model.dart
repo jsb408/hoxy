@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hoxy/constants.dart';
 import 'package:hoxy/model/tag.dart';
+import 'package:hoxy/view/alert_platform_dialog.dart';
 
 class WritePostTagsViewModel extends GetxController {
   WritePostTagsViewModel({required this.initialTags}) {
-    _tags.value = initialTags;
+    _tags.value = initialTags.toList();
   }
 
   final List<String> initialTags;
@@ -47,6 +48,14 @@ class WritePostTagsViewModel extends GetxController {
       _searchKeyword = '';
       _tags.add(tag);
       _tagsScrollController.animateTo(_tagsScrollController.position.maxScrollExtent + 250, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
+    } else if(_tags.length >= 5) {
+      Get.dialog(
+        AlertPlatformDialog(
+            title: Text('태그가 너무 많아요'),
+            content: Text('태그는 5개까지 작성 가능합니다.'),
+            children: [AlertPlatformDialogButton(child: Text('확인'), onPressed: () {})],
+        )
+      );
     }
   }
 
@@ -56,7 +65,14 @@ class WritePostTagsViewModel extends GetxController {
 
   void search(String keyword) {
     if(keyword.length > 10) {
-      _tagsTextFieldController.text = keyword.substring(0, 9);
+      _tagsTextFieldController.text = keyword.substring(0, 10);
+      Get.dialog(
+          AlertPlatformDialog(
+            title: Text('태그가 너무 길어요'),
+            content: Text('태그 길이는 10자 이내로 작성 바랍니다.'),
+            children: [AlertPlatformDialogButton(child: Text('확인'), onPressed: () {})],
+          )
+      );
     }
 
     _searchKeyword = _tagsTextFieldController.text;

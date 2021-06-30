@@ -128,7 +128,7 @@ class WritePostScreen extends StatelessWidget {
                         children: [
                           Icon(CupertinoIcons.tag),
                           Flexible(
-theme:                             child: GestureDetector(
+                              child: GestureDetector(
                               child: Container(
                                 height: 50,
                                 decoration: BoxDecoration(
@@ -156,8 +156,7 @@ theme:                             child: GestureDetector(
                                           label: Text(tag, style: TextStyle(color: Colors.white)),
                                           backgroundColor: kTagChipColor,
                                           onPressed: () async => _viewModel.inputTags(
-                                            await Get.to(
-                                                  () => WritePostTagsScreen(tags: _viewModel.post.tag),
+                                            await Get.to(() => WritePostTagsScreen(tags: _viewModel.post.tag),
                                               fullscreenDialog: true,
                                             ),
                                           ),

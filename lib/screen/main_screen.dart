@@ -16,6 +16,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    kMessaging.subscribeToTopic(kAuth.currentUser!.uid);
+
     return Scaffold(
       body: WillPopScope(
         onWillPop: () {

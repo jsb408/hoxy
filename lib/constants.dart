@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 //region Colors
@@ -23,6 +24,7 @@ const kGradeColors = [
 //region Firebase
 final FirebaseAuth kAuth = FirebaseAuth.instance;
 final FirebaseFirestore kFirestore = FirebaseFirestore.instance;
+final FirebaseMessaging kMessaging = FirebaseMessaging.instance;
 //endregion
 
 //region Styles

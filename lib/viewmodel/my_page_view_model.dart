@@ -13,7 +13,7 @@ class MyPageViewModel extends GetxController {
   String _currentTownName = LocationService.townName;
   String get currentTownName => _currentTownName;
 
-  late String _myTownName;
+  String _myTownName = '';
   String get myTownName => _myTownName;
 
   Member _user = Member();
@@ -106,6 +106,7 @@ class MyPageViewModel extends GetxController {
           AlertPlatformDialogButton(
             child: Text('네'),
             onPressed: () {
+              kMessaging.unsubscribeFromTopic(kAuth.currentUser!.uid);
               kAuth.signOut();
               Get.off(LoginScreen());
             },

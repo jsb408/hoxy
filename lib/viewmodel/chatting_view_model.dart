@@ -41,7 +41,7 @@ class ChattingViewModel extends GetxController {
         update();
       });
 
-      _chatting.chat!.snapshots().listen((event) {
+      _chatting.chat!.orderBy('date', descending: true).snapshots().listen((event) {
         _chats = event.docs.map((e) => Chat.from(e)).toList();
         update();
       });
@@ -74,6 +74,7 @@ class ChattingViewModel extends GetxController {
       print(error);
     });
 
+    _chat = Chat();
     chatController.clear();
   }
 }
