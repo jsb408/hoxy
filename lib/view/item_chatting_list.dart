@@ -61,6 +61,7 @@ class ItemChattingList extends StatelessWidget {
                               Text(
                                 recentChat?.get('content') ?? '최근 대화가 없습니다.',
                                 style: TextStyle(color: Color.fromRGBO(168, 168, 168, 1.0), fontSize: 12),
+                                maxLines: 1,
                               ),
                               SizedBox(height: 9),
                               Text(

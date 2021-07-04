@@ -71,8 +71,9 @@ class MessageBubble extends StatelessWidget {
                       bottomRight: Radius.circular(5.0),
                     ),
                     color: isMe ? kPrimaryColor : Colors.white,
-                    child: Padding(
+                    child: Container(
                       padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      constraints: BoxConstraints(maxWidth: 250),
                       child: Text(
                         chat.content,
                         style: TextStyle(
