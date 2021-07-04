@@ -5,13 +5,15 @@ import 'package:hoxy/screen/chat_list_screen.dart';
 import 'package:hoxy/screen/post_list_screen.dart';
 import 'package:hoxy/screen/my_page_screen.dart';
 
+import 'alert_list_screen.dart';
+
 class MainScreen extends StatefulWidget {
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final _screens = [PostListScreen(), PostListScreen(), ChatListScreen(), MyPageScreen()];
+  final _screens = [PostListScreen(), AlertListScreen(), ChatListScreen(), MyPageScreen()];
   int _selectedIndex = 0;
 
   @override
