@@ -72,14 +72,14 @@ class PostListViewModel extends GetxController {
 
   void refreshPosts() {
     kFirestore.collection('post').orderBy('date', descending: true).snapshots().listen((event) {
-      _posts.value = event.docs
-          .where((element) =>
+      _posts.value = event.docs.map((e) => Post.from(e))
+          .where((post) =>
       LocationService.distanceBetween(
           _selectedLocality == 0 ? LocationService.geoPoint : user.location,
-          element.get('location')) <
+          post.location!) <
           5000 &&
-          !_banned.contains(element['writer'] as DocumentReference))
-          .map((e) => Post.from(e))
+          !_banned.contains(post.writer) &&
+          post.start!.isAfter(DateTime.now()))
           .toList();
       Loading.dismiss();
     });
