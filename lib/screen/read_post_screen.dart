@@ -20,13 +20,14 @@ class ReadPostScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ReadPostViewModel> (
+    return GetBuilder<ReadPostViewModel>(
       init: ReadPostViewModel(postId: postId),
       builder: (_viewModel) => Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(_viewModel.post.title),
-          actions: [_viewModel.writer.uid == kAuth.currentUser?.uid
+          actions: [
+            _viewModel.writer.uid == kAuth.currentUser?.uid
                 ? _viewModel.writerActionSheet()
                 : _viewModel.viewerActionSheet()
           ],
@@ -40,30 +41,39 @@ class ReadPostScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 15),
                         child: Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              child: Text(_viewModel.post.emoji, style: TextStyle(fontSize: 40)),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: Text(_viewModel.post.emoji,
+                                  style: TextStyle(fontSize: 40)),
                             ),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text('예정시간',
-                                      style: TextStyle(color: Color.fromRGBO(55, 68, 78, 1.0))),
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromRGBO(55, 68, 78, 1.0))),
                                   Text(
                                     _viewModel.formattedTime,
-                                    style: TextStyle(fontSize: 14, color: kTimeColor),
+                                    style: TextStyle(
+                                        fontSize: 14, color: kTimeColor),
                                   ),
                                   SizedBox(height: 6),
                                   Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       Text(
                                         "${_viewModel.post.town} ${timeText(_viewModel.post.date)}",
-                                        style: TextStyle(fontSize: 12, color: kSubContentColor),
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: kSubContentColor),
                                       ),
                                       SizedBox(width: 9),
                                       Icon(
@@ -74,10 +84,13 @@ class ReadPostScreen extends StatelessWidget {
                                       SizedBox(width: 4),
                                       Text(
                                         (_viewModel.post.view).toString(),
-                                        style: TextStyle(fontSize: 12, color: kSubContentColor),
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: kSubContentColor),
                                       ),
                                       SizedBox(width: 12),
-                                      GradeButton(birth: _viewModel.writer.birth),
+                                      GradeButton(
+                                          birth: _viewModel.writer.birth),
                                     ],
                                   ),
                                 ],
@@ -91,7 +104,8 @@ class ReadPostScreen extends StatelessWidget {
                                   value: _viewModel.chatting.member.length /
                                       _viewModel.post.headcount,
                                 ),
-                                Text('${_viewModel.chatting.member.length}/${_viewModel.post.headcount}'),
+                                Text(
+                                    '${_viewModel.chatting.member.length}/${_viewModel.post.headcount}'),
                               ],
                             ),
                           ],
@@ -99,13 +113,15 @@ class ReadPostScreen extends StatelessWidget {
                       ),
                       divider(),
                       Container(
-                        padding: EdgeInsets.only(top: 20, right: 25, left: 25, bottom: 8),
+                        padding: EdgeInsets.only(
+                            top: 20, right: 25, left: 25, bottom: 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             ConstrainedBox(
                               constraints: BoxConstraints(minHeight: 300),
-                              child: Text(_viewModel.post.content, style: TextStyle(fontSize: 20)),
+                              child: Text(_viewModel.post.content,
+                                  style: TextStyle(fontSize: 20)),
                             ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +134,8 @@ class ReadPostScreen extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     '#${_viewModel.post.tag.join(' #')}',
-                                    style: TextStyle(fontSize: 15, color: kTagColor),
+                                    style: TextStyle(
+                                        fontSize: 15, color: kTagColor),
                                   ),
                                 ),
                               ],
@@ -128,63 +145,56 @@ class ReadPostScreen extends StatelessWidget {
                       ),
                       divider(),
                       Container(
-                        padding: EdgeInsets.only(top: 10, right: 15, left: 25, bottom: 10),
+                        padding: EdgeInsets.only(
+                            top: 10, right: 15, left: 25, bottom: 10),
+                        height: 60,
                         child: Row(
                           children: [
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        _viewModel.nickname,
-                                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                                      ),
-                                      SizedBox(width: 3),
-                                      Text(_viewModel.post.town,
-                                          style: TextStyle(fontSize: 12, color: kDisabledColor)),
-                                    ],
+                                  Text(
+                                    _viewModel.nickname,
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
                                   ),
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Text('인연지수', style: TextStyle(color: kDisabledColor)),
-                                      Icon(Icons.help_outline, size: 8),
-                                      SizedBox(width: 2),
-                                      Container(
-                                        width: 53,
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(10),
-                                          child: LinearProgressIndicator(
-                                            minHeight: 8,
-                                            backgroundColor: kExpBackgroundColor,
-                                            valueColor: AlwaysStoppedAnimation<Color>(kExpValueColor),
-                                            value: _viewModel.writer.exp / 100,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  SizedBox(width: 3),
+                                  Text(_viewModel.post.town,
+                                      style: TextStyle(
+                                          fontSize: 12, color: kDisabledColor)),
                                 ],
                               ),
                             ),
                             Text(
                               '총 모임참여 ${_viewModel.writer.participation}회',
-                              style: TextStyle(fontSize: 12, color: kDisabledColor),
+                              style: TextStyle(
+                                  fontSize: 12, color: kDisabledColor),
                             ),
                           ],
                         ),
                       ),
                       divider(),
-                      Padding(
-                        padding: EdgeInsets.only(left: 25, top: 8, right: 15),
-                        child: Text('연관모임'),
+                      Container(
+                        height: 40,
+                        padding: EdgeInsets.only(left: 25, right: 15),
+                        child: Row(
+                          children: [
+                            Expanded (
+                              child: Text(
+                                '연관모임',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Text(
+                              _viewModel.post.tag[0],
+                            )
+                          ],
+                        ),
                       ),
-                      //TODO: 연관글이 없으면 안 뜨게 해야
-                      for (String tag in _viewModel.relatedTag())
-                        ItemRelateList(postId: _viewModel.post.id, tag: tag)
+                      divider(),
+                      ItemRelateList(postId: _viewModel.post.id, tag: _viewModel.post.tag[0])
                     ],
                   ),
                 ),
@@ -199,7 +209,8 @@ class ReadPostScreen extends StatelessWidget {
                     thickness: 2,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 16, right: 16, bottom: Platform.isIOS ? 48 : 16),
+                    padding: EdgeInsets.only(
+                        top: 16, right: 16, bottom: Platform.isIOS ? 48 : 16),
                     child: Row(
                       children: [
                         Expanded(
@@ -217,12 +228,15 @@ class ReadPostScreen extends StatelessWidget {
                                 children: [
                                   Text(
                                     _viewModel.post.town,
-                                    style: TextStyle(fontSize: 14, color: kDisabledColor),
+                                    style: TextStyle(
+                                        fontSize: 14, color: kDisabledColor),
                                   ),
                                   SizedBox(width: 4),
                                   Text(
                                     '${_viewModel.nickname}님의 모임',
-                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600),
                                   ),
                                 ],
                               ),
@@ -237,7 +251,8 @@ class ReadPostScreen extends StatelessWidget {
                             child: BackgroundButton(
                               title: '신청하기',
                               onPressed: () => _viewModel.showApplyDialog(),
-                              disabled: _viewModel.chatting.member.contains(kAuth.currentUser?.uid),
+                              disabled: _viewModel.chatting.member
+                                  .contains(kAuth.currentUser?.uid),
                             ),
                           ),
                         ),

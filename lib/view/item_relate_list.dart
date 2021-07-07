@@ -15,40 +15,32 @@ class ItemRelateList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: kFirestore.collection('post').where('tag', arrayContains: tag).snapshots(),
+    return StreamBuilder<QuerySnapshot> (
+      stream: kFirestore.collection('post')
+        .where('tag', arrayContains: tag)
+        .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
+        
+        List<QueryDocumentSnapshot> posts = snapshot.data!.docs.where((element) => element.id != postId && Post.from(element).start!.isAfter(DateTime.now())).toList();
+        
+        if (snapshot.data!.docs.length > 0) {
+          List<int> dices = [];
 
-        List<QueryDocumentSnapshot> posts = snapshot.data!.docs.where((element) => element.id != postId).toList();
+          while (dices.length < (posts.length > 3 ? 3 : posts.length)) {
+            int dice = Random().nextInt(posts.length);
+            if (!dices.contains(dice)) dices.add(dice);
+          }
 
-        List<int> dices = [];
-
-        while (dices.length < (posts.length > 3 ? 3 : posts.length)) {
-          int dice = Random().nextInt(posts.length);
-          if (!dices.contains(dice)) dices.add(dice);
-        }
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 25),
-              child: Text(
-                '#$tag',
-                style: TextStyle(fontWeight: FontWeight.w100),
-              ),
-            ),
-            Column(
-              children: [
-                for (int dice in dices) ItemPostList(post: Post.from(posts[dice])),
-              ],
-            ),
-          ],
-        );
-      },
+          return Column(
+                children: [
+                  for (int dice in dices) ItemPostList(post: Post.from(posts[dice])),
+                ]
+          );
+        } return Container();
+      }
     );
   }
 }

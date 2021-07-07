@@ -33,6 +33,11 @@ class ChatRoomDrawer extends StatelessWidget {
         .collection('chatting')
         .doc(chatting.id)
         .update({'member': chatting.member});
+
+    if (post.start!.isBefore(DateTime.now()))
+      kFirestore.collection('member').doc(kAuth.currentUser!.uid).update({
+        'participation': members.singleWhere((element) => element.uid == kAuth.currentUser!.uid).participation - 1
+      });
   }
 
   @override

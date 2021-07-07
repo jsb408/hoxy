@@ -58,43 +58,28 @@ class MyPageScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 8),
                       Expanded(
-                        child: Column(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              '${_viewModel.user.email} 님의\n인연지수는',
+                              '${_viewModel.user.email} 님은',
                               textAlign: TextAlign.end,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            Container(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: LinearProgressIndicator(
-                                  minHeight: 16,
-                                  backgroundColor: kExpBackgroundColor,
-                                  valueColor: AlwaysStoppedAnimation<Color>(kExpValueColor),
-                                  value: _viewModel.user.exp / 100,
+                            SizedBox(width: 5),
+                            GradeButton(birth: _viewModel.user.birth),
+                            SizedBox(width: 5),
+                              Text(
+                                '입니다',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                GradeButton(birth: _viewModel.user.birth),
-                                SizedBox(width: 5),
-                                Text(
-                                  '동네대장🥳 입니다',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )
-                              ],
-                            ),
                           ],
                         ),
                       ),

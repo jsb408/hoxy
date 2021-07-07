@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -96,21 +94,11 @@ class ReadPostViewModel extends GetxController {
     }
   }
 
-  List<String> relatedTag() {
-    List<int> dices = post.tag.isEmpty ? [] : [0];
-
-    while (dices.length < (post.tag.length > 3 ? 3 : post.tag.length)) {
-    int dice = Random().nextInt(post.tag.length - 1) + 1;
-    if (!dices.contains(dice)) dices.add(dice);
-    }
-
-    return List.generate(dices.length, (index) => post.tag[dices[index]]);
-  }
-
   Future<void> enterChatRoom(String nickname) async {
     chatting.member.add(kAuth.currentUser!.uid);
 
-    DocumentSnapshot myInfo = await kFirestore.collection('member').doc(kAuth.currentUser!.uid).get();
+    DocumentSnapshot myInfoSnapshot = await kFirestore.collection('member').doc(kAuth.currentUser!.uid).get();
+    Member myInfo = Member.from(myInfoSnapshot);
 
     await kFirestore
         .collection('chatting')
@@ -128,13 +116,16 @@ class ReadPostViewModel extends GetxController {
         .update({
       'date': DateTime.now()
     });
+    kFirestore.collection('member').doc(kAuth.currentUser!.uid).update({
+      'participation': myInfo.participation + 1
+    });
     kFirestore.collection('alert').add({
       'type': 'apply',
       'date': DateTime.now(),
       'uid': post.writer!.id,
       'title': nickname + '님이 모임에 참가했습니다',
       'content': '\'${post.title}\' 모임에 새로운 참가 신청이 왔어요\n환영 인사를 해주세요~',
-      'emoji': Member.from(myInfo).emoji,
+      'emoji': myInfo.emoji,
       'target': chatting.id,
     });
   }
