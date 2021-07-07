@@ -110,6 +110,8 @@ class ReadPostViewModel extends GetxController {
   Future<void> enterChatRoom(String nickname) async {
     chatting.member.add(kAuth.currentUser!.uid);
 
+    DocumentSnapshot myInfo = await kFirestore.collection('member').doc(kAuth.currentUser!.uid).get();
+
     await kFirestore
         .collection('chatting')
         .doc(chatting.id)
@@ -125,6 +127,15 @@ class ReadPostViewModel extends GetxController {
         .doc(chatting.id)
         .update({
       'date': DateTime.now()
+    });
+    kFirestore.collection('alert').add({
+      'type': 'apply',
+      'date': DateTime.now(),
+      'uid': post.writer!.id,
+      'title': nickname + '님이 모임에 참가했습니다',
+      'content': '\'${post.title}\' 모임에 새로운 참가 신청이 왔어요\n환영 인사를 해주세요~',
+      'emoji': Member.from(myInfo).emoji,
+      'target': chatting.id,
     });
   }
 
