@@ -27,6 +27,11 @@ class ChatRoomDrawer extends StatelessWidget {
   final List<Member> members;
   final double topPadding;
 
+  Future<void> endMeeting() async {
+    await escapeChatRoom();
+    await chatting.post!.delete();
+  }
+
   Future<void> escapeChatRoom() async {
     chatting.member.remove(kAuth.currentUser?.uid);
     await kFirestore
@@ -148,7 +153,21 @@ class ChatRoomDrawer extends StatelessWidget {
                   ? ChattingDrawerButton(
                       icon: CupertinoIcons.xmark_circle,
                       text: '모임 종료하기',
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pop(context);
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertPlatformDialog(title: Text('모임 종료'), content: Text('모임을 종료하시겠습니까?'), children: [
+                            AlertPlatformDialogButton(child: Text('아니오'), onPressed: () {}),
+                            AlertPlatformDialogButton(child: Text('네'), onPressed: () async {
+                              Loading.show();
+                              await endMeeting();
+                              Navigator.pop(context);
+                              Loading.dismiss();
+                            }),  
+                          ],),
+                        );
+                      },
                     )
                   : ChattingDrawerButton(
                       icon: CupertinoIcons.escape,
@@ -166,7 +185,7 @@ class ChatRoomDrawer extends StatelessWidget {
                                 child: Text('예'),
                                 onPressed: () async {
                                   Loading.show();
-                                  escapeChatRoom();
+                                  await escapeChatRoom();
                                   Navigator.pop(context);
                                   Loading.dismiss();
                                 },

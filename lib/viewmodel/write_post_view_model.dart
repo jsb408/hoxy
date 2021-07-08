@@ -232,7 +232,14 @@ class WritePostViewModel extends GetxController {
         'date': DateTime.now(),
       });
 
+      DocumentSnapshot writerSnapshot = await kFirestore.collection('member').doc(this.post.writer!.id).get();
+      Member writer = Member.from(writerSnapshot);
+
       await post.update({'chat': chatting});
+
+      kFirestore.collection('member').doc(kAuth.currentUser!.uid).update({
+        'particiation': writer.participation + 1
+      });
 
       Loading.showSuccess('업로드 완료');
       Get.back();
