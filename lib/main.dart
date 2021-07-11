@@ -6,6 +6,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:get/get.dart';
+import 'package:hoxy/screen/chat_room_screen.dart';
 import 'package:hoxy/screen/join_detail_screen.dart';
 import 'package:hoxy/screen/location_screen.dart';
 import 'package:hoxy/screen/login_screen.dart';
@@ -73,7 +74,7 @@ class Hoxy extends StatelessWidget {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print('Message Clicked!');
+      Get.to(ChatRoomScreen(chattingId: message.data['chattingId']));
     });
 
     return GetMaterialApp(
