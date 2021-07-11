@@ -30,13 +30,44 @@ class MyPageScreen extends StatelessWidget {
         body: Column(
           children: [
             Container(
-              padding: EdgeInsets.only(top: 12, right: 12, left: 12),
+              padding: EdgeInsets.only(top: 12, right: 36, left: 12),
               color: Colors.white,
               child: Column(
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                                  '${_viewModel.user.email} 님은',
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                GradeButton(birth: _viewModel.user.birth),
+                                SizedBox(width: 5),
+                                  Text(
+                                    '입니다',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 36),
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -55,33 +86,6 @@ class MyPageScreen extends StatelessWidget {
                             ),
                           ),
                         ],
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              '${_viewModel.user.email} 님은',
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(width: 5),
-                            GradeButton(birth: _viewModel.user.birth),
-                            SizedBox(width: 5),
-                              Text(
-                                '입니다',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                          ],
-                        ),
                       ),
                     ],
                   ),
